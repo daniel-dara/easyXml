@@ -125,6 +125,17 @@ namespace EASYXML_NAMESPACE
 		}
 	}
 
+	void Parser::printTree(const Node* node, std::string indentation)
+	{
+		std::cout << (indentation += "\t") + node->name << ": " << node->value << std::endl;
+
+		std::set<Node*, Node::node_ptr_compare>::iterator it;
+		for (it = node->children.begin(); it != node->children.end(); ++it)
+		{
+			printTree((*it), indentation);
+		}
+	}
+
 	void Parser::deleteTree(Node* node)
 	{
 		std::set<Node*, Node::node_ptr_compare>::iterator it;

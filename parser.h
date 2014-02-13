@@ -13,6 +13,7 @@ namespace EASYXML_NAMESPACE
 	{
 	public:
 		static Node* loadXml(const std::string filePath);
+		static void printTree(const Node* node, std::string indentation = "");
 		static void deleteTree(Node* node);
 
 	private:

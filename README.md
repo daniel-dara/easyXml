@@ -9,9 +9,9 @@ It is currently usable however it does not yet implement all common  XML feature
 Not yet available.
 
 # Features Implemented
-  * class "Node" that provides access to an XML elements name, value, and children.
-    * Has function "printTree" to print the XML tree starting from the given node
-    * Has function "findElement" to find an element with the given name
+  * class "Node" that provides access to an XML element's name, value, and children.
+    * contains function "findElement" to find an element with the given name (or path)
+    * global functions for printing and deleting a tree starting from the given node.
   * Parse an XML file with the following:
     * elements with values
     * elements with children
@@ -26,4 +26,4 @@ Not yet available.
     * element attributes
     * element naming rules
     * empty elements
-  * Write destructor to recursively delete nodes
+    * Writing a tree of class Node back to an xml file.

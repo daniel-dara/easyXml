@@ -27,10 +27,7 @@ namespace EASYXML_NAMESPACE
 		~Node();
 
 		Node* findElement(const std::string path, bool useExceptions) const;
-
-		void printTree(const Node* node, std::string tabs = "");
-		// void deleteTree();
-
+		
 	private:
 		struct node_ptr_compare
 		{

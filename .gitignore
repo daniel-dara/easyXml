@@ -1,3 +1,6 @@
+# duplicate files in examples
+examples/*.h
+
 # Compiled Object files
 *.slo
 *.lo

@@ -62,16 +62,4 @@ namespace EASYXML_NAMESPACE
 			return NULL;
 		}
 	}
-
-	void Node::printTree(const Node* node, std::string tabs)
-	{
-		std::cout << tabs + node->name << ": " << node->value << std::endl;
-
-		std::set<Node*, node_ptr_compare>::iterator it;
-		tabs += "\t";
-		for (it = node->children.begin(); it != node->children.end(); ++it)
-		{
-			printTree((*it), tabs);
-		}
-	}
 }
