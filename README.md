@@ -1,6 +1,8 @@
 # Description
 
-I got sick of the myriad of XML parsers that are overly-complex to use and don't provide the basic features I expected an XML parser to have. easyXml is designed to be the easiest to use XML parser. I also plan for it to be simple to setup.
+I got sick of the myriad of XML parsers that are overly-complex to use and don't provide the basic features I expected an XML parser to have. "easyXml" is designed to be the easiest to use and setup XML parser.
+
+It is currently usable however it does not yet implement all common  XML features.
 
 # Installation
 
