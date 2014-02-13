@@ -16,3 +16,4 @@ inline std::string& rtrim(std::string &s);
 inline std::string& trim(std::string &s);
 
 #endif
+

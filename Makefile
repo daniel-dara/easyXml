@@ -3,35 +3,44 @@ CFLAGS=-c -Wall
 LDFLAGS=
 SOURCES=functions.cpp exception.cpp parser.cpp node.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
-EXECUTABLE=example1.out
-EXEC_SOURCE=example1.cpp
-EXEC_OBJ=$(EXEC_SOURCE:.cpp=.o)
+DEPENDS=$(OBJECTS:.o=.d)
+HEADERS=$(SOURCES:.cpp=.h)
+LIB_H=easyXml.h
 LIB=libEasyXml
-INCLUDES=easyXml.h
+EX_DIR=examples
+EX_HEADERS=$(addprefix $(EX_DIR)/, $(SOURCES:.cpp=.h))
 
-all: lib example
+EXECUTABLE=$(EX_DIR)/example.out
+EXEC_SOURCE=$(EX_DIR)/example.cpp
+EXEC_OBJ=$(EXEC_SOURCE:.cpp=.o)
 
-example: lib $(EXEC_SOURCE) $(EXEC_OBJ) $(EXECUTABLE)
+all: lib example1
 
-$(EXECUTABLE):
-	$(CC) -Wall $(EXEC_SOURCE) -o $@ -L. -lEasyXml
-
-lib: $(SOURCES) $(OBJECTS) $(LIB).a $(INCLUDES)
-
-$(LIB).a:
-	ar rvs $(LIB).a $(OBJECTS)
-
-objects:
-	$(CC) $(CFLAGS) $(SOURCES)
+example1: lib $(EXEC_SOURCE) $(EXEC_OBJ) $(EXECUTABLE) $(EX_HEADERS) \
+              $(EX_DIR)/$(LIB_H)
 
 .cpp.o:
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) -MMD $< -o $@
+
+examples/%.h: %.h
+	cp $^ $@
+
+$(EXECUTABLE): $(LIB).a
+	$(CC) -Wall $(EXEC_SOURCE) -o $@ -L. -lEasyXml
+
+lib: $(SOURCES) $(OBJECTS) $(LIB).a
+# recompile lib if header files change
+-include $(DEPENDS)
+
+$(EXTRA_INCLUDES):
+	$(CC) $(CFLAGS) -MMD $@.h
+
+$(LIB).a: $(OBJECTS)
+	ar rs $(LIB).a $(OBJECTS)
 
 run:
-	./$(EXECUTABLE)
+	./$(EX_DIR)/$(EXECUTABLE)
 
 clean:
-	rm -f *.o *.out *.a
+	rm -f *.o *.out *.a *.d *.gch
 
-#$(EXECUTABLE): $(OBJECTS) 
-	#$(CC) $(LDFLAGS) $(OBJECTS) -o $@
