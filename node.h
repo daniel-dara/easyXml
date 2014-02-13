@@ -11,7 +11,9 @@ namespace EASYXML_NAMESPACE
 	class Node
 	{
 	public:
-		friend class Parser;
+		// friend class Parser;
+		friend void printTree(const Node* node, std::string tabs);
+		friend void deleteTree(Node* node);
 
 		std::string name;
 		std::string value;
@@ -27,7 +29,7 @@ namespace EASYXML_NAMESPACE
 		~Node();
 
 		Node* findElement(const std::string path, bool useExceptions) const;
-		
+
 	private:
 		struct node_ptr_compare
 		{
