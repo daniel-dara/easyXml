@@ -1,74 +1,77 @@
 #include "node.h"
 
-Node::Node() : isRoot(false)
-{}
-
-Node::Node(const char* name, bool is_root = false) : name(name), isRoot(is_root)
-{}
-
-Node::Node(const std::string name, bool is_root = false) : name(name), isRoot(is_root)
-{}
-
-Node::Node(const Node& node) : isRoot(node.isRoot)
+namespace EASYXML_NAMESPACE
 {
-	std::cout << "copy constructor called" << std::endl;
-}
+	Node::Node()
+	{}
 
-Node::~Node()
-{
-	std::cout << "~~~destructor for node->name: " + name + " was called." << std::endl; 
-}
+	Node::Node(const char* name) : name(name)
+	{}
 
-Node* Node::findElement(const std::string path, bool useExceptions = false) const
-{
-	// save cost of instantiation since findElement is recursive
-	static Node query;
-	std::string restOfPath;
-	int slashIndex = path.find('/');
+	Node::Node(const std::string name) : name(name)
+	{}
 
-	if (slashIndex == -1)
+	Node::Node(const Node& node)
 	{
-		query.name = path;
-	}
-	else
-	{
-		query.name = path.substr(0, slashIndex);
-		restOfPath = path.substr(slashIndex + 1);
+		std::cout << "Node: copy constructor for " + name << std::endl;
 	}
 
-	static std::set<Node*, node_ptr_compare>::iterator iter;
-	iter = children.find(&query);
-
-	if (iter != children.end())
+	Node::~Node()
 	{
-		if (restOfPath.length() == 0)
+		std::cout << "Node: destructor for " + name << std::endl; 
+	}
+
+	Node* Node::findElement(const std::string path, bool useExceptions = false) const
+	{
+		// save cost of instantiation since findElement is recursive
+		static Node query;
+		std::string restOfPath;
+		int slashIndex = path.find('/');
+
+		if (slashIndex == -1)
 		{
-			return (*iter);
+			query.name = path;
 		}
 		else
 		{
-			return (*iter)->findElement(restOfPath);
+			query.name = path.substr(0, slashIndex);
+			restOfPath = path.substr(slashIndex + 1);
+		}
+
+		static std::set<Node*, node_ptr_compare>::iterator iter;
+		iter = children.find(&query);
+
+		if (iter != children.end())
+		{
+			if (restOfPath.length() == 0)
+			{
+				return (*iter);
+			}
+			else
+			{
+				return (*iter)->findElement(restOfPath);
+			}
+		}
+
+		if (useExceptions)
+		{
+			throw easyXmlException("Child element \"" + path + "\" not found.");
+		}
+		else
+		{
+			return NULL;
 		}
 	}
 
-	if (useExceptions)
+	void Node::printTree(const Node* node, std::string tabs)
 	{
-		throw easyXmlException("Child element \"" + path + "\" not found.");
-	}
-	else
-	{
-		return NULL;
-	}
-}
+		std::cout << tabs + node->name << ": " << node->value << std::endl;
 
-void Node::printTree(const Node* node, std::string tabs)
-{
-	std::cout << tabs + node->name << ": " << node->value << std::endl;
-
-	std::set<Node*, node_ptr_compare>::iterator it;
-	tabs += "\t";
-	for (it = node->children.begin(); it != node->children.end(); ++it)
-	{
-		printTree((*it), tabs);
+		std::set<Node*, node_ptr_compare>::iterator it;
+		tabs += "\t";
+		for (it = node->children.begin(); it != node->children.end(); ++it)
+		{
+			printTree((*it), tabs);
+		}
 	}
 }

@@ -4,19 +4,22 @@
 #include <fstream>
 #include <stack>
 #include "node.h"
+#include "functions.h"
+#include "namespace.h"
 
-class Parser
+namespace EASYXML_NAMESPACE
 {
-public:
-	static Node* loadXml(const std::string filePath);
+	class Parser
+	{
+	public:
+		static Node* loadXml(const std::string filePath);
+		static void deleteTree(Node* node);
 
-private:
-	Parser();
+	private:
+		Parser(); // don't allow instantiation of class
+		static std::string getElementName(const std::string& data, int startIndex);
 
-	// public domain: http://stackoverflow.com/a/17620909
-	static void replaceAll(std::string& str, const std::string& from, const std::string& to);
-
-	static std::string getElementName(const std::string& data, int startIndex);
-};
+	};
+}
 
 #endif

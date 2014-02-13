@@ -1,0 +1,3 @@
+#ifndef EASYXML_NAMESPACE
+#define EASYXML_NAMESPACE xml
+#endif

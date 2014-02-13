@@ -1,4 +1,4 @@
-CC=g++
+CC=clang++
 CFLAGS=-c -Wall
 LDFLAGS=
 SOURCES=functions.cpp exception.cpp parser.cpp node.cpp
@@ -17,7 +17,7 @@ EXEC_OBJ=$(EXEC_SOURCE:.cpp=.o)
 all: lib example1
 
 example1: lib $(EXEC_SOURCE) $(EXEC_OBJ) $(EXECUTABLE) $(EX_HEADERS) \
-              $(EX_DIR)/$(LIB_H)
+              $(EX_DIR)/$(LIB_H) $(EX_DIR)/namespace.h
 
 .cpp.o:
 	$(CC) $(CFLAGS) -MMD $< -o $@
@@ -39,7 +39,7 @@ $(LIB).a: $(OBJECTS)
 	ar rs $(LIB).a $(OBJECTS)
 
 run:
-	cd examples; ./example1.out
+	@cd examples; ./example1.out
 
 clean:
 	rm -f *.o *.out *.a *.d *.gch

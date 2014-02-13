@@ -1,21 +1,24 @@
 #include "exception.h"
 
-easyXmlException::easyXmlException(std::string msg, int line) : message(msg), lineNumber(line)
-{}
-
-easyXmlException::~easyXmlException() throw () 
-{}
-
-const char* easyXmlException::what() const throw()
+namespace EASYXML_NAMESPACE
 {
-	if (lineNumber > 0)
+	easyXmlException::easyXmlException(std::string msg, int line) : message(msg), lineNumber(line)
+	{}
+
+	easyXmlException::~easyXmlException() throw () 
+	{}
+
+	const char* easyXmlException::what() const throw()
 	{
-		char* buf = new char[message.length() + static_cast<int>(log10(lineNumber)) + 1];
-		sprintf(buf, message.c_str(), lineNumber);
-		return buf;
-	}
-	else
-	{
-		return message.c_str();
+		if (lineNumber > 0)
+		{
+			char* buf = new char[message.length() + static_cast<int>(log10(lineNumber)) + 1];
+			sprintf(buf, message.c_str(), lineNumber);
+			return buf;
+		}
+		else
+		{
+			return message.c_str();
+		}
 	}
 }

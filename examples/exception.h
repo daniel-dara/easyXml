@@ -4,19 +4,23 @@
 #include <iostream>
 #include <cmath>
 #include <stdio.h>
+#include "namespace.h"
 
-class easyXmlException : public std::exception
+namespace EASYXML_NAMESPACE
 {
-public:
-	easyXmlException(std::string msg, int line = 0);
+	class easyXmlException : public std::exception
+	{
+	public:
+		easyXmlException(std::string msg, int line = 0);
 
-	~easyXmlException() throw ();
+		~easyXmlException() throw ();
 
-	const char* what() const throw();
+		const char* what() const throw();
 
-private:
-	std::string message;
-	int lineNumber;
-};
+	private:
+		std::string message;
+		int lineNumber;
+	};
+}
 
 #endif

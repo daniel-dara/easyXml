@@ -26,6 +26,4 @@ Not yet available.
     * element attributes
     * element naming rules
     * empty elements
-  * Write node destructor:
-    * Default deletes all children
-	 * Custom destructor to delete just one node
+  * Write destructor to recursively delete nodes
