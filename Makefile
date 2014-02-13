@@ -10,8 +10,8 @@ LIB=libEasyXml
 EX_DIR=examples
 EX_HEADERS=$(addprefix $(EX_DIR)/, $(SOURCES:.cpp=.h))
 
-EXECUTABLE=$(EX_DIR)/example.out
-EXEC_SOURCE=$(EX_DIR)/example.cpp
+EXECUTABLE=$(EX_DIR)/example1.out
+EXEC_SOURCE=$(EX_DIR)/example1.cpp
 EXEC_OBJ=$(EXEC_SOURCE:.cpp=.o)
 
 all: lib example1
@@ -39,7 +39,7 @@ $(LIB).a: $(OBJECTS)
 	ar rs $(LIB).a $(OBJECTS)
 
 run:
-	./$(EX_DIR)/$(EXECUTABLE)
+	cd examples; ./example1.out
 
 clean:
 	rm -f *.o *.out *.a *.d *.gch
