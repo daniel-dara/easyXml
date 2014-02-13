@@ -16,9 +16,8 @@ EXEC_OBJ=$(EXEC_SOURCE:.cpp=.o)
 
 all: example1
 
-example1: $(EX_DIR)/$(LIB_H) $(EX_DIR)/namespace.h lib $(EXEC_SOURCE) \
-          $(EXEC_OBJ) $(EXECUTABLE) $(EX_HEADERS)
-              
+example1: $(EX_HEADERS) $(EX_DIR)/$(LIB_H) $(EX_DIR)/namespace.h lib \
+          $(EXEC_SOURCE) $(EXEC_OBJ) $(EXECUTABLE)
 
 .cpp.o:
 	$(CC) $(CFLAGS) -MMD $< -o $@
