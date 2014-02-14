@@ -11,7 +11,7 @@ OBJECTS=$(addprefix $(OBJ_DIR)/, $(SOURCES:.cpp=.o))
 HEADERS=$(SOURCES:.cpp=.h)
 DEPENDS=$(addprefix $(OBJ_DIR)/, $(HEADERS:.h=.d))
 
-LIB_DIR=library
+LIB_DIR=lib
 LIB=libEasyXml
 
 EX_DIR=examples
@@ -31,16 +31,14 @@ run r:
 
 lib: $(LIB_DIR)/$(LIB).a
 
-$(LIB_DIR):
-	mkdir library
-
 objects/%.o: %.cpp | $(OBJ_DIR)
 	$(CC) -c $(CFLAGS) -MMD $< -o $@
 
 $(OBJ_DIR):
 	mkdir $(OBJ_DIR)
 
-$(LIB_DIR)/$(LIB).a: $(SOURCES) $(OBJECTS) | $(LIB_DIR)
+$(LIB_DIR)/$(LIB).a: $(SOURCES) $(OBJECTS)
+	mkdir -p $(LIB_DIR)
 	ar rs $(LIB_DIR)/$(LIB).a $(OBJECTS)
 # recompile lib if header files change
 -include $(DEPENDS)
