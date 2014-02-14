@@ -46,5 +46,5 @@ $(LIB_DIR)/$(LIB).a: $(SOURCES) $(OBJECTS) | $(LIB_DIR)
 -include $(DEPENDS)
 
 clean c:
-	rm -f *.o *.out *.a *.d *.gch
+	rm -f $(EX_OUT)
 	rm -Rf $(OBJ_DIR)/ $(LIB_DIR)/
