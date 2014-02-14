@@ -1,3 +1,3 @@
-#include "functions.h"
-#include "exception.h"
-#include "node.h"
+#include "easyXml/functions.h"
+#include "easyXml/exception.h"
+#include "easyXml/node.h"

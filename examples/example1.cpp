@@ -1,4 +1,4 @@
-#include "../src/easyXml.h"
+#include "../src/dev-easyXml.h"
 
 int main()
 {
