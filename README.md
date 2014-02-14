@@ -1,12 +1,24 @@
 # Description
 
-I got sick of the myriad of XML parsers that are overly-complex to use and don't provide the basic features I expected an XML parser to have. "easyXml" is designed to be the easiest to use and setup XML parser.
+I got sick of the myriad of XML parsers that are overly-complex to use and don't provide the basic features I expected an XML parser to have. "easyXml" is a C++ XML parser designed to be dead simple to install and use.
 
-It is currently usable however it does not yet implement all common  XML features.
+It is currently usable however it does not yet implement all common XML features.
 
 # Installation
 
-Not yet available.
+After downloading the repo, run "sudo make install". Use the include
+
+    #include <easyXml.h>
+    
+in your code and compile it with the flag
+
+    -lEasyXml
+    
+Ex:
+
+    g++ your_source.cpp -lEasyXml
+
+For now, see examples/example1.cpp for usage.
 
 # Features Implemented
   * class "Node" that provides access to an XML element's name, value, and children.
