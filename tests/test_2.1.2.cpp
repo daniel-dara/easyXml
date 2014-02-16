@@ -2,6 +2,7 @@
 #include "test.h"
 
 #define EXPECTED_ERROR_CODE 1
+#define XML_SECTION "2.1.2"
 
 int main()
 {
@@ -15,12 +16,12 @@ int main()
 	{
 		if (e.errorCode == EXPECTED_ERROR_CODE)
 		{
-			std::cout << "PASS: 2.1.2" << std::endl;
+			std::cout << "PASS: " << XML_SECTION << std::endl;
 			return 0;
 		}
 		else
 		{
-			std::cout << "FAIL: 2.1.2 - Expected " << EXPECTED_ERROR_CODE << " Recieved " << e.errorCode << std::endl;
+			std::cout << "FAIL: XML_SECTION - Expected " << EXPECTED_ERROR_CODE << ", Recieved " << e.errorCode << std::endl;
 			return 1;
 		}
 	}
@@ -29,4 +30,8 @@ int main()
 	{
 		xml::deleteTree(root);
 	}
+
+	std::cout << "FAIL: " << XML_SECTION << " - Expected " << EXPECTED_ERROR_CODE << ", Recieved (no error)" << std::endl;
+
+	return 1;
 }

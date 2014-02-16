@@ -18,7 +18,7 @@ EX_SOURCE=$(EX_DIR)/example1.cpp
 EX_OBJ=$(EX_SOURCE:.cpp=.o)
 EX_OUT=$(EX_SOURCE:.cpp=.out)
 
-TEST_DIR=test
+TEST_DIR=tests
 TEST_OBJ_DIR=$(TEST_DIR)/obj
 TEST_OUT_DIR=$(TEST_DIR)/out
 TEST_SOURCES=$(wildcard $(TEST_DIR)/*.cpp)
