@@ -2,15 +2,21 @@
 
 int main()
 {
-	xml::Node* root = xml::loadXml("sample.xml");
+	// Loading an XML file is easy, and it returns a pointer to the root node.
+	xml::Node* root = xml::loadXml("example.xml");
 
-	std::cout << "*** MAIN ***" << std::endl;
-	std::cout << (root == NULL ? "root is null" : "root has something!") << std::endl;
-
+	// You can print the XML structure in a readable format.
+	std::cout << "Print the XML structure" << std::endl;
 	xml::printTree(root);
 
-	std::cout << "history/2008: " << root->findElement("history/2008", true)->value << std::endl;
+	// You can search for nodes by value, using "/" as a node delimiter.
+	// You can access a node's name and value members directly. This is so that in the future, you can make
+	// changes to them and then write the XML tree back to a file.
+	std::cout << "\nRetrieve value of node history/2008: " << root->findNode("history/2008", true)->value \
+		<< std::endl;
 
+	// When finished with an XML tree, don't forget to free the memory.
+	// deleteTree will recursively delete all of its children for you.
 	xml::deleteTree(root);
 
 	return 0;

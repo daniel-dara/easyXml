@@ -22,7 +22,7 @@ namespace EASYXML_NAMESPACE
 				unsigned int index = 0;
 
 				// mixed content should retain new lines between actual values
-				line += '\n';
+				// line += '\n';
 
 				while (index < line.length())
 				{
@@ -134,7 +134,10 @@ namespace EASYXML_NAMESPACE
 
 	void printTree(const Node* node, std::string indentation)
 	{
-		std::cout << (indentation += "\t") + node->name << ": " << node->value << std::endl;
+		std::cout << indentation << node->name << ": " << node->value << std::endl;
+
+		// increase the indentation for the next level
+		indentation += "\t";
 
 		std::set<Node*, Node::node_ptr_compare>::iterator it;
 		for (it = node->children.begin(); it != node->children.end(); ++it)

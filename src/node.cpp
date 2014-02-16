@@ -16,9 +16,9 @@ namespace EASYXML_NAMESPACE
 		std::cout << "Node: copy constructor for " + name << std::endl;
 	}
 
-	Node* Node::findElement(const std::string path, bool useExceptions = false) const
+	Node* Node::findNode(const std::string path, bool useExceptions = false) const
 	{
-		// save cost of instantiation since findElement is recursive
+		// save cost of instantiation since findNode is recursive
 		static Node query;
 		std::string restOfPath;
 		int slashIndex = path.find('/');
@@ -44,7 +44,7 @@ namespace EASYXML_NAMESPACE
 			}
 			else
 			{
-				return (*iter)->findElement(restOfPath);
+				return (*iter)->findNode(restOfPath);
 			}
 		}
 

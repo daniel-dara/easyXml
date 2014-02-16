@@ -26,7 +26,7 @@ namespace EASYXML_NAMESPACE
 
 		Node(const Node& node);
 
-		Node* findElement(const std::string path, bool useExceptions) const;
+		Node* findNode(const std::string path, bool useExceptions) const;
 
 	private:
 		struct node_ptr_compare
