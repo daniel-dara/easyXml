@@ -50,7 +50,7 @@ namespace EASYXML_NAMESPACE
 
 		if (useExceptions)
 		{
-			throw EasyXmlException("Child element \"" + path + "\" not found.");
+			throw EasyXmlException("Child element \"" + path + "\" not found.", 103);
 		}
 		else
 		{

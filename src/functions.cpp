@@ -58,9 +58,9 @@ namespace EASYXML_NAMESPACE
 						{
 							if (root != NULL)
 							{
-								throw EasyXmlException("Malformed XML: There must be only one root node." \
-									" First root node is \"" + root->name + "\", second is \"" + \
-									newNode->name + "\" defined at line %d.", 1, lineNumber);
+								throw EasyXmlException("Malformed XML: Multiple root nodes found." \
+									" First root node is \"" + root->name + "\", second node is \"" + \
+									newNode->name + "\" defined at line %d.", 2, lineNumber);
 							}
 
 							root = newNode;
@@ -85,7 +85,7 @@ namespace EASYXML_NAMESPACE
 						{
 							throw EasyXmlException("Malformed XML: Mismatched closing tag at line %d." \
 								" Expected \"" + ancestors.top()->name + "\" found \"" + elementName + "\"." \
-								, 2, lineNumber);
+								, 5, lineNumber);
 						}
 
 
@@ -127,7 +127,7 @@ namespace EASYXML_NAMESPACE
 		}
 		else
 		{
-			throw EasyXmlException("Unable to find or open file \"" + filePath + "\".", 101);
+			throw EasyXmlException("Unable to open file \"" + filePath + "\".", 101);
 			return NULL;
 		}
 	}
@@ -147,7 +147,7 @@ namespace EASYXML_NAMESPACE
 	{
 		if (node == NULL)
 		{
-			throw EasyXmlException("deleteTree was called on a NULL pointer.", 101);
+			throw EasyXmlException("deleteTree was called on a NULL pointer.", 102);
 		}
 		else
 		{

@@ -20,25 +20,30 @@ EX_OUT=$(EX_SOURCE:.cpp=.out)
 
 TEST_DIR=tests
 TEST_OBJ_DIR=$(TEST_DIR)/obj
-TEST_OUT_DIR=$(TEST_DIR)/out
+TEST_OUT_DIR=$(TEST_DIR)
 TEST_SOURCES=$(wildcard $(TEST_DIR)/*.cpp)
 TEMP=$(TEST_SOURCES:.cpp=.o)
 TEST_OBJS=$(TEMP:$(TEST_DIR)/%=$(TEST_OBJ_DIR)/%)
 TEMP=$(TEST_SOURCES:.cpp=.out)
-TEST_OUTS=$(TEMP:$(TEST_DIR)/%=$(TEST_OUT_DIR)/%)
+TEST_OUT=unit_test.out
+TEST_CASES=test_cases.txt
 
 ARGS=$(MAKECMDGOALS)
 
+.PHONY: all
 all: ex1
 
+.PHONY: ex1
 ex1: $(EX_OUT)
 
 $(EX_OUT): $(LIB_DIR)/$(LIB).a $(EX_SOURCE)
 	$(CC) $(CFLAGS) $(EX_SOURCE) -o $@ -L$(LIB_DIR) -l$(LIB:lib%=%)
 
+.PHONY: run r
 run r:
 	@cd examples; ./example1.out
 
+.PHONY: lib l
 lib l: $(LIB_DIR)/$(LIB).a
 
 $(LIB_DIR)/$(LIB).a: $(SOURCES) $(OBJECTS)
@@ -53,10 +58,12 @@ $(OBJ_DIR)/%.o: %.cpp | $(OBJ_DIR)
 $(OBJ_DIR):
 	mkdir $(OBJ_DIR)
 
-test: $(TEST_OUTS)
-	@cd $(TEST_OUT_DIR); \
-	for file in *; do \
-		./$$file; \
+.PHONY: test
+test: $(TEST_DIR)/$(TEST_OUT)
+	@echo "\nRunning tests..."; \
+	cd $(TEST_DIR); \
+	cat $(TEST_CASES) | while read line; do \
+		./$(TEST_OUT) $$line; \
 	done
 
 $(TEST_OUT_DIR)/%.out: $(TEST_DIR)/%.cpp $(LIB_DIR)/$(LIB).a | $(TEST_OUT_DIR)
@@ -71,26 +78,33 @@ $(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp | $(TEST_OBJ_DIR)
 $(TEST_OBJ_DIR):
 	mkdir $(TEST_OBJ_DIR)
 
+.PHONY: install
 install: lib
 	mkdir -p /usr/local/include/easyXml/
 	cp -fR $(addprefix $(SRC_DIR)/, $(HEADERS) namespace.h) /usr/local/include/easyXml/
 	cp -f $(SRC_DIR)/easyXml.h /usr/local/include/
 	cp -f $(LIB_DIR)/$(LIB).a /usr/local/lib/
 
+.PHONY: uninstall
 uninstall:
 	rm -fR /usr/local/include/easyXml
 	rm -f /usr/local/include/easyXml.h
 	rm -f /usr/local/lib/$(LIB).a
 
+.PHONY: clean
 clean: clean-all
 
+.PHONY: clean-all
 clean-all: clean-lib clean-ex clean-test
 
+.PHONY: clean-lib
 clean-lib:
 	rm -Rf $(OBJ_DIR)/ $(LIB_DIR)/
 
+.PHONY: clean-ex
 clean-ex:
 	rm -f $(EX_OUT)
 
+.PHONY: clean-test
 clean-test:
 	rm -Rf $(TEST_OUT_DIR)

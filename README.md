@@ -40,11 +40,20 @@ For now, see examples/example1.cpp for usage.
     * empty elements
     * Writing a tree of class Node back to an xml file.
 
-# Error Codes
+# Unit Testing
+The "tests" directory is dedicated to unit testing. Within that directory, there is a file named "test_cases.txt". Each row in the file represents a set of arguments to pass to the unit_test program. Each column of the is a single argument: the first being the test identifier and the second being the exepected error code. The unit test program will use these arguments to read in the appropriate xml file from the "xml" folder and check the results against the expected error code. "make test" will compile the unit_test program (if necessary) and run all tests. Each test will output "PASS" or "FAIL" along with the test identifier, the received error code, and on failure, the expected error code.
+
+All tests should be run together to ensure that modifications to the library for one particular feature do not break another. My initial unit tests use identifiers that correspond to the section of the XML 1.0 Specifications (5th edition) they test for. I will use a different identifier format for bugs and additional features that I have yet to decide on.
+
+# Error Codes:
+0-99 are XML specification violations, 100-199 are other errors
+
 0 - No error code set
-1 - Multiple root nodes
-2 - Mismatched tags
+1 - No elements in xml file
+2 - Multiple root nodes
 3 - No opening tag
-4 - No closing tag
-100 - unable to open file
-101 - deleteTree on NULL pointer
+4 - Unclosed tag
+5 - Mismatched closing tag
+101 - unable to open file
+102 - deleteTree called on NULL pointer
+103 - Child element not found (when using Node.find() method)

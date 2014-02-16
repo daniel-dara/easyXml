@@ -1,11 +1,20 @@
+// Most common includes come from just including easyXml
+#include <cstdlib>
 #include "../src/dev-easyXml.h"
-#include "test.h"
 
-#define EXPECTED_ERROR_CODE 1
-#define XML_SECTION_NUM "2.1.1"
+const std::string testXmlPath("xml/");
 
-int main()
+int main(int argc, char* argv[])
 {
+	if (argc < 3)
+	{
+		std::cout << "Error: incorrect number of arguments" << std::endl;
+		std::cout << "Usage: unit_test <test identifier> <expected error code>" << std::endl;
+		return 1;
+	}
+
+	const std::string XML_SECTION_NUM(argv[1]);
+	const int EXPECTED_ERROR_CODE = atoi(argv[2]);
 	xml::Node* root;
 
 	try
@@ -16,7 +25,7 @@ int main()
 	{
 		if (e.errorCode == EXPECTED_ERROR_CODE)
 		{
-			std::cout << "PASS: " << XML_SECTION_NUM << std::endl;
+			std::cout << "PASS: " << XML_SECTION_NUM << " - Received " << EXPECTED_ERROR_CODE << std::endl;
 			return 0;
 		}
 		else
