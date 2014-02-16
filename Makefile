@@ -19,13 +19,9 @@ EX_OBJ=$(EX_SOURCE:.cpp=.o)
 EX_OUT=$(EX_SOURCE:.cpp=.out)
 
 TEST_DIR=tests
-TEST_OBJ_DIR=$(TEST_DIR)/obj
+TEST_SOURCE=unit_test.cpp
 TEST_OUT_DIR=$(TEST_DIR)
-TEST_SOURCES=$(wildcard $(TEST_DIR)/*.cpp)
-TEMP=$(TEST_SOURCES:.cpp=.o)
-TEST_OBJS=$(TEMP:$(TEST_DIR)/%=$(TEST_OBJ_DIR)/%)
-TEMP=$(TEST_SOURCES:.cpp=.out)
-TEST_OUT=unit_test.out
+TEST_OUT=$(TEST_SOURCE:.cpp=.out)
 TEST_CASES=test_cases.txt
 
 ARGS=$(MAKECMDGOALS)
@@ -36,7 +32,7 @@ all: ex1
 .PHONY: ex1
 ex1: $(EX_OUT)
 
-$(EX_OUT): $(LIB_DIR)/$(LIB).a $(EX_SOURCE)
+$(EX_OUT): $(LIB_DIR)/$(LIB).a $(EX_SOURCE) 
 	$(CC) $(CFLAGS) $(EX_SOURCE) -o $@ -L$(LIB_DIR) -l$(LIB:lib%=%)
 
 .PHONY: run r
@@ -66,17 +62,11 @@ test: $(TEST_DIR)/$(TEST_OUT)
 		./$(TEST_OUT) $$line; \
 	done
 
-$(TEST_OUT_DIR)/%.out: $(TEST_DIR)/%.cpp $(LIB_DIR)/$(LIB).a | $(TEST_OUT_DIR)
+$(TEST_OUT_DIR)/$(TEST_OUT): $(TEST_DIR)/$(TEST_SOURCE) $(LIB_DIR)/$(LIB).a | $(TEST_OUT_DIR)
 	$(CC) $(CFLAGS) $< -o $@ -L$(LIB_DIR) -l$(LIB:lib%=%)
 
 $(TEST_OUT_DIR):
 	mkdir $(TEST_OUT_DIR)
-
-$(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp | $(TEST_OBJ_DIR)
-	$(CC) -c $(CFLAGS) $< -o $@
-
-$(TEST_OBJ_DIR):
-	mkdir $(TEST_OBJ_DIR)
 
 .PHONY: install
 install: lib
