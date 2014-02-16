@@ -16,11 +16,6 @@ namespace EASYXML_NAMESPACE
 		std::cout << "Node: copy constructor for " + name << std::endl;
 	}
 
-	Node::~Node()
-	{
-		std::cout << "Node: destructor for " + name << std::endl; 
-	}
-
 	Node* Node::findElement(const std::string path, bool useExceptions = false) const
 	{
 		// save cost of instantiation since findElement is recursive

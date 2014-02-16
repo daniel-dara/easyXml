@@ -26,8 +26,6 @@ namespace EASYXML_NAMESPACE
 
 		Node(const Node& node);
 
-		~Node();
-
 		Node* findElement(const std::string path, bool useExceptions) const;
 
 	private:
