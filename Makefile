@@ -24,8 +24,6 @@ TEST_OUT_DIR=$(TEST_DIR)
 TEST_OUT=$(TEST_SOURCE:.cpp=.out)
 TEST_CASES=test_cases.txt
 
-ARGS=$(MAKECMDGOALS)
-
 .PHONY: all
 all: ex1
 
