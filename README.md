@@ -39,3 +39,12 @@ For now, see examples/example1.cpp for usage.
     * element naming rules
     * empty elements
     * Writing a tree of class Node back to an xml file.
+
+# Error Codes
+0 - No error code set
+1 - Multiple root nodes
+2 - Mismatched tags
+3 - No opening tag
+4 - No closing tag
+100 - unable to open file
+101 - deleteTree on NULL pointer

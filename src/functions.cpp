@@ -58,9 +58,9 @@ namespace EASYXML_NAMESPACE
 						{
 							if (root != NULL)
 							{
-								throw easyXmlException("Malformed XML: There must be one top-level node." \
-									" First top-level node is \"" + root->name + "\". Second is \"" + \
-									newNode->name + "\" defined at line %d.", lineNumber);
+								throw EasyXmlException("Malformed XML: There must be only one root node." \
+									" First root node is \"" + root->name + "\", second is \"" + \
+									newNode->name + "\" defined at line %d.", 1, lineNumber);
 							}
 
 							root = newNode;
@@ -77,15 +77,15 @@ namespace EASYXML_NAMESPACE
 
 						if (ancestors.top()->name.compare("root") == 0)
 						{
-							throw easyXmlException("Malformed XML: No opening tag for \"" + 
-								elementName + "\", closing tag found at line %d.", lineNumber);
+							throw EasyXmlException("Malformed XML: No opening tag for \"" + 
+								elementName + "\", closing tag found at line %d.", 3, lineNumber);
 						}
 
 						if (ancestors.top()->name.compare(elementName) != 0)
 						{
-							throw easyXmlException("Malformed XML: Mismatched closing tag at line %d." \
+							throw EasyXmlException("Malformed XML: Mismatched closing tag at line %d." \
 								" Expected \"" + ancestors.top()->name + "\" found \"" + elementName + "\"." \
-								, lineNumber);
+								, 2, lineNumber);
 						}
 
 
@@ -109,9 +109,16 @@ namespace EASYXML_NAMESPACE
 				}
 			}
 
+			if (root == NULL)
+			{
+				// 2.1 Rule 1
+				throw EasyXmlException("No XML elements found in file \"" + filePath + "\".", 1);
+			}
+
 			if (!ancestors.empty())
 			{
-				throw easyXmlException("Unclosed XML element \"" + ancestors.top()->name + "\".");
+				// 2.1 Rule 2
+				throw EasyXmlException("Unclosed XML element \"" + ancestors.top()->name + "\".", 4);
 			}
 
 			reader.close();
@@ -120,7 +127,7 @@ namespace EASYXML_NAMESPACE
 		}
 		else
 		{
-			throw easyXmlException("Unable to find or open file \"" + filePath + "\".");
+			throw EasyXmlException("Unable to find or open file \"" + filePath + "\".", 101);
 			return NULL;
 		}
 	}
@@ -138,13 +145,20 @@ namespace EASYXML_NAMESPACE
 
 	void deleteTree(Node* node)
 	{
-		std::set<Node*, Node::node_ptr_compare>::iterator it;
-		for (it = node->children.begin(); it != node->children.end(); ++it)
+		if (node == NULL)
 		{
-			deleteTree(*it);
+			throw EasyXmlException("deleteTree was called on a NULL pointer.", 101);
 		}
+		else
+		{
+			std::set<Node*, Node::node_ptr_compare>::iterator it;
+			for (it = node->children.begin(); it != node->children.end(); ++it)
+			{
+				deleteTree(*it);
+			}
 
-		delete node;
+			delete node;
+		}
 	}
 
 	std::string getElementName(const std::string& data, int startIndex)

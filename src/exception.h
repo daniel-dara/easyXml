@@ -8,18 +8,19 @@
 
 namespace EASYXML_NAMESPACE
 {
-	class easyXmlException : public std::exception
+	class EasyXmlException : public std::exception
 	{
 	public:
-		easyXmlException(std::string msg, int line = 0);
+		const int errorCode;
 
-		~easyXmlException() throw ();
+		EasyXmlException(const std::string msg, int line = 0, int errorCode = 0);
+		~EasyXmlException() throw ();
 
 		const char* what() const throw();
 
 	private:
 		std::string message;
-		int lineNumber;
+		const int lineNumber;
 	};
 }
 

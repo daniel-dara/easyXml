@@ -2,13 +2,13 @@
 
 namespace EASYXML_NAMESPACE
 {
-	easyXmlException::easyXmlException(std::string msg, int line) : message(msg), lineNumber(line)
+	EasyXmlException::EasyXmlException(const std::string msg, int code, int line) : errorCode(code), message(msg), lineNumber(line)
 	{}
 
-	easyXmlException::~easyXmlException() throw () 
+	EasyXmlException::~EasyXmlException() throw ()
 	{}
 
-	const char* easyXmlException::what() const throw()
+	const char* EasyXmlException::what() const throw()
 	{
 		if (lineNumber > 0)
 		{
