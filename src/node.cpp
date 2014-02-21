@@ -16,7 +16,7 @@ namespace EASYXML_NAMESPACE
 		std::cout << "Node: copy constructor for " + name << std::endl;
 	}
 
-	Node* Node::findNode(const std::string path, bool useExceptions = false) const
+	Node* Node::findNode(const std::string path, bool returnNull) const
 	{
 		// save cost of instantiation since findNode is recursive
 		static Node query;
@@ -48,44 +48,60 @@ namespace EASYXML_NAMESPACE
 			}
 		}
 
-		if (useExceptions)
-		{
-			throw EasyXmlException("Child element \"" + path + "\" not found.", 103);
-		}
-		else
+		if (returnNull)
 		{
 			return NULL;
 		}
+		else
+		{
+			throw EasyXmlException("Child element \"" + path + "\" not found.", 103);
+		}
+	}
+
+	std::string Node::getName() const
+	{
+		return name;
+	}
+
+	void Node::setName(const std::string& newName)
+	{
+		name = newName;
 	}
 
 	// Provides a "default" type for the templated getValue() without using C++11.
-	std::string Node::getValue()
+	std::string Node::getValue() const
 	{
 		return value;
 	}
 
 	// This function will only be called if one of the type didn't match one of the specializations.
 	template <typename T>
-	T Node::getValue()
+	T Node::getValue() const
 	{
 		throw EasyXmlException("getValue() request: Unsupported type \"" + std::string(typeid(T).name()) + "\"");
 	}
 
 	template<>
-	std::string Node::getValue<std::string>()
+	std::string Node::getValue<std::string>() const
 	{
 		return value;
 	}
 
 	template<>
-	int Node::getValue<int>()
+	int Node::getValue<int>() const
 	{
 		return atoi(value.c_str());
 	}
 
 	template<>
-	double Node::getValue<double>()
+	double Node::getValue<double>() const
 	{
 		return atof(value.c_str());
+	}
+
+	template <typename T>
+	void Node::setValue(T val)
+	{
+		value = std::string(val);
 	}
 }

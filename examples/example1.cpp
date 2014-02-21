@@ -6,20 +6,24 @@ int main()
 	xml::Node* root = xml::loadXml("example.xml");
 
 	// You can print the XML structure in a readable format.
-	std::cout << "Print the XML structure" << std::endl;
+	std::cout << "Printing the XML structure..." << std::endl;
 	xml::printTree(root);
+	std::cout << std::endl;
 
 	// You can search for nodes by name, using "/" as a hierarchical delimiter.
-	xml::Node* history2008 = root->findNode("history/2008", true);
+	// findNode() will throw an exception if the given node was not found OR you pass the boolean "true"
+	// as the second argument and it will return NULL instead.
+	xml::Node* n2008 = root->findNode("history/2008");
 
-	// You can access a node's name and value members through their respective "get" and "set" methods.
-	std::cout << "\nValue of the node \"history\" which is in \"2008\": " \
-	          << history2008->getValue();
+	// You can access a node's name and value  through its respective "get" and "set" methods.
+	std::cout << "The value of \"" << n2008->getName() << "\" is \"" << n2008->getValue() << "\""
+	          << std::endl;
 
-	// The getValue() method also accepts a type template allowing you to choose std::string, int, or
+	xml::Node* year = root->findNode("year", true);
+
+	// There is also a templated getValue() method that allows you to choose between std::string, int, or
 	// double as the return type.
-	std::cout << "\nRetrieve value of node \"year\" (and add one to it): " \
-	          << root->findNode("year", true)->getValue<int>() + 1 \
+	std::cout << "The integer value of \"" + year->getName() + "\" + 1 is " << year->getValue<int>() + 1 \
 	          << std::endl;
 
 	// When finished with an XML tree, don't forget to free the memory.

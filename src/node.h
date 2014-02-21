@@ -13,12 +13,9 @@ namespace EASYXML_NAMESPACE
 	class Node
 	{
 	public:
-		// friend class Parser;
+		friend Node* loadXml(const std::string filePath);
 		friend void printTree(const Node* node, std::string tabs);
 		friend void deleteTree(Node* node);
-
-		std::string name;
-		std::string value;
 
 		Node();
 
@@ -28,14 +25,19 @@ namespace EASYXML_NAMESPACE
 
 		Node(const Node& node);
 
-		Node* findNode(const std::string path, bool useExceptions) const;
+		Node* findNode(const std::string path, bool returnNull = false) const;
 
-		std::string getValue();
+		std::string getName() const;
+		void setName(const std::string& newName);
 
-		template <class T> T getValue();
-
+		std::string getValue() const;
+		template <class T> T getValue() const;
+		template <class T> void setValue(T val);
 
 	private:
+		std::string name;
+		std::string value;
+
 		struct node_ptr_compare
 		{
 			bool operator()(const Node* lhs, const Node* rhs) const
