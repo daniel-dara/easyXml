@@ -1,0 +1,10 @@
+<car>
+	<make>Honda</make>
+	<model>Civic</model>
+	1992</year>
+	<history>
+		<2004>New transmission.</2004>
+		<2008>New tires.</2008>
+		<2012>Oil change.</2012>
+	</history>
+</car>

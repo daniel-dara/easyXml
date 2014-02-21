@@ -41,5 +41,6 @@ int main(int argc, char* argv[])
 	}
 
 	std::cout << "FAIL: " << XML_SECTION_NUM << " - Expected " << EXPECTED_ERROR_CODE << ", Recieved (no error)" << std::endl;
+	
 	return 1;
 }

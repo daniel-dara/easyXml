@@ -58,6 +58,7 @@ namespace EASYXML_NAMESPACE
 						{
 							if (root != NULL)
 							{
+								// 2.1.2a
 								throw EasyXmlException("Malformed XML: Multiple root nodes found." \
 									" First root node is \"" + root->name + "\", second node is \"" + \
 									newNode->name + "\" defined at line %d.", 2, lineNumber);
@@ -75,14 +76,16 @@ namespace EASYXML_NAMESPACE
 
 						std::string elementName = getElementName(line, closeIndex + 2);
 
-						if (ancestors.top()->name.compare("root") == 0)
+						if (ancestors.top() == root && root->name != elementName)
 						{
+							// 2.1.2d
 							throw EasyXmlException("Malformed XML: No opening tag for \"" + 
 								elementName + "\", closing tag found at line %d.", 3, lineNumber);
 						}
 
-						if (ancestors.top()->name.compare(elementName) != 0)
+						if (ancestors.top()->name != elementName)
 						{
+							// 2.1.2b
 							throw EasyXmlException("Malformed XML: Mismatched closing tag at line %d." \
 								" Expected \"" + ancestors.top()->name + "\" found \"" + elementName + "\"." \
 								, 5, lineNumber);
