@@ -9,14 +9,21 @@ int main()
 	std::cout << "Print the XML structure" << std::endl;
 	xml::printTree(root);
 
-	// You can search for nodes by value, using "/" as a node delimiter.
-	// You can access a node's name and value members directly. This is so that in the future, you can make
-	// changes to them and then write the XML tree back to a file.
-	std::cout << "\nRetrieve value of node history/2008: " << root->findNode("history/2008", true)->value \
-		<< std::endl;
+	// You can search for nodes by name, using "/" as a hierarchical delimiter.
+	xml::Node* history2008 = root->findNode("history/2008", true);
+
+	// You can access a node's name and value members through their respective "get" and "set" methods.
+	std::cout << "\nValue of the node \"history\" which is in \"2008\": " \
+	          << history2008->getValue();
+
+	// The getValue() method also accepts a type template allowing you to choose std::string, int, or
+	// double as the return type.
+	std::cout << "\nRetrieve value of node \"year\" (and add one to it): " \
+	          << root->findNode("year", true)->getValue<int>() + 1 \
+	          << std::endl;
 
 	// When finished with an XML tree, don't forget to free the memory.
-	// deleteTree will recursively delete all of its children for you.
+	// deleteTree will recursively delete a node and its children for you.
 	xml::deleteTree(root);
 
 	return 0;

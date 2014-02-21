@@ -8,6 +8,8 @@ Currently, it only supports parsing a small subset of the XML specifications and
 
 ## Installation
 
+Note: The makefile currently uses clang++ as the compiler so you can either install that package or you can change the first line of the makefile to "CC=g++" to use the GNU compiler.
+
 After downloading the repo, run:
 
     sudo make install

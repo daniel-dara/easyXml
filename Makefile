@@ -83,7 +83,7 @@ uninstall:
 clean: clean-all
 
 .PHONY: clean-all
-clean-all: clean-lib clean-ex clean-test
+clean-all: clean-lib clean-ex
 
 .PHONY: clean-lib
 clean-lib:
@@ -92,7 +92,3 @@ clean-lib:
 .PHONY: clean-ex
 clean-ex:
 	rm -f $(EX_OUT)
-
-.PHONY: clean-test
-clean-test:
-	rm -Rf $(TEST_OUT_DIR)

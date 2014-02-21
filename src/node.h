@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <set>
+#include <typeinfo>
+#include <cstdlib>
 #include "exception.h"
 #include "namespace.h"
 
@@ -27,6 +29,11 @@ namespace EASYXML_NAMESPACE
 		Node(const Node& node);
 
 		Node* findNode(const std::string path, bool useExceptions) const;
+
+		std::string getValue();
+
+		template <class T> T getValue();
+
 
 	private:
 		struct node_ptr_compare
