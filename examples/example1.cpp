@@ -2,13 +2,20 @@
 
 int main()
 {
+	/*** LOADING FILES  *************************************************************************************/
+
 	// Loading an XML file is easy, and it returns a pointer to the root node.
 	xml::Node* root = xml::loadXml("example.xml");
+
+	/*** PRINTING THE STRUCTURE *****************************************************************************/
 
 	// You can print the XML structure in a readable format.
 	std::cout << "Printing the XML structure..." << std::endl;
 	xml::printTree(root);
 	std::cout << std::endl;
+
+
+	/*** ACCESSING NODES ************************************************************************************/
 
 	// You can search for nodes by name, using "/" as a hierarchical delimiter.
 	// findNode() will throw an exception if the given node was not found OR you pass the boolean "true"
@@ -26,6 +33,9 @@ int main()
 	std::cout << "The integer value of \"" + year->getName() + "\" + 1 is " << year->getValue<int>() + 1 \
 	          << std::endl;
 
+
+	/*** CLEANUP ********************************************************************************************/
+	          
 	// When finished with an XML tree, don't forget to free the memory.
 	// deleteTree will recursively delete a node and its children for you.
 	xml::deleteTree(root);
