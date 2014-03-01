@@ -69,38 +69,51 @@ namespace EASYXML_NAMESPACE
 	}
 
 	// Provides a "default" type for the templated getValue() without using C++11.
-	std::string Node::getValue() const
+	std::string Node::val() const
 	{
 		return value;
 	}
 
 	// This function will only be called if one of the type didn't match one of the specializations.
 	template <typename T>
-	T Node::getValue() const
+	T Node::val() const
 	{
 		throw EasyXmlException("getValue() request: Unsupported type \"" + std::string(typeid(T).name()) + "\"");
 	}
 
 	template<>
-	std::string Node::getValue<std::string>() const
+	std::string Node::val<std::string>() const
 	{
 		return value;
 	}
 
 	template<>
-	int Node::getValue<int>() const
+	int Node::val<int>() const
 	{
 		return atoi(value.c_str());
 	}
 
 	template<>
-	double Node::getValue<double>() const
+	double Node::val<double>() const
 	{
 		return atof(value.c_str());
 	}
 
+	template<>
+	bool Node::val<bool>() const
+	{
+		if (value == "true")
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 	template <typename T>
-	void Node::setValue(T val)
+	void Node::setVal(T val)
 	{
 		value = std::string(val);
 	}

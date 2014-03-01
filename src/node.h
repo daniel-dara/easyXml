@@ -30,9 +30,9 @@ namespace EASYXML_NAMESPACE
 		std::string getName() const;
 		void setName(const std::string& newName);
 
-		std::string getValue() const;
-		template <class T> T getValue() const;
-		template <class T> void setValue(T val);
+		std::string val() const;
+		template <class T> T val() const;
+		template <class T> void setVal(T val);
 
 	private:
 		std::string name;

@@ -1,0 +1,399 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"easy",
+				"easyXmlException"
+			],
+			[
+				"xml",
+				"easyXmlException"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "src/node.cpp",
+			"settings":
+			{
+				"buffer_size": 1884,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "examples/example1.cpp",
+			"settings":
+			{
+				"buffer_size": 1775,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/node.h",
+			"settings":
+			{
+				"buffer_size": 967,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 159.0,
+		"selected_items":
+		[
+			[
+				"make",
+				"Set Syntax: Makefile"
+			]
+		],
+		"width": 392.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/ddara/easyXml/README.md",
+		"/home/ddara/easyXml/Makefile",
+		"/home/ddara/easyXml/examples/example1.cpp",
+		"/home/ddara/easyXml/src/functions.h",
+		"/home/ddara/easyXml/src/functions.cpp",
+		"/home/ddara/easyXml/src/exception.h",
+		"/home/ddara/easyXml/src/exception.cpp",
+		"/home/ddara/easyXml/src/node.h",
+		"/home/ddara/easyXml/src/node.cpp",
+		"/home/ddara/easyXml/src/easyXml.h",
+		"/home/ddara/easyXml/src/dev-easyXml.h",
+		"/home/ddara/easyXml/examples/example.xml",
+		"/home/ddara/easyXml/tests/xml/test_2.1.2d.xml",
+		"/home/ddara/easyXml/tests/xml/test_2.1.2a.xml",
+		"/home/ddara/easyXml/tests/xml/test_2.1.2c.xml",
+		"/home/ddara/easyXml/tests/test_cases.txt",
+		"/home/ddara/easyXml/tests/unit_test.cpp",
+		"/home/ddara/easyXml/tests/xml/test_2.1.1.xml",
+		"/home/ddara/easyXml/examples/sample.xml",
+		"/home/ddara/easyXml/tests/test_2.1.2a.cpp",
+		"/home/ddara/easyXml/tests/test_2.1.1.cpp",
+		"/home/ddara/easyXml/tests/test_2.1.2a.xml",
+		"/home/ddara/easyXml/tests/test_2.1.1.xml",
+		"/home/ddara/easyXml/tests/test_2.1.2.xml",
+		"/home/ddara/easyXml/tests/test_2.1.2.cpp",
+		"/home/ddara/easyXml/test/test_2.1.2.cpp",
+		"/home/ddara/easyXml/test/test_2.1.2.xml",
+		"/home/ddara/.config/sublime-text-3/Packages/User/Preferences.sublime-settings",
+		"/home/ddara/.config/sublime-text-3/Packages/Default/Preferences.sublime-settings",
+		"/home/ddara/easyXml/test/test-1.xml",
+		"/home/ddara/easyXml/test/test-1.cpp",
+		"/home/ddara/416p1/manager.h",
+		"/home/ddara/416p1/Makefile",
+		"/home/ddara/easyXml/src/namespace.h",
+		"/home/ddara/416p1/main.cpp",
+		"/home/ddara/416p1/gamedata.h",
+		"/home/ddara/416p1/parseXML.h",
+		"/home/ddara/easyXml/node.h",
+		"/home/ddara/easyXml/node.cpp",
+		"/home/ddara/416p1/gofFramework/gamedata.h",
+		"/home/ddara/416p1/gofFramework/gamedata.cpp",
+		"/home/ddara/416p1/gofFramework/main.cpp",
+		"/home/ddara/416p1/gofFramework/ioManager.cpp",
+		"/home/ddara/416p1/gofFramework/ioManager.h",
+		"/home/ddara/416p1/gofFramework/clock.cpp",
+		"/home/ddara/416p1/gofFramework/clock.h",
+		"/home/ddara/416p1/gofFramework/manager.cpp",
+		"/home/ddara/416p1/gofFramework/manager.h",
+		"/home/ddara/416p1/gofFramework/sprite.cpp",
+		"/home/ddara/416p1/gofFramework/sprite.h",
+		"/home/ddara/416p1/gofFramework/frame.cpp",
+		"/home/ddara/416p1/gofFramework/frame.h",
+		"/home/ddara/416p1/gofFramework/xmlSpec/game.xml",
+		"/home/ddara/416p1/gofFramework/parseXML.h",
+		"/home/ddara/416p1/gofFramework/easyXml/sample.xml",
+		"/home/ddara/416p1/gofFramework/easyXml/easyXml.cpp",
+		"/home/ddara/416p1/gofFramework/parseXML.cpp",
+		"/home/ddara/416p1/gofFramework/easyXml.cpp",
+		"/home/ddara/416p1/blit/main.cpp",
+		"/home/ddara/416p1/gofFramework/drawable.h",
+		"/home/ddara/Documents/ProjectEuler/p044.c"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"compare",
+			"TEST_OUT_DIR",
+			"unit_test",
+			"TEST_SOURCES",
+			"TEST_SOURCE",
+			"easyxmlexception",
+			"TEST_OUTS",
+			"test",
+			"printf",
+			"throw",
+			"easyxmlexception",
+			"linenumber",
+			"rulers",
+			"lineNumber",
+			"line",
+			"expat",
+			"SDL",
+			"children.",
+			"children",
+			"find",
+			"pop",
+			"what",
+			"vector",
+			"xmlE",
+			"xmlN",
+			"wrapper4Start",
+			"gameData",
+			"getXmlBool",
+			"frame",
+			"lastFps",
+			"enableFpsCap",
+			"getTicks",
+			"getSeconds",
+			"frames",
+			"ticks",
+			"fpsCap",
+			"green",
+			"orb.",
+			"getTicks",
+			"getSeconds",
+			"update",
+			"orb",
+			"orbFrame",
+			"orbSurface",
+			"io->",
+			"io",
+			"IOManager::getInstance()->",
+			"Gamedata::getInstance()->",
+			"gdata->"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"set",
+			"fpsCapEnabled",
+			"",
+			"io.",
+			"IOManager::getInstance().",
+			"Gamedata::getInstance().",
+			"gdata."
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "src/node.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1884,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1715,
+								1715
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1064.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "examples/example1.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1775,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1291,
+								1291
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "src/node.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 967,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								601,
+								601
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": -0.0,
+						"translation.y": 153.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 25.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"project": "easyXml.sublime-project",
+	"replace":
+	{
+		"height": 46.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+			[
+				"",
+				"~/gofFramework.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
