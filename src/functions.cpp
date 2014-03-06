@@ -77,7 +77,18 @@ namespace EASYXML_NAMESPACE
 						// It must be a node.
 						else
 						{
+							bool isSelfClosing = (name[name.length() - 1] == '/');
+
 							Node* newNode = new Node(name);
+
+							if (isSelfClosing)
+							{
+								// Trim the '/' and any whitespace in between the name and closing bracket.
+								// We must save the original name so we know how far to advance the index
+								// pointer used for pasring.
+								newNode->name = name.substr(0, name.length() - 1);
+								newNode->name = rtrim(newNode->name);
+							}
 
 							if (!ancestors.empty())
 							{
@@ -105,15 +116,19 @@ namespace EASYXML_NAMESPACE
 								root = newNode;
 							}
 
-							ancestors.push(newNode);
+							// If the tag is self closing, do not push it since it will have no closing tag.
+							if (!isSelfClosing)
+							{
+								ancestors.push(newNode);
+							}
 						}
 
+						// Use the original name since the new name may have been self-closing.
 						index = openIndex + 1 + name.length() + 1;
 					}
+					// Closing tag.
 					else
 					{
-						// closing tag found
-
 						std::string elementName = getElementName(line, closeIndex + 2);
 
 						if (ancestors.top() == root && root->name != elementName)

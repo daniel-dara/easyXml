@@ -31,11 +31,14 @@ A rough outline of features supported by easyXml.
 
   * class "Node" that provides access to an XML element's name, value, and children.
     * contains function "findElement" to find an element with the given name (or path)
-    * global functions for printing and deleting a tree starting from the given node.
+    * stand-alone functions for printing and deleting a tree starting from the given node.
   * Parse an XML file with the following:
     * elements with values
     * elements with children
-    * require top-level element
+    * empty elements (self-closing)
+    * comments
+    * a prolog (ignored)
+    * basic xml validation (not complete)
     * error handling for:
       * mismatched tags
       * missing tags
@@ -46,17 +49,13 @@ A rough outline of features supported by easyXml.
       * elements with mixed content
       * element attributes
       * element naming rules
-      * empty element syntax
   * Medium Priority:
     * Allow writing a tree of nodes to an xml file
     * Consider creating xmlTree class to manage an XML tree rather than use global functions.
       * Will depend on amount of functionality "xmlTree"s need.
   * Low Priority:
+    * Modify Node class to use an STL set for lookup efficiency but an STL list to preserve original order.
     * Write alternative classes for STL set and stack to reduce dependencies and overhead for statically linked programs.
-    * Offer option for "children" data structure:
-      * A binary tree/set (current setup) offers logarithmic lookup
-        * But does not maintain order of elements at the same tree level
-      * A vector/linked list would take linear time to search but would maintain element order
 
 ## Unit Testing
 The "tests" directory is dedicated to unit testing. Within that directory, there is a file named "test_cases.txt". Each row in the file represents a set of arguments to pass to the unit_test program. Each column of the is a single argument: the first being the test identifier and the second being the exepected error code. The unit test program will use these arguments to read in the appropriate xml file from the "xml" folder and check the results against the expected error code. "make test" will compile the unit_test program (if necessary) and run all tests. Each test will output "PASS" or "FAIL" along with the test identifier, the received error code, and on failure, the expected error code.
