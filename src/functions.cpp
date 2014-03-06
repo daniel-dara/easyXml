@@ -35,40 +35,80 @@ namespace EASYXML_NAMESPACE
 						value += line.substr(index);
 						index = line.length();
 					}
+					// Check if this is an opening tag.
 					else if (openIndex < closeIndex || closeIndex == -1)
 					{ 
-						// opening tag found
+						std::string name = getElementName(line, openIndex + 1);
 
-						Node* newNode = new Node(getElementName(line, openIndex + 1));
-
-						if (!ancestors.empty())
+						// Make sure the tag is not empty.
+						if (name.length() == 0)
 						{
-							// To support mixed content, store any previously found values into parent
-							// if (ancestors.top()->name == "car")
-							// 	std::cout << "val add to: " + value << std::endl;
-
-							ancestors.top()->value += value;
-
-							// if (ancestors.top()->name == "car")
-							// 	std::cout << "car val after: " + root->value << std::endl;
-							value = "";
-							ancestors.top()->children.insert(newNode);
+							throw EasyXmlException("No name in opening tag on line %d.", 9, lineNumber);
 						}
-						else
+						// Check if the tag is a comment.
+						else if (name.length() >= 3 && name.substr(0, 3) == "!--")
 						{
-							if (root != NULL)
+							if (name.length() < 5 || name.substr(name.length() - 2) != "--")
 							{
-								// 2.1.2a
-								throw EasyXmlException("Malformed XML: Multiple root nodes found." \
-									" First root node is \"" + root->name + "\", second node is \"" + \
-									newNode->name + "\" defined at line %d.", 2, lineNumber);
+								throw EasyXmlException("XML Comment must end with \"-->\" at line %d.", \
+								                       7, lineNumber);
 							}
 
-							root = newNode;
+							// TODO: Possibly store comments in the xml tree somehow, useful for preserving
+							// them if data is to be written back to a file.
+						}
+						// Check if the tag is an xml Prolog.
+						else if (name.length() >= 4 && name.substr(0, 4) == "?xml")
+						{
+							if (lineNumber != 1)
+							{
+								throw EasyXmlException("XML Prolog must appear on the first line." \
+								                       " Prolog found on line %d.", 6, lineNumber);
+							}
+
+							if (name[name.length() - 1] != '?')
+							{
+								throw EasyXmlException("Malformed XML Prolog. Must end with \"?>\" instead" \
+								                       " of \">\" at line %d.", 7, lineNumber);
+							}
+
+							// TODO: Parse xml Prolog for document information.
+						}
+						// It must be a node.
+						else
+						{
+							Node* newNode = new Node(name);
+
+							if (!ancestors.empty())
+							{
+								// To support mixed content, store any previously found values into parent
+								// if (ancestors.top()->name == "car")
+								// 	std::cout << "val add to: " + value << std::endl;
+
+								ancestors.top()->value += value;
+
+								// if (ancestors.top()->name == "car")
+								// 	std::cout << "car val after: " + root->value << std::endl;
+								value = "";
+								ancestors.top()->children.insert(newNode);
+							}
+							else
+							{
+								if (root != NULL)
+								{
+									// 2.1.2a
+									throw EasyXmlException("Malformed XML: Multiple root nodes found." \
+										" First root node is \"" + root->name + "\", second node is \"" + \
+										newNode->name + "\" defined at line %d.", 2, lineNumber);
+								}
+
+								root = newNode;
+							}
+
+							ancestors.push(newNode);
 						}
 
-						ancestors.push(newNode);
-						index = openIndex + 1 + newNode->name.length() + 1;
+						index = openIndex + 1 + name.length() + 1;
 					}
 					else
 					{

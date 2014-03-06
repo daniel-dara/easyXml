@@ -1,4 +1,6 @@
+<?xml version="1.0"?>
 <car>
+	<!-- test -->
 	<make>Honda</make>
 	<model>Civic</model>
 	<year>1992</year>

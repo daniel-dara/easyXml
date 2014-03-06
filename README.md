@@ -72,6 +72,10 @@ All tests should be run together to ensure that modifications to the library for
     3 - No opening tag
     4 - Unclosed tag
     5 - Mismatched closing tag
+    6 - XML Prolog not on first line
+    7 - Malformed Prolog
+    8 - Malformed Comment (end tag)
+    9 - No opening tag name
     101 - unable to open file
     102 - deleteTree called on NULL pointer
     103 - Child element not found (when using Node.find() method)
