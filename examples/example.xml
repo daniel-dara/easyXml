@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <car>
-	<!-- test -->
+	<!-- basic car attributes -->
 	<make>Honda</make>
 	<model>Civic</model>
 	<year>1992</year>
