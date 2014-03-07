@@ -190,6 +190,43 @@ namespace EASYXML_NAMESPACE
 		}
 	}
 
+	void saveXml(const Node* node, const std::string& filePath)
+	{
+		std::ofstream file;
+		file.open(filePath.c_str());
+		saveXml(node, file);
+		file.close();
+	}
+
+	void saveXml(const Node* node, std::ostream& out, std::string indentation)
+	{
+		out << indentation << "<" << node->getName();
+
+		if (node->children.size() > 0)
+		{
+			out << ">\n";
+
+			std::set<Node*>::const_iterator it;
+			for (it = node->children.begin(); it != node->children.end(); ++it)
+			{
+				saveXml(*it, out, indentation + "\t");
+			}
+
+			out << indentation << "</" << node->getName() << ">";
+		}
+		else if (node->val() == "")
+		{
+			out << " />";
+		}
+		else
+		{
+			out << ">" << node->val();
+			out << "</" << node->getName() << ">";
+		}
+
+		out << "\n";
+	}
+
 	void printTree(const Node* node, std::string indentation)
 	{
 		std::cout << indentation << node->name << ": " << node->value << std::endl;

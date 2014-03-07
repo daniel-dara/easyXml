@@ -11,6 +11,9 @@
 namespace EASYXML_NAMESPACE
 {
 	Node* loadXml(const std::string filePath);
+	void saveXml(const Node* node, const std::string& filePath);
+	void saveXml(const Node* node, std::ostream& out, std::string indentation = "");
+
 	void printTree(const Node* node, std::string indentation = "");
 	void deleteTree(Node* node);
 

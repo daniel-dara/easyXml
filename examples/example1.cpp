@@ -37,6 +37,7 @@ int main()
 	std::cout << "The integer value of \"" + year->getName() + "\" + 1 is " << year->val<int>() + 1 \
 	          << std::endl;
 
+	xml::saveXml(root, "example1_output.xml");
 
 	/*** CLEANUP ********************************************************************************************/
 	          
