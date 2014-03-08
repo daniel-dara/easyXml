@@ -2,6 +2,9 @@
 
 namespace EASYXML_NAMESPACE
 {
+	std::string esc_sequences[] = {"&amp;", "&lt;", "&gt;", "&apos;", "&quot;"};
+	std::string esc_values[] = {"&", "<", ">", "'", "\""};
+
 	Node* loadXml(const std::string filePath)
 	{
 		std::ifstream reader(filePath.c_str());
@@ -149,13 +152,11 @@ namespace EASYXML_NAMESPACE
 
 						value += line.substr(index, openIndex - index);
 
-						// Replace XML escape sequences.
-						std::string sequences[] = {"&lt;", "&gt;", "&amp;", "&apos;", "&quot;"};
-						std::string values[] = {"<", ">", "&", "'", "\""};
-
-						for (int i = 0; i < 5; i++)
+						// Replace XML escape sequences. Ampersands must be replaced last or else they may
+						// cause other escape sequences to be replaced that were not in the original string.
+						for (int i = 4; i >= 0; i--)
 						{
-							replaceAll(value, sequences[i], values[i]);
+							replaceAll(value, esc_sequences[i], esc_values[i]);
 						}
 
 						ancestors.top()->value += value;
@@ -220,7 +221,16 @@ namespace EASYXML_NAMESPACE
 		}
 		else
 		{
-			out << ">" << node->val();
+			std::string value(node->val());
+
+			// Replace bad chars with XML escape sequences. Ampersands must be escaped first otherwise
+			// ampersands from other escape sequences will be double encoded.
+			for (int i = 0; i < 5; i++)
+			{
+				replaceAll(value, esc_values[i], esc_sequences[i]);
+			}
+
+			out << ">" << value;
 			out << "</" << node->getName() << ">";
 		}
 
@@ -296,18 +306,17 @@ namespace EASYXML_NAMESPACE
 			return;
 		}
 
-		std::string wsRet;
-		wsRet.reserve(str.length());
+		std::string newStr;
+		newStr.reserve(str.length());
 
 		size_t start_pos = 0, pos;
 		while ((pos = str.find(from, start_pos)) != std::string::npos)
 		{
-			wsRet += str.substr(start_pos, pos - start_pos);
-			wsRet += to;
-			pos += from.length();
-			start_pos = pos;
+			newStr += str.substr(start_pos, pos - start_pos);
+			newStr += to;
+			start_pos = pos + from.length();
 		}
-		wsRet += str.substr(start_pos);
-		str.swap(wsRet); // faster than str = wsRet;
+		newStr += str.substr(start_pos);
+		str.swap(newStr); // faster than str = newStr;
 	}
 }

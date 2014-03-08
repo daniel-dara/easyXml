@@ -8,9 +8,9 @@ I created easyXml because during my endeavors to find a decent XML parser, I got
 
 This is a young project so the documentation aspect is still to come, however, easyXml is so simple I recommend you learn it from the sample code anyway! I found that when I was looking for an XML parser myself, some decent sample code with proper explanations would have been worth a thousand pages of documentation.
 
-Currently, easyXml only supports a small subset of the XML specifications and features. It also only supports reading XML files and does not yet write to them. However, development is in progress and I plan to add these important features in the near future.
+Currently, easyXml only supports a small subset of the XML specifications and features. However, development is in progress and I plan to add these important features in the near future.
 
-easyXml is offered as is so use at your own risk. I have not stress tested this library and it has no guaranteed performance level. It works fine for my needs of reading a basic, hundred line XML file and I hope you find it useful.
+easyXml is offered "as is" so use at your own risk. I have not stress tested this library and it has no guaranteed performance level. It works fine for my needs of reading a basic, hundred line XML file and I hope you find it useful.
 
 I love feedback so feel free to contact me about bugs, feature requests, or any comments you might have.
 
@@ -49,7 +49,7 @@ Ex:
 
 ### Windows
 
-I currently do not support installing this library on Windows however easyXML has no Unix dependencies. You could either compile the library into a DLL to link with your program or directly compile your code with the files in the <code>src</code> folder.
+I currently do not support installing this library on Windows however easyXML has no Unix dependencies. You could either compile the code yourself into a static library to link with your projects or directly compile your code with the files in the <code>src</code> folder.
     
 ## Documentation
 
@@ -73,6 +73,8 @@ A rough outline of features supported by easyXml.
     * error handling for:
       * mismatched tags
       * missing tags
+  * Write node data to a file
+    * Does not include comments or prologs
 
 ### Todo List
   * High Priority:
@@ -81,7 +83,6 @@ A rough outline of features supported by easyXml.
       * element attributes
       * element naming rules
   * Medium Priority:
-    * Allow writing a tree of nodes to an xml file
     * Consider creating xmlTree class to manage an XML tree rather than use global functions.
       * Will depend on amount of functionality "xmlTree"s need.
   * Low Priority:
