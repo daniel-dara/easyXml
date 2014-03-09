@@ -51,11 +51,32 @@ namespace EASYXML_NAMESPACE
 						// Check if the tag is a comment.
 						else if (name.length() >= 3 && name.substr(0, 3) == "!--")
 						{
-							if (name.length() < 5 || name.substr(name.length() - 2) != "--")
+							std::string comment;
+
+							int endIndex = openIndex + 4; // Index of comment close.
+							int startIndex = endIndex; // Index to start search (after "!--")
+							const int origLineNumber = lineNumber; // Save the line number of the opening tag.
+
+							// If the comment end is not on this line, we must keep searching.
+							while ((endIndex = line.find("-->", startIndex)) == std::string::npos)
 							{
-								throw EasyXmlException("XML Comment must end with \"-->\" at line %d.", \
-								                       7, lineNumber);
+								// Store comment contents, for use in future versions of easyXml.
+								comment += line.substr(startIndex) + "\n";
+
+								// Reset startIndex to the beginning of the new line.
+								startIndex = 0; 
+								
+								if (!getline(reader, line))
+								{
+									throw EasyXmlException("Unclosed comment at line %d.", 8, origLineNumber);
+								}
+
+								lineNumber++;
 							}
+
+							comment += line.substr(startIndex, endIndex - startIndex);
+
+							index = endIndex + 3;
 
 							// TODO: Possibly store comments in the xml tree somehow, useful for preserving
 							// them if data is to be written back to a file.
@@ -75,12 +96,23 @@ namespace EASYXML_NAMESPACE
 								                       " of \">\" at line %d.", 7, lineNumber);
 							}
 
+							// Use the original name since the new name may have been self-closing.
+							index = openIndex + 1 + name.length() + 1;
+
 							// TODO: Parse xml Prolog for document information.
 						}
 						// It must be a node.
 						else
 						{
 							bool isSelfClosing = (name[name.length() - 1] == '/');
+
+							// // Check for attributes
+							// int attrIndex = 0;
+							// while ((attrIndex = name.find(" ", attrIndex)) != std::string::npos)
+							// {
+							// 	name = name.substr(0, attrIndex);
+							// 	break;
+							// }
 
 							Node* newNode = new Node(name);
 
@@ -124,10 +156,10 @@ namespace EASYXML_NAMESPACE
 							{
 								ancestors.push(newNode);
 							}
-						}
 
-						// Use the original name since the new name may have been self-closing.
-						index = openIndex + 1 + name.length() + 1;
+							// Use the original name since the new name may have been self-closing.
+							index = openIndex + 1 + name.length() + 1;
+						}
 					}
 					// Closing tag.
 					else

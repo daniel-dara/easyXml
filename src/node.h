@@ -16,13 +16,11 @@ namespace EASYXML_NAMESPACE
 		friend Node* loadXml(const std::string filePath);
 		friend void printTree(const Node* node, std::string tabs);
 		friend void deleteTree(Node* node);
+		friend struct node_ptr_compare;
 
 		Node();
-
 		Node(const char* name);
-
 		Node(const std::string name);
-
 		Node(const Node& node);
 
 		Node* findNode(const std::string path, bool returnNull = false) const;
