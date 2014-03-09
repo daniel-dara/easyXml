@@ -53,7 +53,7 @@ I currently do not support installing this library on Windows however easyXML ha
     
 ## Documentation
 
-For now, this readme and the example program are the only documentation. I have written the example program, <code>examples/example1.cpp</code>, such that it shows simple uses for (nearly) all of easyXml's current features. I will add more code to the sample program as new features are implemented. Eventually I plan to produce formal documentation.
+For now, this readme and the example programs are the only documentation. I have written the example program <code>examples/easy_example.cpp</code> to explain the most simple usage of easyXml. The source <code>examples/complete_example.cpp</code> provides a more in depth look at easyXml's functionality. I will add more code to the complete example program as new features are implemented. Eventually I plan to produce formal documentation.
 
 ## Development Notes
 

@@ -14,9 +14,12 @@ LIB_DIR=lib
 LIB=libEasyXml
 
 EX_DIR=examples
-EX_SOURCE=$(EX_DIR)/example1.cpp
+EX_NAME=complete_example
+EX_SOURCE=$(EX_DIR)/$(EX_NAME).cpp
 EX_OBJ=$(EX_SOURCE:.cpp=.o)
 EX_OUT=$(EX_SOURCE:.cpp=.out)
+
+EASY_EX=easy_example
 
 TEST_DIR=tests
 TEST_SOURCE=unit_test.cpp
@@ -35,7 +38,14 @@ $(EX_OUT): $(LIB_DIR)/$(LIB).a $(EX_SOURCE)
 
 .PHONY: run r
 run r:
-	@cd examples; ./example1.out
+	@cd examples; \
+	./$(EX_NAME).out
+
+simple:
+	cd examples; \
+	g++ easy_example.cpp -lEasyXml; \
+	./a.out; \
+	rm -f a.out
 
 .PHONY: lib l
 lib l: $(LIB_DIR)/$(LIB).a
