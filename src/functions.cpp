@@ -58,14 +58,15 @@ namespace EASYXML_NAMESPACE
 							const int origLineNumber = lineNumber; // Save the line number of the opening tag.
 
 							// If the comment end is not on this line, we must keep searching.
-							while ((endIndex = line.find("-->", startIndex)) == std::string::npos)
+							while ( (endIndex = line.find("-->", startIndex)) == \
+								static_cast<int>(std::string::npos) )
 							{
 								// Store comment contents, for use in future versions of easyXml.
 								comment += line.substr(startIndex) + "\n";
 
 								// Reset startIndex to the beginning of the new line.
 								startIndex = 0; 
-								
+
 								if (!getline(reader, line))
 								{
 									throw EasyXmlException("Unclosed comment at line %d.", 8, origLineNumber);
