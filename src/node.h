@@ -36,6 +36,7 @@ namespace EASYXML_NAMESPACE
 		std::string name;
 		std::string value;
 
+	public:
 		struct node_ptr_compare
 		{
 			bool operator()(const Node* lhs, const Node* rhs) const
@@ -44,7 +45,6 @@ namespace EASYXML_NAMESPACE
 			}
 		};
 
-	public:
 		std::set<Node*, node_ptr_compare> children;
 	};
 }
