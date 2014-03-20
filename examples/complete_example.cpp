@@ -1,3 +1,5 @@
+#include <iostream>
+
 // I only use this include so I do not have to re-install the library for each change when I am developing.
 #include "../src/dev-easyXml.h"
 
@@ -17,7 +19,6 @@ int main()
 	std::cout << "Printing the XML structure..." << std::endl;
 	xml::printTree(root);
 	std::cout << std::endl;
-
 
 	/*** ACCESSING NODES ************************************************************************************/
 

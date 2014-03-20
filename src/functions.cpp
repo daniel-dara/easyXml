@@ -1,11 +1,16 @@
 #include "functions.h"
+#include "exception.h"
+#include <iostream>
+#include <algorithm>
+#include <fstream>
+#include <stack>
 
 namespace EASYXML_NAMESPACE
 {
 	std::string esc_sequences[] = {"&amp;", "&lt;", "&gt;", "&apos;", "&quot;"};
 	std::string esc_values[] = {"&", "<", ">", "'", "\""};
 
-	Node* loadXml(const std::string filePath)
+	Node* loadXml(const std::string& filePath)
 	{
 		std::ifstream reader(filePath.c_str());
 
@@ -129,12 +134,12 @@ namespace EASYXML_NAMESPACE
 							if (!ancestors.empty())
 							{
 								// To support mixed content, store any previously found values into parent
-								// if (ancestors.top()->name == "car")
+								// if (ancestors.top()->getName() == "car")
 								// 	std::cout << "val add to: " + value << std::endl;
 
 								ancestors.top()->value += value;
 
-								// if (ancestors.top()->name == "car")
+								// if (ancestors.top()->getName() == "car")
 								// 	std::cout << "car val after: " + root->value << std::endl;
 								value = "";
 								ancestors.top()->children.insert(newNode);
@@ -145,7 +150,7 @@ namespace EASYXML_NAMESPACE
 								{
 									// 2.1.2a
 									throw EasyXmlException("Malformed XML: Multiple root nodes found." \
-										" First root node is \"" + root->name + "\", second node is \"" + \
+										" First root node is \"" + root->getName() + "\", second node is \"" + \
 										newNode->name + "\" defined at line %d.", 2, lineNumber);
 								}
 
@@ -167,18 +172,18 @@ namespace EASYXML_NAMESPACE
 					{
 						std::string elementName = getElementName(line, closeIndex + 2);
 
-						if (ancestors.top() == root && root->name != elementName)
+						if (ancestors.top() == root && root->getName() != elementName)
 						{
 							// 2.1.2d
 							throw EasyXmlException("Malformed XML: No opening tag for \"" + 
 								elementName + "\", closing tag found at line %d.", 3, lineNumber);
 						}
 
-						if (ancestors.top()->name != elementName)
+						if (ancestors.top()->getName() != elementName)
 						{
 							// 2.1.2b
 							throw EasyXmlException("Malformed XML: Mismatched closing tag at line %d." \
-								" Expected \"" + ancestors.top()->name + "\" found \"" + elementName + "\"." \
+								" Expected \"" + ancestors.top()->getName() + "\" found \"" + elementName + "\"." \
 								, 5, lineNumber);
 						}
 
@@ -195,7 +200,7 @@ namespace EASYXML_NAMESPACE
 						ancestors.top()->value += value;
 						value = "";
 
-						index = closeIndex + 2 + ancestors.top()->name.length() + 1;
+						index = closeIndex + 2 + ancestors.top()->getName().length() + 1;
 						ancestors.pop();
 					}
 				}
@@ -210,7 +215,7 @@ namespace EASYXML_NAMESPACE
 			if (!ancestors.empty())
 			{
 				// 2.1 Rule 2
-				throw EasyXmlException("Unclosed XML element \"" + ancestors.top()->name + "\".", 4);
+				throw EasyXmlException("Unclosed XML element \"" + ancestors.top()->getName() + "\".", 4);
 			}
 
 			reader.close();
@@ -277,7 +282,7 @@ namespace EASYXML_NAMESPACE
 		// increase the indentation for the next level
 		indentation += "\t";
 
-		std::set<Node*, Node::node_ptr_compare>::iterator it;
+		std::set<Node*>::iterator it;
 		for (it = node->children.begin(); it != node->children.end(); ++it)
 		{
 			printTree((*it), indentation);
@@ -292,7 +297,7 @@ namespace EASYXML_NAMESPACE
 		}
 		else
 		{
-			std::set<Node*, Node::node_ptr_compare>::iterator it;
+			std::set<Node*>::iterator it;
 			for (it = node->children.begin(); it != node->children.end(); ++it)
 			{
 				deleteTree(*it);

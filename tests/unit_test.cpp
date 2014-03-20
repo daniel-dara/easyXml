@@ -1,5 +1,6 @@
 // Most common includes come from just including easyXml
 #include <cstdlib>
+#include <iostream>
 #include "../src/dev-easyXml.h"
 
 const std::string testXmlPath("xml/");
