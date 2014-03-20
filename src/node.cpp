@@ -1,19 +1,49 @@
 #include "node.h"
+#include <iostream>
+#include <typeinfo>
+#include <cstdlib>
 
 namespace EASYXML_NAMESPACE
 {
-	Node::Node()
-	{}
+	// Default Constructor
+	Node::Node() : children(node_ptr_compare), name(), value()
+	{ }
 
-	Node::Node(const char* name) : name(name)
-	{}
+	// Conversion Constructors
+	Node::Node(const char* _name, const char* _val) : children(node_ptr_compare), name(_name), value(_val)
+	{ }
 
-	Node::Node(const std::string name) : name(name)
-	{}
+	Node::Node(const std::string& _name, const std::string& _val) : children(node_ptr_compare), \
+	           name(_name), value(_val)
+	{ }
 
-	Node::Node(const Node& node)
+	// Copy Constructor - technically a deep copy since the "children" set is copied
+	// but note that the set is just a bunch of pointers. The actual child nodes are not copied.
+	Node::Node(const Node& rhs) : children(node_ptr_compare), name(rhs.name), value(rhs.value)
 	{
-		std::cout << "Node: copy constructor for " + name << std::endl;
+		for (std::set<Node*>::const_iterator ite = rhs.children.begin(); ite != rhs.children.end(); ite++)
+		{
+			children.insert(*ite);
+		}
+	}
+
+	// Assignment - deep copy (beware, this loses all children pointers but does not free them)
+	Node& Node::operator=(const Node& rhs)
+	{
+		if (this != &rhs)
+		{
+			children.clear();
+
+			for (std::set<Node*>::const_iterator ite = rhs.children.begin(); ite != rhs.children.end(); ite++)
+			{
+				children.insert(*ite);
+			}
+
+			name = rhs.name;
+			value = rhs.value;
+		}
+
+		return *this;
 	}
 
 	Node* Node::findNode(const std::string path, bool returnNull) const
@@ -33,7 +63,7 @@ namespace EASYXML_NAMESPACE
 			restOfPath = path.substr(slashIndex + 1);
 		}
 
-		static std::set<Node*, node_ptr_compare>::iterator iter;
+		static std::set<Node*>::iterator iter;
 		iter = children.find(&query);
 
 		if (iter != children.end())
@@ -58,7 +88,7 @@ namespace EASYXML_NAMESPACE
 		}
 	}
 
-	std::string Node::getName() const
+	const std::string& Node::getName() const
 	{
 		return name;
 	}
@@ -69,7 +99,7 @@ namespace EASYXML_NAMESPACE
 	}
 
 	// Provides a "default" type for the templated getValue() without using C++11.
-	std::string Node::val() const
+	const std::string& Node::val() const
 	{
 		return value;
 	}
@@ -78,7 +108,8 @@ namespace EASYXML_NAMESPACE
 	template <typename T>
 	T Node::val() const
 	{
-		throw EasyXmlException("getValue() request: Unsupported type \"" + std::string(typeid(T).name()) + "\"");
+		throw EasyXmlException("getValue() request: Unsupported type \"" + \
+		                       std::string(typeid(T).name()) + "\"");
 	}
 
 	template<>

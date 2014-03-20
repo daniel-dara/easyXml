@@ -1,16 +1,12 @@
-#ifndef FUNCTIONS
-#define FUNCTIONS
+#ifndef FUNCTIONS_H
+#define FUNCTIONS_H
 
-#include <iostream>
-#include <algorithm>
-#include <fstream>
-#include <stack>
-#include "node.h"
 #include "namespace.h"
+#include "node.h"
 
 namespace EASYXML_NAMESPACE
 {
-	Node* loadXml(const std::string filePath);
+	Node* loadXml(const std::string& filePath);
 	void saveXml(const Node* node, const std::string& filePath);
 	void saveXml(const Node* node, std::ostream& out, std::string indentation = "");
 

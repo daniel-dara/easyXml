@@ -1,12 +1,15 @@
 #include "exception.h"
+#include <iostream>
+#include <cmath>
+#include <stdio.h>
 
 namespace EASYXML_NAMESPACE
 {
-	EasyXmlException::EasyXmlException(const std::string msg, int code, int line) : errorCode(code), message(msg), lineNumber(line)
-	{}
+	EasyXmlException::EasyXmlException(const std::string msg, int code, int line) : message(msg), errorCode(code), lineNumber(line)
+	{ }
 
 	EasyXmlException::~EasyXmlException() throw ()
-	{}
+	{ }
 
 	const char* EasyXmlException::what() const throw()
 	{
