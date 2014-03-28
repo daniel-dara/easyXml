@@ -6,20 +6,24 @@ int main()
 	// Loading an XML file is one function call. loadXml returns a pointer to the root node.
 	xml::Node* root = xml::loadXml("example.xml");
 
-	// You can search for nodes by name, using "/" as a hierarchical delimiter.
-	// findNode() will throw an exception if the given node was not found OR you can pass the boolean "true"
-	// as the second argument and it will return NULL instead.
+	// You can easily search for nodes by name and use "/" as a hierarchical delimiter.
+	// find() will return NULL if the given node was not found OR you can pass the boolean "true"
+	// as the second argument and it will throw an exception instead.
 	xml::Node* n2008 = root->findNode("history/2008");
 
-	// You can access a node's name and value  through its respective "get" and "set" methods.
-	// val() is templated so val<int>() will return the value parsed as an integer.
-	std::cout << n2008->getName() << "=" << n2008->val() << std::endl;
+	// You can access a node's name and value directly.
+	std::cout << n2008->name << "=" << n2008->value << std::endl;
 
-	// Saving is as easy as loading
+	// There is also a templated function called val() to parse the value for you.
+	xml::Node* year = root->findNode("year");
+	std::cout << year->name << "=" << (year->val<int>() - 10) << std::endl;
+
+
+	// Saving is as easy as loading.
 	xml::saveXml(root, "example_output.xml");
 
 	// When finished with an XML tree, don't forget to free the memory.
-	// deleteTree will recursively delete a node and all of its children for you.
+	// deleteTree will recursively delete a node and all of its children.
 	xml::deleteTree(root);
 
 	return 0;

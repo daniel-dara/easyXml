@@ -6,20 +6,31 @@
 namespace EASYXML_NAMESPACE
 {
 	// Default Constructor
-	Node::Node() : children(node_ptr_compare), name(), value()
+	Node::Node() :
+		name(),
+		value(),
+		children(node_ptr_compare)
 	{ }
 
 	// Conversion Constructors
-	Node::Node(const char* _name, const char* _val) : children(node_ptr_compare), name(_name), value(_val)
+	Node::Node(const char* _name, const char* _value) :
+		name(_name),
+		value(_value),
+		children(node_ptr_compare)
 	{ }
 
-	Node::Node(const std::string& _name, const std::string& _val) : children(node_ptr_compare), \
-	           name(_name), value(_val)
+	Node::Node(const std::string& _name, const std::string& _value) :
+		name(_name),
+		value(_value),
+		children(node_ptr_compare)
 	{ }
 
 	// Copy Constructor - technically a deep copy since the "children" set is copied
 	// but note that the set is just a bunch of pointers. The actual child nodes are not copied.
-	Node::Node(const Node& rhs) : children(node_ptr_compare), name(rhs.name), value(rhs.value)
+	Node::Node(const Node& rhs) :
+		name(rhs.name),
+		value(rhs.value),
+		children(node_ptr_compare)
 	{
 		for (std::set<Node*>::const_iterator ite = rhs.children.begin(); ite != rhs.children.end(); ite++)
 		{
@@ -46,69 +57,12 @@ namespace EASYXML_NAMESPACE
 		return *this;
 	}
 
-	Node* Node::findNode(const std::string path, bool returnNull) const
-	{
-		// save cost of instantiation since findNode is recursive
-		static Node query;
-		std::string restOfPath;
-		int slashIndex = path.find('/');
-
-		if (slashIndex == -1)
-		{
-			query.name = path;
-		}
-		else
-		{
-			query.name = path.substr(0, slashIndex);
-			restOfPath = path.substr(slashIndex + 1);
-		}
-
-		static std::set<Node*>::iterator iter;
-		iter = children.find(&query);
-
-		if (iter != children.end())
-		{
-			if (restOfPath.length() == 0)
-			{
-				return (*iter);
-			}
-			else
-			{
-				return (*iter)->findNode(restOfPath);
-			}
-		}
-
-		if (returnNull)
-		{
-			return NULL;
-		}
-		else
-		{
-			throw EasyXmlException("Child element \"" + path + "\" not found.", 103);
-		}
-	}
-
-	const std::string& Node::getName() const
-	{
-		return name;
-	}
-
-	void Node::setName(const std::string& newName)
-	{
-		name = newName;
-	}
-
-	// Provides a "default" type for the templated getValue() without using C++11.
-	const std::string& Node::val() const
-	{
-		return value;
-	}
-
-	// This function will only be called if one of the type didn't match one of the specializations.
+	// This function will only be called if the given type didn't match any of the template
+	// specializations below.
 	template <typename T>
 	T Node::val() const
 	{
-		throw EasyXmlException("getValue() request: Unsupported type \"" + \
+		throw EasyXmlException("Unsupported type requested in val(): \"" + \
 		                       std::string(typeid(T).name()) + "\"");
 	}
 
@@ -131,6 +85,12 @@ namespace EASYXML_NAMESPACE
 	}
 
 	template<>
+	float Node::val<float>() const
+	{
+		return static_cast<float>(atof(value.c_str()));
+	}
+
+	template<>
 	bool Node::val<bool>() const
 	{
 		if (value == "true")
@@ -143,9 +103,46 @@ namespace EASYXML_NAMESPACE
 		}
 	}
 
-	template <typename T>
-	void Node::setVal(T val)
+	Node* Node::findNode(const std::string path, bool returnNull) const
 	{
-		value = std::string(val);
+		// Save the cost of instantiation since findNode is recursive and it's name is always overwritten.
+		static Node query;
+
+		std::string restOfPath;
+		int slashIndex = path.find('/');
+
+		if (slashIndex == -1)
+		{
+			query.name = path;
+		}
+		else
+		{
+			query.name = path.substr(0, slashIndex);
+			restOfPath = path.substr(slashIndex + 1);
+		}
+
+		static std::set<Node*>::const_iterator iter;
+		iter = children.find(&query);
+
+		if (iter != children.end())
+		{
+			if (restOfPath.length() == 0)
+			{
+				return (*iter);
+			}
+			else
+			{
+				return (*iter)->findNode(restOfPath);
+			}
+		}
+
+		if (returnNull)
+		{
+			return NULL;
+		}
+		else
+		{
+			throw EasyXmlException("Child element \"" + path + "\" not found.", 103);
+		}
 	}
 }

@@ -11,24 +11,22 @@ namespace EASYXML_NAMESPACE
 	class Node
 	{
 	public:
-		friend Node* loadXml(const std::string& filePath);
-		friend void printTree(const Node* node, std::string tabs);
-		friend void deleteTree(Node* node);
+		// friend Node* loadXml(const std::string& filePath);
 
 		Node();
-		Node(const char* _name, const char* _val = NULL);
-		Node(const std::string& _name, const std::string& _val = "");
+		Node(const char* name, const char* value = NULL);
+		Node(const std::string& name, const std::string& value = "");
 		Node(const Node& rhs);
 		Node& operator=(const Node& rhs);
 
-		Node* findNode(const std::string path, bool returnNull = false) const;
-
-		const std::string& getName() const;
-		void setName(const std::string& newName);
-
-		const std::string& val() const;
+		// Templated short-hand "getter" function
 		template <class T> T val() const;
-		template <class T> void setVal(T val);
+
+		Node* findNode(const std::string path, bool throwException = false) const;
+
+		// Members should be public so they can be readable and writable by anyone
+		std::string name;
+		std::string value;
 
 		std::set<Node*, bool (*)(const Node*, const Node*)> children;
 
@@ -36,11 +34,8 @@ namespace EASYXML_NAMESPACE
 		// Comparator function used to sort the "children" set.
 		static bool node_ptr_compare(const Node* lhs, const Node* rhs)
 		{
-			return lhs->getName() < rhs->getName();
+			return lhs->name < rhs->name;
 		}
-
-		std::string name;
-		std::string value;
 	};
 }
 

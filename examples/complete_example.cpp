@@ -27,15 +27,15 @@ int main()
 	// as the second argument and it will return NULL instead.
 	xml::Node* n2008 = root->findNode("history/2008");
 
-	// You can access a node's name and value  through its respective "get" and "set" methods.
-	std::cout << "The value of \"" << n2008->getName() << "\" is \"" << n2008->val() << "\""
+	// You can access a node's name and value directly so you can read or make changes to the XML structure
+	std::cout << "The value of \"" << n2008->name << "\" is \"" << n2008->value << "\""
 	          << std::endl;
 
 	xml::Node* year = root->findNode("year", true);
 
-	// There is also a templated getValue() method that allows you to choose between std::string, int, or
-	// double as the return type.
-	std::cout << "The integer value of \"" + year->getName() + "\" + 1 is " << year->val<int>() + 1 \
+	// There is also a templated "getter" method for value that allows you to choose between std::string, int,
+	// float, or double as the return type.
+	std::cout << "The integer value of \"" + year->name + "\" + 1 is " << year->val<int>() + 1 \
 	          << std::endl;
 
 	xml::saveXml(root, "example_output.xml");
