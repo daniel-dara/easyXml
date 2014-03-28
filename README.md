@@ -6,19 +6,19 @@ easyXml is a DOM-Style XML parser written in C++. It is designed to be extremely
 
 I created easyXml because during my endeavors to find a decent XML parser, I got frustrated with the lack of intuitive interface design, missing sample code, and poor documentation of other libraries. I wrote easyXml to meet my own needs and to help others who are tired of overly complex parsers.
 
-This is a young project so the documentation aspect is still to come, however, easyXml is so simple I recommend you learn it from the sample code anyway! I found that when I was looking for an XML parser myself, some decent sample code with proper explanations would have been worth a thousand pages of documentation.
+This is a young project so the documentation aspect is still to come, however, easyXml is so simple I recommend you learn it from the sample code anyway! I found that when I was looking for an XML parser myself, some decent sample code with proper explanations would have been worth a thousand pages of documentation (well, figuratively).
 
-Currently, easyXml only supports a small subset of the XML specifications and features. However, development is in progress and I plan to add these important features in the near future.
+Currently, easyXml only supports a subset of the XML specifications and features. However, development is in progress and I plan to add any significant features that are missing in the near future.
 
-easyXml is offered "as is" so use at your own risk. I have not stress tested this library and it has no guaranteed performance level. It works fine for my needs of reading a basic, hundred line XML file and I hope you find it useful.
+easyXml is offered "as is" so use at your own risk. I have not stress tested this library and it has no guaranteed performance level. It works fine reading a basic XML file from one to several hundred lines and I hope you find it useful.
 
-I love feedback so feel free to contact me about bugs, feature requests, or any comments you might have.
+I love feedback so feel free to contact me about bugs, feature requests, or any general comments you might have.
 
 ## Installation
 
 ### Linux / OSX
 
-Note: The makefile currently uses clang++ as the compiler so you can either install clang or you can change the first line of the makefile to <code>CC=g++</code> to use the GNU compiler.
+Note: Use of the makefile requires the packages <code>make</code>, <code>g++</code> (on OSX g++ is aliased to clang++ which will work fine), and <code>ar</code>. Most or all of these packages are pre-installed depending on your distro.
 
 Download the repo with either
 
@@ -49,11 +49,11 @@ Ex:
 
 ### Windows
 
-I currently do not support installing this library on Windows however easyXML has no Unix dependencies. You could either compile the code yourself into a static library to link with your projects or directly compile your code with the files in the <code>src</code> folder.
+I don't currently offer Windows binaries but easyXML has no Unix-specific dependencies. You should be able to compile easyXml by downloading and using GNU Make for Windows and the MinGW compiler. You can then place the generated library file in MinGW's lib folder (in the MinGW install directory).
     
 ## Documentation
 
-For now, this readme and the example programs are the only documentation. I have written the example program <code>examples/easy_example.cpp</code> to explain the most simple usage of easyXml. The source <code>examples/complete_example.cpp</code> provides a more in depth look at easyXml's functionality. I will add more code to the complete example program as new features are implemented. Eventually I plan to produce formal documentation.
+For now, this readme, the example programs, and code comments are the only documentation. I have written the example program <code>examples/easy_example.cpp</code> to explain the most simple usage of easyXml. The source <code>examples/complete_example.cpp</code> provides a more in depth look at easyXml's functionality. I will add more code to the complete example program as new features are implemented. I plan to eventually produce formal documentation.
 
 ## Development Notes
 
@@ -87,7 +87,6 @@ A rough outline of features supported by easyXml.
       * Will depend on amount of functionality "xmlTree"s need.
   * Low Priority:
     * Modify Node class to use an STL set for lookup efficiency but an STL list to preserve original order.
-    * Write alternative classes for STL set and stack to reduce dependencies and overhead for statically linked programs.
 
 ### Unit Testing
 The "tests" directory is dedicated to unit testing. Within that directory, there is a file named "test_cases.txt". Each row in the file represents a set of arguments to pass to the unit_test program. Each column of the is a single argument: the first being the test identifier and the second being the exepected error code. The unit test program will use these arguments to read in the appropriate xml file from the "xml" folder and check the results against the expected error code. "make test" will compile the unit_test program (if necessary) and run all tests. Each test will output "PASS" or "FAIL" along with the test identifier, the received error code, and on failure, the expected error code.
