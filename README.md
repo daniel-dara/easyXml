@@ -18,7 +18,7 @@ I love feedback so feel free to contact me about bugs, feature requests, or any 
 
 ### Linux / OSX
 
-Note: Use of the makefile requires the packages <code>make</code>, <code>g++</code> (on OSX g++ is aliased to clang++ which will work fine), and <code>ar</code>. Most or all of these packages are pre-installed depending on your distro.
+Use of the makefile requires the packages <code>make</code>, <code>g++</code> (on OSX, g++ is aliased to clang++ which should be pre-installed), and <code>ar</code>. Most, if not all, of these packages are pre-installed depending on your distro.
 
 Download the repo with either
 
@@ -53,7 +53,7 @@ I don't currently offer Windows binaries but easyXML has no Unix-specific depend
     
 ## Documentation
 
-For now, this readme, the example programs, and code comments are the only documentation. I have written the example program <code>examples/easy_example.cpp</code> to explain the most simple usage of easyXml. The source <code>examples/complete_example.cpp</code> provides a more in depth look at easyXml's functionality. I will add more code to the complete example program as new features are implemented. I plan to eventually produce formal documentation.
+This readme, the example programs, and code comments are currently the only documentation. I have written the example program <code>examples/easy_example.cpp</code> to explain the most simple usage of easyXml. The source <code>examples/complete_example.cpp</code> provides a more in depth look at easyXml's functionality. I will add more code to the complete example program as new features are implemented. I plan to eventually produce formal documentation.
 
 ## Development Notes
 
