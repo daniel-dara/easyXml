@@ -61,7 +61,7 @@ For now, this readme and the example programs are the only documentation. I have
 A rough outline of features supported by easyXml.
 
   * class "Node" that provides access to an XML element's name, value, and children.
-    * contains function "findElement" to find an element with the given name (or path)
+    * contains function "findNode" to find an element with the given name (or path)
     * stand-alone functions for printing and deleting a tree starting from the given node.
   * Parse an XML file with the following:
     * elements with values

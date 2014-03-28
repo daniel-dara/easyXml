@@ -4,11 +4,12 @@
 #include <algorithm>
 #include <fstream>
 #include <stack>
+#include <cstring>
 
 namespace EASYXML_NAMESPACE
 {
-	std::string esc_sequences[] = {"&amp;", "&lt;", "&gt;", "&apos;", "&quot;"};
-	std::string esc_values[] = {"&", "<", ">", "'", "\""};
+	const std::string esc_sequences[] = {"&amp;", "&lt;", "&gt;", "&apos;", "&quot;"};
+	const std::string esc_values[] = {"&", "<", ">", "'", "\""};
 
 	Node* loadXml(const std::string& filePath)
 	{
@@ -127,19 +128,19 @@ namespace EASYXML_NAMESPACE
 								// Trim the '/' and any whitespace in between the name and closing bracket.
 								// We must save the original name so we know how far to advance the index
 								// pointer used for pasring.
-								newNode->name = name.substr(0, name.length() - 1);
-								newNode->name = rtrim(newNode->name);
+								std::string temp = name.substr(0, name.length() - 1);
+								newNode->name = rtrim(temp);
 							}
 
 							if (!ancestors.empty())
 							{
 								// To support mixed content, store any previously found values into parent
-								// if (ancestors.top()->getName() == "car")
+								// if (ancestors.top()->name == "car")
 								// 	std::cout << "val add to: " + value << std::endl;
 
 								ancestors.top()->value += value;
 
-								// if (ancestors.top()->getName() == "car")
+								// if (ancestors.top()->name == "car")
 								// 	std::cout << "car val after: " + root->value << std::endl;
 								value = "";
 								ancestors.top()->children.insert(newNode);
@@ -150,7 +151,7 @@ namespace EASYXML_NAMESPACE
 								{
 									// 2.1.2a
 									throw EasyXmlException("Malformed XML: Multiple root nodes found." \
-										" First root node is \"" + root->getName() + "\", second node is \"" + \
+										" First root node is \"" + root->name + "\", second node is \"" + \
 										newNode->name + "\" defined at line %d.", 2, lineNumber);
 								}
 
@@ -172,18 +173,18 @@ namespace EASYXML_NAMESPACE
 					{
 						std::string elementName = getElementName(line, closeIndex + 2);
 
-						if (ancestors.top() == root && root->getName() != elementName)
+						if (ancestors.top() == root && root->name != elementName)
 						{
 							// 2.1.2d
 							throw EasyXmlException("Malformed XML: No opening tag for \"" + 
 								elementName + "\", closing tag found at line %d.", 3, lineNumber);
 						}
 
-						if (ancestors.top()->getName() != elementName)
+						if (ancestors.top()->name != elementName)
 						{
 							// 2.1.2b
 							throw EasyXmlException("Malformed XML: Mismatched closing tag at line %d." \
-								" Expected \"" + ancestors.top()->getName() + "\" found \"" + elementName + "\"." \
+								" Expected \"" + ancestors.top()->name + "\" found \"" + elementName + "\"." \
 								, 5, lineNumber);
 						}
 
@@ -200,7 +201,7 @@ namespace EASYXML_NAMESPACE
 						ancestors.top()->value += value;
 						value = "";
 
-						index = closeIndex + 2 + ancestors.top()->getName().length() + 1;
+						index = closeIndex + 2 + ancestors.top()->name.length() + 1;
 						ancestors.pop();
 					}
 				}
@@ -215,7 +216,7 @@ namespace EASYXML_NAMESPACE
 			if (!ancestors.empty())
 			{
 				// 2.1 Rule 2
-				throw EasyXmlException("Unclosed XML element \"" + ancestors.top()->getName() + "\".", 4);
+				throw EasyXmlException("Unclosed XML element \"" + ancestors.top()->name + "\".", 4);
 			}
 
 			reader.close();
@@ -239,27 +240,27 @@ namespace EASYXML_NAMESPACE
 
 	void saveXml(const Node* node, std::ostream& out, std::string indentation)
 	{
-		out << indentation << "<" << node->getName();
+		out << indentation << "<" << node->name;
 
 		if (node->children.size() > 0)
 		{
 			out << ">\n";
 
-			std::set<Node*>::const_iterator it;
-			for (it = node->children.begin(); it != node->children.end(); ++it)
+			for (std::set<Node*>::const_iterator it = node->children.begin(); \
+			     it != node->children.end(); ++it)
 			{
 				saveXml(*it, out, indentation + "\t");
 			}
 
-			out << indentation << "</" << node->getName() << ">";
+			out << indentation << "</" << node->name << ">";
 		}
-		else if (node->val() == "")
+		else if (node->value == "")
 		{
 			out << " />";
 		}
 		else
 		{
-			std::string value(node->val());
+			std::string value(node->value);
 
 			// Replace bad chars with XML escape sequences. Ampersands must be escaped first otherwise
 			// ampersands from other escape sequences will be double encoded.
@@ -269,7 +270,7 @@ namespace EASYXML_NAMESPACE
 			}
 
 			out << ">" << value;
-			out << "</" << node->getName() << ">";
+			out << "</" << node->name << ">";
 		}
 
 		out << "\n";
@@ -313,6 +314,7 @@ namespace EASYXML_NAMESPACE
 	}
 
 	// The following 3 functions are public domain: http://stackoverflow.com/a/217605
+	// They perform in-place trims.
 
 	// trim from start
 	std::string& ltrim(std::string &s)
@@ -337,9 +339,9 @@ namespace EASYXML_NAMESPACE
 	}
 
 	// public domain: http://stackoverflow.com/a/17620909
-	void replaceAll(std::string& str, const std::string& from, const std::string& to)
+	void replaceAll(std::string& str, const char* from, const std::string& to)
 	{
-		if (from.empty())
+		if (strlen(from) == 0)
 		{
 			return;
 		}
@@ -352,9 +354,14 @@ namespace EASYXML_NAMESPACE
 		{
 			newStr += str.substr(start_pos, pos - start_pos);
 			newStr += to;
-			start_pos = pos + from.length();
+			start_pos = pos + strlen(from);
 		}
 		newStr += str.substr(start_pos);
 		str.swap(newStr); // faster than str = newStr;
+	}
+
+	void replaceAll(std::string& str, const std::string& from, const std::string& to)
+	{
+		replaceAll(str, from.c_str(), to);
 	}
 }

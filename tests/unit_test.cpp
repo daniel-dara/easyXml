@@ -24,14 +24,14 @@ int main(int argc, char* argv[])
 	}
 	catch (const xml::EasyXmlException& e)
 	{
-		if (e.errorCode == EXPECTED_ERROR_CODE)
+		if (e.getErrorCode() == EXPECTED_ERROR_CODE)
 		{
 			std::cout << "PASS: " << XML_SECTION_NUM << " - Received " << EXPECTED_ERROR_CODE << std::endl;
 			return 0;
 		}
 		else
 		{
-			std::cout << "FAIL: " << XML_SECTION_NUM << " - Expected " << EXPECTED_ERROR_CODE << ", Recieved " << e.errorCode << std::endl;
+			std::cout << "FAIL: " << XML_SECTION_NUM << " - Expected " << EXPECTED_ERROR_CODE << ", Recieved " << e.getErrorCode() << std::endl;
 			return 1;
 		}
 	}
