@@ -57,6 +57,11 @@ namespace EASYXML_NAMESPACE
 		return *this;
 	}
 
+	std::string Node::val() const
+	{
+		return value;
+	}
+
 	// This function will only be called if the given type didn't match any of the template
 	// specializations below.
 	template <typename T>
