@@ -11,14 +11,13 @@ namespace EASYXML_NAMESPACE
 	class Node
 	{
 	public:
-		// friend Node* loadXml(const std::string& filePath);
-
 		Node();
 		Node(const char* name, const char* value = NULL);
 		Node(const std::string& name, const std::string& value = "");
 		Node(const Node& rhs);
 		Node& operator=(const Node& rhs);
 
+		std::string val() const;
 		// Templated short-hand "getter" function
 		template <class T> T val() const;
 
