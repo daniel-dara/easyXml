@@ -18,7 +18,6 @@ int main()
 	xml::Node* year = root->findNode("year");
 	std::cout << year->name << "=" << (year->val<int>() - 10) << std::endl;
 
-
 	// Saving is as easy as loading.
 	xml::saveXml(root, "example_output.xml");
 

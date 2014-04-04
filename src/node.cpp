@@ -110,7 +110,7 @@ namespace EASYXML_NAMESPACE
 
 	Node* Node::findNode(const std::string path, bool returnNull) const
 	{
-		// Save the cost of instantiation since findNode is recursive and it's name is always overwritten.
+		// Save the cost of instantiation since findNode is recursive and its name is always overwritten.
 		static Node query;
 
 		std::string restOfPath;
