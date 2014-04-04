@@ -13,7 +13,7 @@ namespace EASYXML_NAMESPACE
 	void printTree(const Node* node, std::string indentation = "");
 	void deleteTree(Node* node);
 
-	std::string getElementName(const std::string& data, int startIndex);
+	std::string getElementName(const std::string& data, size_t startIndex);
 
 	// The following 3 trim functions are public domain: http://stackoverflow.com/a/217605
 	// trim from start

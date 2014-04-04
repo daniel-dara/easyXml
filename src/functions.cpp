@@ -10,7 +10,6 @@ namespace EASYXML_NAMESPACE
 {
 	const std::string esc_sequences[] = {"&amp;", "&lt;", "&gt;", "&apos;", "&quot;"};
 	const std::string esc_values[] = {"&", "<", ">", "'", "\""};
-	typedef unsigned int uint;
 
 	Node* loadXml(const std::string& filePath)
 	{
@@ -309,7 +308,7 @@ namespace EASYXML_NAMESPACE
 		}
 	}
 
-	std::string getElementName(const std::string& data, int startIndex)
+	std::string getElementName(const std::string& data, size_t startIndex)
 	{
 		return data.substr(startIndex, data.find(">", startIndex) - startIndex);
 	}

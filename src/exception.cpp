@@ -7,18 +7,19 @@
 
 namespace EASYXML_NAMESPACE
 {
-	EasyXmlException::EasyXmlException(const std::string& msg, int code, int line) :
-		message(msg),
-		errorCode(code),
-		lineNumber(line)
+	EasyXmlException::EasyXmlException(const std::string& message, int errorCode, uint lineNumber) :
+		message_(message),
+		errorCode_(errorCode),
+		lineNumber_(lineNumber)
 	{
-		if (lineNumber > 0)
+		// If a line number was specified...
+		if (lineNumber_ > 0)
 		{
-			// Convert lineNumber to string
+			// convert "lineNumber" to a string.
 			std::ostringstream ss;
-			ss << lineNumber;
+			ss << lineNumber_;
 
-			replaceAll(message, "%d", ss.str());
+			replaceAll(message_, "%d", ss.str());
 		}
 	}
 
@@ -27,16 +28,16 @@ namespace EASYXML_NAMESPACE
 
 	const char* EasyXmlException::what() const throw()
 	{
-		return (message + "\n").c_str();
+		return (message_ + "\n").c_str();
 	}
 
 	int EasyXmlException::getErrorCode() const
 	{
-		return errorCode;
+		return errorCode_;
 	}
 
-	int EasyXmlException::getLineNumber() const
+	uint EasyXmlException::getLineNumber() const
 	{
-		return lineNumber;
+		return lineNumber_;
 	}
 }

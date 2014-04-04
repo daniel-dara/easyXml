@@ -114,9 +114,9 @@ namespace EASYXML_NAMESPACE
 		static Node query;
 
 		std::string restOfPath;
-		int slashIndex = path.find('/');
+		size_t slashIndex = path.find('/');
 
-		if (slashIndex == -1)
+		if (slashIndex == std::string::npos)
 		{
 			query.name = path;
 		}
