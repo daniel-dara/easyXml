@@ -17,7 +17,7 @@ int main()
 	try
 	{
 		// Loading an XML file is easy, and it returns a pointer to the root node.
-		root = xml::loadXml("example_utf.xml");
+		root = xml::loadXml("example.xml");
 	}
 	catch (const xml::EasyXmlException& e)
 	{

@@ -10,6 +10,7 @@ namespace EASYXML_NAMESPACE
 {
 	const std::string esc_sequences[] = {"&amp;", "&lt;", "&gt;", "&apos;", "&quot;"};
 	const std::string esc_values[] = {"&", "<", ">", "'", "\""};
+	typedef unsigned int uint;
 
 	Node* loadXml(const std::string& filePath)
 	{
@@ -22,30 +23,31 @@ namespace EASYXML_NAMESPACE
 
 			std::string line;
 			std::string value = "";
-			int lineNumber = 0;
+			uint lineNumber = 0;
 
 			// read file line by line
 			while (getline(reader, line))
 			{
 				lineNumber++;
-				unsigned int index = 0;
+				size_t index = 0;
 
 				// mixed content should retain new lines between actual values
 				// line += '\n';
 
 				while (index < line.length())
 				{
-					int openIndex = static_cast<int>(line.find('<', index));
-					int closeIndex = static_cast<int>(line.find("</" , index, 2));
+					size_t openIndex = line.find('<', index);
+					size_t closeIndex = line.find("</" , index, 2);
+					const size_t notFound = std::string::npos;
 
-					if (openIndex == -1 && closeIndex == -1)
+					if (openIndex == notFound && closeIndex == notFound)
 					{ 
 						// the rest of this line is probably a value so save it
 						value += line.substr(index);
 						index = line.length();
 					}
 					// Check if this is an opening tag.
-					else if (openIndex < closeIndex || closeIndex == -1)
+					else if (openIndex < closeIndex || closeIndex == notFound)
 					{ 
 						std::string name = getElementName(line, openIndex + 1);
 
@@ -59,13 +61,12 @@ namespace EASYXML_NAMESPACE
 						{
 							std::string comment;
 
-							int endIndex = openIndex + 4; // Index of comment close.
-							int startIndex = endIndex; // Index to start search (after "!--")
-							const int origLineNumber = lineNumber; // Save the line number of the opening tag.
+							size_t endIndex = openIndex + 4; // Index of comment close.
+							size_t startIndex = endIndex; // Index to start search (after "!--")
+							const uint origLineNumber = lineNumber; // Save the line number of the opening tag.
 
-							// If the comment end is not on this line, we must keep searching.
-							while ( (endIndex = line.find("-->", startIndex)) == \
-								static_cast<int>(std::string::npos) )
+							// If the end of the comment is not on this line, we must keep searching.
+							while ( (endIndex = line.find("-->", startIndex)) == notFound )
 							{
 								// Store comment contents, for use in future versions of easyXml.
 								comment += line.substr(startIndex) + "\n";
@@ -115,7 +116,7 @@ namespace EASYXML_NAMESPACE
 
 							// // Check for attributes
 							// int attrIndex = 0;
-							// while ((attrIndex = name.find(" ", attrIndex)) != std::string::npos)
+							// while ((attrIndex = name.find(" ", attrIndex)) != notFound)
 							// {
 							// 	name = name.substr(0, attrIndex);
 							// 	break;
