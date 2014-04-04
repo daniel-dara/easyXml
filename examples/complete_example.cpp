@@ -10,7 +10,6 @@ int main()
 {
 	/*** LOADING FILES  *************************************************************************************/
 
-
 	xml::Node* root = NULL;
 
 	// Malformed XML can cause an exception to be thrown when loadXml is called.
