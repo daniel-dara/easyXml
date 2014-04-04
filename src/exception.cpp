@@ -27,7 +27,7 @@ namespace EASYXML_NAMESPACE
 
 	const char* EasyXmlException::what() const throw()
 	{
-		return message.c_str();
+		return (message + "\n").c_str();
 	}
 
 	int EasyXmlException::getErrorCode() const
