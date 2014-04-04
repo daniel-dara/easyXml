@@ -20,6 +20,8 @@ namespace EASYXML_NAMESPACE
 			ss << lineNumber_;
 
 			replaceAll(message_, "%d", ss.str());
+
+			message_ += "\n";
 		}
 	}
 
@@ -28,7 +30,7 @@ namespace EASYXML_NAMESPACE
 
 	const char* EasyXmlException::what() const throw()
 	{
-		return (message_ + "\n").c_str();
+		return message_.c_str();
 	}
 
 	int EasyXmlException::getErrorCode() const
