@@ -27,11 +27,35 @@ namespace EASYXML_NAMESPACE
 		std::string name;
 		std::string value;
 
+		class Attribute
+		{
+		public:
+			Attribute(const std::string& _name, const std::string& _value) :
+				name(_name),
+				value(_value)
+			{ }
+
+			bool operator<(const Attribute& rhs) const
+			{
+				return name < rhs.name;
+			}
+
+			std::string name;
+			std::string value;
+		};
+
+		std::set<Attribute> attributes;
 		std::set<Node*, bool (*)(const Node*, const Node*)> children;
 
 	private:
 		// Comparator function used to sort the "children" set.
 		static bool node_ptr_compare(const Node* lhs, const Node* rhs)
+		{
+			return &lhs->name < &rhs->name;
+		}
+
+		// Comparator function used to sort the "attributes" set.
+		static bool attr_ptr_compare(const Attribute* lhs, const Attribute* rhs)
 		{
 			return lhs->name < rhs->name;
 		}

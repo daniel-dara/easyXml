@@ -21,7 +21,7 @@ namespace EASYXML_NAMESPACE
 			Node* root = NULL;
 
 			std::string line;
-			std::string value = "";
+			std::string value;
 			uint lineNumber = 0;
 
 			// read file line by line
@@ -111,17 +111,64 @@ namespace EASYXML_NAMESPACE
 						// It must be a node.
 						else
 						{
+							int tagLength = name.length();
+
 							bool isSelfClosing = (name[name.length() - 1] == '/');
 
-							// // Check for attributes
-							// int attrIndex = 0;
-							// while ((attrIndex = name.find(" ", attrIndex)) != notFound)
-							// {
-							// 	name = name.substr(0, attrIndex);
-							// 	break;
-							// }
+							// Check for attributes
+							std::string attributes = "";
+							size_t attrIndex = name.find(" ");
+
+							// Fix the name if there were attributes
+							if (attrIndex != notFound)
+							{
+								attributes.swap(name); // quicker than copy
+								name = attributes.substr(0, attrIndex);
+							}
 
 							Node* newNode = new Node(name);
+
+							// Parse attributes
+							while (attrIndex != notFound && Trim(attributes.substr(attrIndex)) != "/")
+							{
+								size_t equalsIndex = attributes.find("=", attrIndex + 1);
+
+								if (equalsIndex == notFound)
+								{
+									throw EasyXmlException("Equals sign not found after attribute name" \
+									                       " at line %d.", 10, lineNumber);
+								}
+
+								size_t firstQuoteIndex = attributes.find("\"", equalsIndex + 1);
+
+								if (firstQuoteIndex == notFound)
+								{
+									throw EasyXmlException("Missing double quote after equals sign in" \
+									                     " element attribute at line %d.", 11, lineNumber);
+								}
+
+								size_t secondQuoteIndex = attributes.find("\"", firstQuoteIndex + 1);
+
+								if (secondQuoteIndex == notFound)
+								{
+									throw EasyXmlException("Missing double quote after the value in" \
+									                     " element attribute at line %d.", 12, lineNumber);
+								}
+
+								int attrNameLength = equalsIndex - attrIndex;
+								int attrValLength = secondQuoteIndex - firstQuoteIndex - 1;
+
+								// Parse attribute name and remove whitespace
+								std::string attrName = attributes.substr(attrIndex, attrNameLength);
+								attrName = trim(attrName);
+
+								// Parse attribute value
+								std::string attrVal = attributes.substr(firstQuoteIndex + 1, attrValLength);
+
+								newNode->attributes.insert(Node::Attribute(attrName, attrVal));
+
+								attrIndex = attributes.find(" ", secondQuoteIndex + 1);
+							}
 
 							if (isSelfClosing)
 							{
@@ -164,8 +211,8 @@ namespace EASYXML_NAMESPACE
 								ancestors.push(newNode);
 							}
 
-							// Use the original name since the new name may have been self-closing.
-							index = openIndex + 1 + name.length() + 1;
+							// Use the length of the original name since the new name may be shortened.
+							index = openIndex + 1 + tagLength + 1;
 						}
 					}
 					// Closing tag.
@@ -191,14 +238,16 @@ namespace EASYXML_NAMESPACE
 
 						value += line.substr(index, openIndex - index);
 
+						std::string temp = value;
+
 						// Replace XML escape sequences. Ampersands must be replaced last or else they may
 						// cause other escape sequences to be replaced that were not in the original string.
 						for (int i = 4; i >= 0; i--)
 						{
-							replaceAll(value, esc_sequences[i], esc_values[i]);
+							replaceAll(temp, esc_sequences[i], esc_values[i]);
 						}
 
-						ancestors.top()->value += value;
+						ancestors.top()->value += temp;
 						value = "";
 
 						index = closeIndex + 2 + ancestors.top()->name.length() + 1;
@@ -280,10 +329,23 @@ namespace EASYXML_NAMESPACE
 	{
 		std::cout << indentation << node->name << ": " << node->value << std::endl;
 
+		if (node->attributes.size() != 0)
+		{
+			std::cout << "\t" + indentation + "attributes:";
+
+			std::set<Node::Attribute>::const_iterator it;
+			for (it = node->attributes.begin(); it != node->attributes.end(); ++it)
+			{
+				std::cout << " " << (*it).name << "=\"" << (*it).value << "\"";
+			}
+
+			std::cout << std::endl;
+		}
+
 		// increase the indentation for the next level
 		indentation += "\t";
 
-		std::set<Node*>::iterator it;
+		std::set<Node*>::const_iterator it;
 		for (it = node->children.begin(); it != node->children.end(); ++it)
 		{
 			printTree((*it), indentation);
@@ -317,7 +379,7 @@ namespace EASYXML_NAMESPACE
 	// They perform in-place trims.
 
 	// trim from start
-	std::string& ltrim(std::string &s)
+	std::string& ltrim(std::string& s)
 	{
 		s.erase(s.begin(), std::find_if(s.begin(), s.end(), \
 			std::not1(std::ptr_fun<int, int>(std::isspace))));
@@ -325,17 +387,29 @@ namespace EASYXML_NAMESPACE
 	}
 
 	// trim from end
-	std::string& rtrim(std::string &s)
+	std::string& rtrim(std::string& s)
 	{
 		s.erase(std::find_if(s.rbegin(), s.rend(), \
 			std::not1(std::ptr_fun<int, int>(std::isspace))).base() ,s.end());
 		return s;
 	}
 
+	// trim from end (copy)
+	std::string rTrim(std::string s)
+	{
+		return rtrim(s);
+	}
+
 	// trim from both ends
-	std::string& trim(std::string &s)
+	std::string& trim(std::string& s)
 	{
 		return ltrim(rtrim(s));
+	}
+
+	// trim from both ends (copy)
+	std::string Trim(std::string s)
+	{
+		return trim(s);
 	}
 
 	// public domain: http://stackoverflow.com/a/17620909

@@ -16,14 +16,16 @@ namespace EASYXML_NAMESPACE
 	std::string getElementName(const std::string& data, size_t startIndex);
 
 	// The following 3 trim functions are public domain: http://stackoverflow.com/a/217605
-	// trim from start
+	// trim from start (in place)
 	std::string& ltrim(std::string& s);
 
-	// trim from end
+	// trim from end (in place)
 	std::string& rtrim(std::string& s);
+	std::string rTrim(std::string s); // copy
 
-	// trim from both ends
+	// trim from both ends (in place)
 	std::string& trim(std::string& s);
+	std::string Trim(std::string s); // copy
 
 	// In-place replaceAll
 	// public domain: http://stackoverflow.com/a/17620909

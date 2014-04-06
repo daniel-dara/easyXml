@@ -11,9 +11,9 @@
 		<2013 />
 		<2014/>
 	</history>
-	<!--
-		<location x="123" y="144">
-		</location>
-	-->
+	
+	<location x="123.456" y="999"/>
+	<license plate="123 XYZ" />
+	
 	<supported_escape_chars>&lt; &gt; &quot; &amp; &apos;</supported_escape_chars>
 </car>

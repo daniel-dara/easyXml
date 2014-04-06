@@ -9,6 +9,7 @@ namespace EASYXML_NAMESPACE
 	Node::Node() :
 		name(),
 		value(),
+		attributes(),
 		children(node_ptr_compare)
 	{ }
 
@@ -16,12 +17,14 @@ namespace EASYXML_NAMESPACE
 	Node::Node(const char* _name, const char* _value) :
 		name(_name),
 		value(_value),
+		attributes(),
 		children(node_ptr_compare)
 	{ }
 
 	Node::Node(const std::string& _name, const std::string& _value) :
 		name(_name),
 		value(_value),
+		attributes(),
 		children(node_ptr_compare)
 	{ }
 
@@ -30,8 +33,14 @@ namespace EASYXML_NAMESPACE
 	Node::Node(const Node& rhs) :
 		name(rhs.name),
 		value(rhs.value),
+		attributes(),
 		children(node_ptr_compare)
 	{
+		for (std::set<Attribute>::const_iterator ite = rhs.attributes.begin(); ite != rhs.attributes.end(); ite++)
+		{
+			attributes.insert(*ite);
+		}
+
 		for (std::set<Node*>::const_iterator ite = rhs.children.begin(); ite != rhs.children.end(); ite++)
 		{
 			children.insert(*ite);
@@ -43,8 +52,13 @@ namespace EASYXML_NAMESPACE
 	{
 		if (this != &rhs)
 		{
-			children.clear();
+			attributes.clear();
+			for (std::set<Attribute>::const_iterator ite = rhs.attributes.begin(); ite != rhs.attributes.end(); ite++)
+			{
+				attributes.insert(*ite);
+			}
 
+			children.clear();
 			for (std::set<Node*>::const_iterator ite = rhs.children.begin(); ite != rhs.children.end(); ite++)
 			{
 				children.insert(*ite);

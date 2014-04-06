@@ -4,9 +4,9 @@
 
 easyXml is a DOM-Style XML parser written in C++. It is designed to be extremely simple to install and use.
 
-I created easyXml because during my endeavors to find a decent XML parser, I got frustrated with the lack of intuitive interface design, missing sample code, and poor documentation of other libraries. I wrote easyXml to meet my own needs and to help others who are tired of overly complex parsers.
+I created easyXml because during my endeavors to find a decent XML parser I was frustrated by the lack of intuitive interface design, missing sample code, and poor documentation of other libraries. I wrote easyXml to meet my own needs and to help others who are tired of overly complex parsers.
 
-This is a young project so the documentation aspect is still to come, however, easyXml is so simple I recommend you learn it from the sample code anyway! I found that when I was looking for an XML parser myself, some decent sample code with proper explanations would have been worth a thousand pages of documentation (well, figuratively).
+This is a young project so the documentation aspect is still to come. However, easyXml is so simple I recommend you learn it from the sample code anyway! I found that when I was looking for an XML parser myself, some decent sample code with proper explanations would have been worth a thousand pages of documentation (well, figuratively).
 
 Currently, easyXml only supports a subset of the XML specifications and features. However, development is in progress and I plan to add any significant features that are missing in the near future.
 
@@ -106,6 +106,7 @@ All tests should be run together to ensure that modifications to the library for
     7 - Malformed Prolog
     8 - Malformed Comment (end tag)
     9 - No opening tag name
+    10 - No equals sign after attribute name
     101 - unable to open file
     102 - deleteTree called on NULL pointer
     103 - Child element not found (when using Node.find() method)
