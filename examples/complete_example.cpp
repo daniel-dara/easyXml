@@ -16,7 +16,8 @@ int main()
 	try
 	{
 		// Loading an XML file is easy, and it returns a pointer to the root node.
-		root = xml::loadXml("../../bigdaddy.xml");
+		root = xml::loadXml2("../../dblp.xml");
+		// root = xml::loadXml2("test.xml");
 
 		if (root != NULL)
 		{

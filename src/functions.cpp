@@ -11,6 +11,120 @@ namespace EASYXML_NAMESPACE
 	const std::string esc_sequences[] = {"&amp;", "&lt;", "&gt;", "&apos;", "&quot;"};
 	const std::string esc_values[] = {"&", "<", ">", "'", "\""};
 
+	Node* loadXml2(const std::string& filePath)
+	{
+		std::ifstream reader(filePath.c_str());
+
+		Node* root = NULL;
+
+		if (reader.is_open())
+		{
+			std::stack<Node*> ancestors;
+
+			std::string file, line;
+			// uint lineNumber = 0;
+
+			// read file line by line
+			while (getline(reader, line))
+			{
+				file += line;
+			}
+
+			int index = 0, len = file.length();
+
+			// for values
+			std::string value;
+			value.reserve(500);
+
+			while (index < len)
+			{
+				if (file[index] == '<')
+				{
+					index++; // skip '<'
+
+					if (file[index] == '/') // parse closing tag
+					{
+						value.resize(value.length());
+						ancestors.top()->value.swap(value);
+
+						while (file[index++] != '>')
+							; // skip end tag
+
+						ancestors.pop();
+					}
+					else if (file[index] == '!' && file[index + 1] == '-' && file[index + 2] == '-')
+					{
+						while (!(file[index] == '-' && file[index + 1] == '-' && file[index + 2] == '>'))
+						{
+							index++;
+							while (file[index] != '-') // shorter condition
+							{
+								index++;
+							}
+						}
+
+						index += 2;
+					}
+					else if (file[index] == '?')
+					{
+						while (file[index++] != '?')
+							;
+					}
+					else // opening tag
+					{
+						value = "";
+
+						std::string name;
+						name.reserve(100);
+
+						while (file[index] != '>' && file[index] != '/')
+						{
+							// name[i++] = file[index++];
+							name += file[index++];
+						}
+
+						// create node
+						name.resize(name.length());
+						Node* node = new Node(name);
+						if (root == NULL)
+						{
+							root = node;
+						}
+						else
+						{
+							ancestors.top()->children.insert(node);
+						}
+
+						if (file[index] == '/')
+						{
+							while (file[index++] != '>')
+								; // whitespace
+						}
+						else
+						{
+							ancestors.push(node);
+						}
+					}
+				}
+				else
+				{
+					// parse value
+					value += file[index];
+				}
+
+				index++; // next char
+			}
+
+			reader.close();
+		}
+		else
+		{
+			throw EasyXmlException("Unable to open file \"" + filePath + "\".", 101);
+		}
+
+		return root;
+	}
+
 	Node* loadXml(const std::string& filePath)
 	{
 		std::ifstream reader(filePath.c_str());
@@ -20,16 +134,20 @@ namespace EASYXML_NAMESPACE
 			std::stack<Node*> ancestors;
 			Node* root = NULL;
 
-			std::string line;
+			std::string line, line2;
 			std::string value;
 			uint lineNumber = 0;
 
 			// read file line by line
-			while (getline(reader, line))
+			while (getline(reader, line2))
 			{
-				lineNumber++;
+				// lineNumber++;
+				line += line2;
+			}
 				size_t index = 0;
+				lineNumber = 1;
 
+			{
 				// mixed content should retain new lines between actual values
 				// line += '\n';
 
