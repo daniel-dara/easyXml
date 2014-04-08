@@ -16,8 +16,7 @@ int main()
 	try
 	{
 		// Loading an XML file is easy, and it returns a pointer to the root node.
-		root = xml::loadXml2("../../dblp.xml");
-		// root = xml::loadXml2("test.xml");
+		root = xml::loadXml2("../../../Downloads/bigdaddy.xml");
 
 		if (root != NULL)
 		{
@@ -43,7 +42,7 @@ int main()
 
 			// There is also a templated "getter" method for value that allows you to choose between std::string, int,
 			// float, or double as the return type.
-			// std::cout << "The integer value of \"" + year->name + "\" + 1 is " << year->val<int>() + 1 \
+			// std::cout << "The integer value of \"" + year->name + "\" + 1 is " << year->val<int>() + 1 
 			//           << std::endl;
 
 			//xml::saveXml(root, "example_output.xml");

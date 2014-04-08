@@ -1,5 +1,5 @@
 CC=clang++
-CFLAGS=-Wall -Weffc++ -Wextra -pedantic -O0 -g
+CFLAGS=-Wall -Weffc++ -Wextra -pedantic -g -O3
 LDFLAGS=
 
 SRC_DIR=src

@@ -2,6 +2,7 @@
 #define EXCEPTION_H
 
 #include "namespace.h"
+#include "String.h"
 #include <exception>
 #include <string>
 
@@ -11,6 +12,7 @@ namespace EASYXML_NAMESPACE
 	{
 	public:
 		EasyXmlException(const std::string& msg, int errorCode = 0, uint lineNumber = 0);
+		EasyXmlException(const String& msg, int errorCode = 0, uint lineNumber = 0);
 		~EasyXmlException() throw ();
 
 		const char* what() const throw();

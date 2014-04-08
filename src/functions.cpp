@@ -1,126 +1,286 @@
 #include "functions.h"
 #include "exception.h"
+#include "String.h"
 #include <iostream>
 #include <algorithm>
 #include <fstream>
 #include <stack>
 #include <cstring>
+#include <vector>
 
 namespace EASYXML_NAMESPACE
 {
+	const uint ELEMENT_NAME_SIZE = 50;
+	const uint ELEMENT_VALUE_SIZE = 50;
 	const std::string esc_sequences[] = {"&amp;", "&lt;", "&gt;", "&apos;", "&quot;"};
 	const std::string esc_values[] = {"&", "<", ">", "'", "\""};
 
+	template <typename T>
+	class Stack2
+	{
+	public:
+		Stack2() : capacity_(1), top_(-1), array_(new T[capacity_])
+		{ }
+
+		Stack2(int capacity) : capacity_(capacity), top_(-1), array_(new T[capacity_])
+		{ }
+
+		~Stack2()
+		{
+			delete[] array_;
+		}
+
+		void push(T val)
+		{
+			if (top_ < capacity_)
+			{
+				array_[++top_] = val;
+			}
+		}
+
+		T top()
+		{
+			if (top_ == -1)
+			{
+				return NULL;
+			}
+			else
+			{
+				return array_[top_];
+			}
+		}
+
+		T pop()
+		{
+			if (top_ > -1)
+			{
+				return array_[top_--];
+			}
+			else
+			{
+				return NULL;
+			}
+		}
+
+	private:
+		int capacity_;
+		int top_;
+		T* array_;
+	};
+
+	template <typename T>
+	class Stack
+	{
+	public:
+		Stack() : size(0), top_(NULL)
+		{ }
+
+		~Stack()
+		{
+			while (top_ != NULL)
+			{
+				pop();
+			}
+		}
+
+		void push(T val)
+		{
+			if (top_ == NULL)
+			{
+				top_ = new Node_(val, NULL);
+			}
+			else
+			{
+				struct Node_* node = new Node_(val, top_);
+				top_ = node;
+			}
+		}
+
+		T top()
+		{
+			if (top_ == NULL)
+			{
+				return NULL;
+			}
+			else
+			{
+				return top_->val;
+			}
+		}
+
+		T pop()
+		{
+			T val = top_->val;
+			struct Node_* temp = top_;
+			top_ = top_->next;
+			delete temp;
+			return val;
+		}
+
+	private:
+		Stack(const Stack& rhs);
+		Stack& operator=(const Stack& rhs);
+
+		struct Node_
+		{
+			Node_(T Val, struct Node_* Next) : val(Val), next(Next)
+			{ }
+
+			T val;
+			struct Node_* next;
+		};
+
+		uint size;
+		struct Node_* top_;
+	};
+
 	Node* loadXml2(const std::string& filePath)
 	{
-		std::ifstream reader(filePath.c_str());
-
 		Node* root = NULL;
 
-		if (reader.is_open())
+		FILE* fp = fopen(filePath.c_str(), "rb");
+		fseek(fp, 0, SEEK_END);
+		size_t len = ftell(fp);
+		fseek(fp, 0, SEEK_SET);
+
+		char* file = new char[len];
+		fread(file, sizeof(char), len, fp);
+		fclose(fp);
+
+		Stack<Node*> ancestors;
+		// Stack2<Node*> ancestors(100);
+
+		uint index = 0;
+
+		// for values
+		String value;
+		value.reserve(ELEMENT_VALUE_SIZE);
+
+		while (index < len)
 		{
-			std::stack<Node*> ancestors;
-
-			std::string file, line;
-			// uint lineNumber = 0;
-
-			// read file line by line
-			while (getline(reader, line))
+			// printf("starting\n");
+			if (file[index] == '<')
 			{
-				file += line;
-			}
+				index++; // skip '<'
 
-			int index = 0, len = file.length();
-
-			// for values
-			std::string value;
-			value.reserve(500);
-
-			while (index < len)
-			{
-				if (file[index] == '<')
+				if (file[index] == '/') // parse closing tag
 				{
-					index++; // skip '<'
+					// printf("stopping '/'\n");
 
-					if (file[index] == '/') // parse closing tag
+					// std::cout << "closing tag: " << file.substr(index, 10) << "\n";
+					// std::cout << "with value: " << value << "\n*\n";
+					// std::cout << "value: " << value.cpp_str() << "\n";
+					// value.resize(value.length());
+					// ancestors.top()->value = value.cpp_str();
+
+					String name;
+					name.reserve(ELEMENT_NAME_SIZE);
+
+					while (file[index] != '>')
 					{
-						value.resize(value.length());
-						ancestors.top()->value.swap(value);
-
-						while (file[index++] != '>')
-							; // skip end tag
-
-						ancestors.pop();
+						name += file[index];
+						index++;
 					}
-					else if (file[index] == '!' && file[index + 1] == '-' && file[index + 2] == '-')
+
+					// std::cout << "end tag: " << name.cpp_str() << "\n";
+
+					// std::cout << "popping: " << ancestors.top()->name << "\n";
+					ancestors.pop();
+
+					// std::cout << "next char: " << file[index] << "\n";
+				}
+				else if (file[index] == '!' && file[index + 1] == '-' && file[index + 2] == '-')
+				{
+					// printf("stopping '!--'\n");
+					// std::cout << "comment\n";
+					while (!(file[index] == '-' && file[index + 1] == '-' && file[index + 2] == '>'))
 					{
-						while (!(file[index] == '-' && file[index + 1] == '-' && file[index + 2] == '>'))
+						index++;
+						while (file[index] != '-') // shorter condition
 						{
 							index++;
-							while (file[index] != '-') // shorter condition
-							{
-								index++;
-							}
-						}
-
-						index += 2;
-					}
-					else if (file[index] == '?')
-					{
-						while (file[index++] != '?')
-							;
-					}
-					else // opening tag
-					{
-						value = "";
-
-						std::string name;
-						name.reserve(100);
-
-						while (file[index] != '>' && file[index] != '/')
-						{
-							// name[i++] = file[index++];
-							name += file[index++];
-						}
-
-						// create node
-						name.resize(name.length());
-						Node* node = new Node(name);
-						if (root == NULL)
-						{
-							root = node;
-						}
-						else
-						{
-							ancestors.top()->children.insert(node);
-						}
-
-						if (file[index] == '/')
-						{
-							while (file[index++] != '>')
-								; // whitespace
-						}
-						else
-						{
-							ancestors.push(node);
 						}
 					}
+
+					index += 2;
 				}
-				else
+				else if (file[index] == '?')
 				{
-					// parse value
-					value += file[index];
-				}
+					// std::cout << "prolog\n";
 
-				index++; // next char
+					// printf("stopping '?'\n");
+					while (file[++index] != '?')
+						;
+
+					index++; // skip '?'
+				}
+				else // opening tag
+				{
+					// printf("stopping 'opening tag'\n");
+					value.clear();
+					value.reserve(ELEMENT_VALUE_SIZE);
+
+					String name;
+					name.reserve(ELEMENT_NAME_SIZE);
+
+					while (file[index] != '>')
+					{
+						name += file[index++];
+					}
+
+					// create node
+					// name.resize(name.length());
+					static uint count = 0;
+					count++;
+					if (count % 1000000 == 0)
+					{
+						printf("size: %d\n", sizeof(Node));
+						printf("count: %d\n", count);
+					}
+
+					Node* node = new Node();
+					// node->name.swap(name);
+					// name.swap(node->name);
+					
+					// std::cout << "start tag: " << name.cpp_str() << "\n";
+
+					if (root == NULL)
+					{
+						// std::cout << "\troot\n";
+						// root = node;
+					}
+					else
+					{
+						ancestors.top()->children.insert(node);
+					}
+
+					if (file[index - 1] == '/')
+					{
+						// std::cout << "found empty: " << node->name << "\n";
+						// std::cout << "\tself-closing\n";
+					}
+					else
+					{
+						// std::cout << "pushing node: " << node->name << "\n";
+						ancestors.push(node);
+					}
+				}
+			}
+			else
+			{
+				// printf("stopping 'value' %d %d %d\n", value.capacity_, value.length_, index);
+				// printf("stopping 'value' %d\n", index);
+
+				// parse value
+				value += file[index];
 			}
 
-			reader.close();
+			// printf("last char: %c\n", file[index]); // EIIGDAGIIVPPR
+			index++; // next char
 		}
-		else
-		{
-			throw EasyXmlException("Unable to open file \"" + filePath + "\".", 101);
-		}
+
+		delete[] file;
+		std::cout << "finished parsing\n";
 
 		return root;
 	}

@@ -3,6 +3,7 @@
 
 #include "namespace.h"
 #include "exception.h"
+#include "String.h"
 #include <set>
 #include <string>
 
@@ -12,7 +13,7 @@ namespace EASYXML_NAMESPACE
 	{
 	public:
 		Node();
-		Node(const char* name, const char* value = NULL);
+		Node(const char* name, const char* value = "");
 		Node(const std::string& name, const std::string& value = "");
 		Node(const Node& rhs);
 		Node& operator=(const Node& rhs);
@@ -24,7 +25,7 @@ namespace EASYXML_NAMESPACE
 		Node* findNode(const std::string path, bool throwException = false) const;
 
 		// Members should be public so they can be readable and writable by anyone
-		std::string name;
+		String name;
 		std::string value;
 
 		class Attribute
