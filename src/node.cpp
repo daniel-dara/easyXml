@@ -9,20 +9,23 @@ namespace EASYXML_NAMESPACE
 	Node::Node() :
 		name(),
 		value(),
-		children(node_ptr_compare)
+		children(),
+		sortedChildren(node_ptr_compare)
 	{ }
 
 	// Conversion Constructors
 	Node::Node(const char* _name, const char* _value) :
 		name(_name),
 		value(_value),
-		children(node_ptr_compare)
+		children(),
+		sortedChildren(node_ptr_compare)
 	{ }
 
 	Node::Node(const std::string& _name, const std::string& _value) :
 		name(_name),
 		value(_value),
-		children(node_ptr_compare)
+		children(),
+		sortedChildren(node_ptr_compare)
 	{ }
 
 	// Copy Constructor - technically a deep copy since the "children" set is copied
@@ -30,11 +33,21 @@ namespace EASYXML_NAMESPACE
 	Node::Node(const Node& rhs) :
 		name(rhs.name),
 		value(rhs.value),
-		children(node_ptr_compare)
+		children(),
+		sortedChildren(node_ptr_compare)
 	{
-		for (std::set<Node*>::const_iterator ite = rhs.children.begin(); ite != rhs.children.end(); ite++)
+		for (std::vector<Node*>::const_iterator ite = rhs.children.begin();
+		     ite != rhs.children.end();
+		     ite++)
 		{
-			children.insert(*ite);
+			children.push_back(*ite);
+		}
+
+		for (std::set<Node*>::const_iterator ite = rhs.sortedChildren.begin();
+		     ite != rhs.sortedChildren.end();
+		     ite++)
+		{
+			sortedChildren.insert(*ite);
 		}
 	}
 
@@ -44,10 +57,21 @@ namespace EASYXML_NAMESPACE
 		if (this != &rhs)
 		{
 			children.clear();
-
-			for (std::set<Node*>::const_iterator ite = rhs.children.begin(); ite != rhs.children.end(); ite++)
+			
+			for (std::vector<Node*>::const_iterator ite = rhs.children.begin();
+			     ite != rhs.children.end();
+			     ite++)
 			{
-				children.insert(*ite);
+				children.push_back(*ite);
+			}
+
+			sortedChildren.clear();
+
+			for (std::set<Node*>::const_iterator ite = rhs.sortedChildren.begin();
+			     ite != rhs.sortedChildren.end();
+			     ite++)
+			{
+				sortedChildren.insert(*ite);
 			}
 
 			name = rhs.name;
@@ -127,9 +151,9 @@ namespace EASYXML_NAMESPACE
 		}
 
 		static std::set<Node*>::const_iterator iter;
-		iter = children.find(&query);
+		iter = sortedChildren.find(&query);
 
-		if (iter != children.end())
+		if (iter != sortedChildren.end())
 		{
 			if (restOfPath.length() == 0)
 			{

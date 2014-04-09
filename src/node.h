@@ -4,6 +4,7 @@
 #include "namespace.h"
 #include "exception.h"
 #include <set>
+#include <vector>
 #include <string>
 
 namespace EASYXML_NAMESPACE
@@ -27,7 +28,8 @@ namespace EASYXML_NAMESPACE
 		std::string name;
 		std::string value;
 
-		std::set<Node*, bool (*)(const Node*, const Node*)> children;
+		std::vector<Node*> children; // for preserving order and duplicate xml nodes
+		std::set<Node*, bool (*)(const Node*, const Node*)> sortedChildren; // for log(N) lookups
 
 	private:
 		// Comparator function used to sort the "children" set.

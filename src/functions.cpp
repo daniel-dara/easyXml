@@ -143,7 +143,8 @@ namespace EASYXML_NAMESPACE
 								// if (ancestors.top()->name == "car")
 								// 	std::cout << "car val after: " + root->value << std::endl;
 								value = "";
-								ancestors.top()->children.insert(newNode);
+								ancestors.top()->children.push_back(newNode);
+								ancestors.top()->sortedChildren.insert(newNode);
 							}
 							else
 							{
@@ -246,8 +247,9 @@ namespace EASYXML_NAMESPACE
 		{
 			out << ">\n";
 
-			for (std::set<Node*>::const_iterator it = node->children.begin(); \
-			     it != node->children.end(); ++it)
+			for (std::vector<Node*>::const_iterator it = node->children.begin();
+			     it != node->children.end();
+			     ++it)
 			{
 				saveXml(*it, out, indentation + "\t");
 			}
@@ -283,8 +285,10 @@ namespace EASYXML_NAMESPACE
 		// increase the indentation for the next level
 		indentation += "\t";
 
-		std::set<Node*>::iterator it;
-		for (it = node->children.begin(); it != node->children.end(); ++it)
+		
+		for (std::vector<Node *>::const_iterator it = node->children.begin();
+		     it != node->children.end();
+		     it++)
 		{
 			printTree((*it), indentation);
 		}
@@ -298,7 +302,7 @@ namespace EASYXML_NAMESPACE
 		}
 		else
 		{
-			std::set<Node*>::iterator it;
+			std::vector<Node*>::iterator it;
 			for (it = node->children.begin(); it != node->children.end(); ++it)
 			{
 				deleteTree(*it);
