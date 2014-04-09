@@ -78,7 +78,6 @@ A rough outline of features supported by easyXml.
 
 ### Todo List
   * High Priority:
-    * Fix memory leak/bug when there are two sibling xml nodes with the same name
     * Support/enforce XML 1.0 specifications
       * elements with mixed content
       * element attributes
@@ -86,8 +85,6 @@ A rough outline of features supported by easyXml.
   * Medium Priority:
     * Consider creating xmlTree class to manage an XML tree rather than use global functions.
       * Will depend on amount of functionality "xmlTree"s need.
-  * Low Priority:
-    * Modify Node class to use an STL set for lookup efficiency but an STL list to preserve original order.
 
 ### Unit Testing
 The "tests" directory is dedicated to unit testing. Within that directory, there is a file named "test_cases.txt". Each row in the file represents a set of arguments to pass to the unit_test program. Each column of the is a single argument: the first being the test identifier and the second being the exepected error code. The unit test program will use these arguments to read in the appropriate xml file from the "xml" folder and check the results against the expected error code. "make test" will compile the unit_test program (if necessary) and run all tests. Each test will output "PASS" or "FAIL" along with the test identifier, the received error code, and on failure, the expected error code.
