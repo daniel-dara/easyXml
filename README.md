@@ -78,6 +78,7 @@ A rough outline of features supported by easyXml.
 
 ### Todo List
   * High Priority:
+    * Fix memory leak/bug when there are two sibling xml nodes with the same name
     * Support/enforce XML 1.0 specifications
       * elements with mixed content
       * element attributes
