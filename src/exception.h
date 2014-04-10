@@ -6,23 +6,33 @@
 #include <exception>
 #include <string>
 
+enum ERROR_CODE
+{
+	FOPEN_FAILED = 1,
+	FSEEK_END_FAILED = 2,
+	FTELL_FAILED = 3,
+	FSEEK_SET_FAILED = 4,
+	FREAD_FAILED = 5,
+	FREAD_EOF = 6
+};
+
 namespace EASYXML_NAMESPACE
 {
 	class EasyXmlException : std::exception
 	{
 	public:
-		EasyXmlException(const std::string& msg, int errorCode = 0, uint lineNumber = 0);
+		EasyXmlException(const String& message, ERROR_CODE errorCode, uint lineNumber = 0);
 		EasyXmlException(const String& msg, int errorCode = 0, uint lineNumber = 0);
 		~EasyXmlException() throw ();
 
 		const char* what() const throw();
 
-		int getErrorCode() const;
+		ERROR_CODE getErrorCode() const;
 		uint getLineNumber() const;
 
 	private:
-		std::string message_;
-		const int errorCode_;
+		String message_;
+		const ERROR_CODE errorCode_;
 		const uint lineNumber_;
 	};
 }

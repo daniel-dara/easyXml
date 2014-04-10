@@ -1,4 +1,4 @@
-CC=clang++
+CC=g++
 CFLAGS=-Wall -Weffc++ -Wextra -pedantic -g -O3
 LDFLAGS=
 

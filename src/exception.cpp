@@ -7,39 +7,33 @@
 
 namespace EASYXML_NAMESPACE
 {
-	EasyXmlException::EasyXmlException(const std::string& message, int errorCode, uint lineNumber) :
-		message_(message),
+	EasyXmlException::EasyXmlException(const String& message, ERROR_CODE errorCode, uint lineNumber) :
+		message_("EasyXmlException: "),
 		errorCode_(errorCode),
 		lineNumber_(lineNumber)
 	{
-		// If a line number was specified...
-		if (lineNumber_ > 0)
+		message_ += message + '\n';
+
+		if (lineNumber > 0)
 		{
-			// convert "lineNumber" to a string.
 			std::ostringstream ss;
 			ss << lineNumber_;
-
-			replaceAll(message_, "%d", ss.str());
-
-			message_ += "\n";
+			message_ += "At line " + ss.str() + "\n.";
 		}
 	}
-
+				                       
 	EasyXmlException::EasyXmlException(const String& message, int errorCode, uint lineNumber) :
-		message_(message.c_str()),
-		errorCode_(errorCode),
+		message_("EasyXmlException: "),
+		errorCode_(static_cast<ERROR_CODE>(errorCode)),
 		lineNumber_(lineNumber)
 	{
-		// If a line number was specified...
-		if (lineNumber_ > 0)
+		message_ += message + '\n';
+
+		if (lineNumber > 0)
 		{
-			// convert "lineNumber" to a string.
 			std::ostringstream ss;
 			ss << lineNumber_;
-
-			replaceAll(message_, "%d", ss.str());
-
-			message_ += "\n";
+			message_ += "At line " + ss.str() + "\n.";
 		}
 	}
 
@@ -51,7 +45,7 @@ namespace EASYXML_NAMESPACE
 		return message_.c_str();
 	}
 
-	int EasyXmlException::getErrorCode() const
+	ERROR_CODE EasyXmlException::getErrorCode() const
 	{
 		return errorCode_;
 	}

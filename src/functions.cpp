@@ -7,6 +7,8 @@
 #include <stack>
 #include <cstring>
 #include <vector>
+#include <cerrno>
+#include <new>
 
 namespace EASYXML_NAMESPACE
 {
@@ -136,27 +138,85 @@ namespace EASYXML_NAMESPACE
 
 	Node* loadXml2(const std::string& filePath)
 	{
-		Node* root = NULL;
-
+		// Open a stream to the file.
 		FILE* fp = fopen(filePath.c_str(), "rb");
-		fseek(fp, 0, SEEK_END);
-		size_t len = ftell(fp);
-		fseek(fp, 0, SEEK_SET);
 
-		char* file = new char[len];
-		fread(file, sizeof(char), len, fp);
+		if (fp == NULL)
+		{
+			throw EasyXmlException("fopen() - Error opening file \"" + filePath + "\": " + strerror(errno),
+			                       FOPEN_FAILED);
+		}
+
+		// Move the stream position indicator to the end of the file.
+		if (fseek(fp, 0, SEEK_END))
+		{
+			throw EasyXmlException("fseek() - Error reading file \"" + filePath + "\": " + strerror(errno),
+			                       FSEEK_END_FAILED);
+		}
+
+		// Get the stream position indicator's length. This is the length of the file (in bytes).
+		long int fileLength = ftell(fp);
+
+		if (fileLength == -1L)
+		{
+			throw EasyXmlException("ftell() - Error reading file \"" + filePath + "\": " + strerror(errno),
+			                       FTELL_FAILED);
+		}
+
+		// Move the stream position indicator to the beginning of the file.
+		if (fseek(fp, 0, SEEK_SET))
+		{
+			throw EasyXmlException("fseek() - Error reading file \"" + filePath + "\": " + strerror(errno),
+			                       FSEEK_SET_FAILED);
+		}
+
+		char* file = NULL;
+
+		try
+		{
+			// Allocate memory for file.
+			file = new char[fileLength];
+		}
+		catch (const std::bad_alloc& e)
+		{
+			throw EasyXmlException("Error allocating memory for file \"" + filePath + "\": " + e.what());
+		}
+
+		// Read the entire file into memory.
+		if (fileLength != static_cast<long int>(fread(file, sizeof(char), fileLength, fp)))
+		{
+			if (ferror(fp))
+			{
+				throw EasyXmlException("fread() - Error reading file \"" + filePath + "\": " +
+				                       strerror(errno), FREAD_FAILED);
+			}
+			else if (feof(fp))
+			{
+				throw EasyXmlException("fread() - Reached early EOF in file \"" + filePath + "\": " +
+				                       strerror(errno), FREAD_EOF);
+			}
+		}
+
+		// The file contents are now in memory and the file stream can be closed.
 		fclose(fp);
+
+		printf("Node size: %d\n", sizeof(Node));
+		printf("String size: %d\n", sizeof(String));
+		printf("std::string size: %d\n", sizeof(std::string));
+		printf("set: %d\n", sizeof(std::set<Node*, bool (*)(const Node*, const Node*)>));
+
+		Node* root = NULL;
 
 		Stack<Node*> ancestors;
 		// Stack2<Node*> ancestors(100);
 
-		uint index = 0;
+		long int index = 0;
 
 		// for values
 		String value;
 		value.reserve(ELEMENT_VALUE_SIZE);
 
-		while (index < len)
+		while (index < fileLength)
 		{
 			// printf("starting\n");
 			if (file[index] == '<')
@@ -171,7 +231,19 @@ namespace EASYXML_NAMESPACE
 					// std::cout << "with value: " << value << "\n*\n";
 					// std::cout << "value: " << value.cpp_str() << "\n";
 					// value.resize(value.length());
-					// ancestors.top()->value = value.cpp_str();
+
+					// try
+					// {
+					// 	ancestors.top()->value = value;
+					// }
+					// catch (std::bad_alloc e)
+					// {
+					// 	std::cout << "bad_alloc: " << e.what() << "\n";
+					// 	return NULL;
+					// }
+					ancestors.top()->value.swap(value);
+					// char* test = new char[92];
+					// char test = 'c';
 
 					String name;
 					name.reserve(ELEMENT_NAME_SIZE);
@@ -234,7 +306,6 @@ namespace EASYXML_NAMESPACE
 					count++;
 					if (count % 1000000 == 0)
 					{
-						printf("size: %d\n", sizeof(Node));
 						printf("count: %d\n", count);
 					}
 
@@ -251,7 +322,8 @@ namespace EASYXML_NAMESPACE
 					}
 					else
 					{
-						ancestors.top()->children.insert(node);
+						ancestors.top()->children.push_back(node);
+						ancestors.top()->sortedChildren.insert(node);
 					}
 
 					if (file[index - 1] == '/')
@@ -280,7 +352,7 @@ namespace EASYXML_NAMESPACE
 		}
 
 		delete[] file;
-		std::cout << "finished parsing\n";
+		std::cout << "finished parsing" << std::endl;
 
 		return root;
 	}
@@ -468,7 +540,8 @@ namespace EASYXML_NAMESPACE
 								// if (ancestors.top()->name == "car")
 								// 	std::cout << "car val after: " + root->value << std::endl;
 								value = "";
-								ancestors.top()->children.insert(newNode);
+								ancestors.top()->children.push_back(newNode);
+								ancestors.top()->sortedChildren.insert(newNode);
 							}
 							else
 							{
@@ -573,7 +646,7 @@ namespace EASYXML_NAMESPACE
 		{
 			out << ">\n";
 
-			for (std::set<Node*>::const_iterator it = node->children.begin(); \
+			for (std::vector<Node*>::const_iterator it = node->children.begin(); \
 			     it != node->children.end(); ++it)
 			{
 				saveXml(*it, out, indentation + "\t");
@@ -587,13 +660,14 @@ namespace EASYXML_NAMESPACE
 		}
 		else
 		{
-			std::string value(node->value);
+			String value(node->value);
 
 			// Replace bad chars with XML escape sequences. Ampersands must be escaped first otherwise
 			// ampersands from other escape sequences will be double encoded.
 			for (int i = 0; i < 5; i++)
 			{
-				replaceAll(value, esc_values[i], esc_sequences[i]);
+				// TODO: write replacement function
+				// replaceAll(value, esc_values[i], esc_sequences[i]);
 			}
 
 			out << ">" << value;
@@ -623,7 +697,7 @@ namespace EASYXML_NAMESPACE
 		// increase the indentation for the next level
 		indentation += "\t";
 
-		std::set<Node*>::const_iterator it;
+		std::vector<Node*>::const_iterator it;
 		for (it = node->children.begin(); it != node->children.end(); ++it)
 		{
 			printTree((*it), indentation);
@@ -638,7 +712,7 @@ namespace EASYXML_NAMESPACE
 		}
 		else
 		{
-			std::set<Node*>::iterator it;
+			std::vector<Node*>::iterator it;
 			for (it = node->children.begin(); it != node->children.end(); ++it)
 			{
 				deleteTree(*it);

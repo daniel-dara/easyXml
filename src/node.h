@@ -4,6 +4,7 @@
 #include "namespace.h"
 #include "exception.h"
 #include "String.h"
+#include <vector>
 #include <set>
 #include <string>
 
@@ -15,8 +16,8 @@ namespace EASYXML_NAMESPACE
 		Node();
 		Node(const char* name, const char* value = "");
 		Node(const std::string& name, const std::string& value = "");
-		Node(const Node& rhs);
-		Node& operator=(const Node& rhs);
+		// Node(const Node& rhs);
+		// Node& operator=(const Node& rhs);
 
 		std::string val() const;
 		// Templated short-hand "getter" function
@@ -26,7 +27,7 @@ namespace EASYXML_NAMESPACE
 
 		// Members should be public so they can be readable and writable by anyone
 		String name;
-		std::string value;
+		String value;
 
 		class Attribute
 		{
@@ -46,7 +47,8 @@ namespace EASYXML_NAMESPACE
 		};
 
 		std::set<Attribute> attributes;
-		std::set<Node*, bool (*)(const Node*, const Node*)> children;
+		std::vector<Node*> children;
+		std::set<Node*, bool (*)(const Node*, const Node*)> sortedChildren;
 
 	private:
 		// Comparator function used to sort the "children" set.

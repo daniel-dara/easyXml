@@ -10,7 +10,8 @@ namespace EASYXML_NAMESPACE
 		name(),
 		value(),
 		attributes(),
-		children(node_ptr_compare)
+		children(),
+		sortedChildren(node_ptr_compare)
 	{ }
 
 	// Conversion Constructors
@@ -18,62 +19,76 @@ namespace EASYXML_NAMESPACE
 		name(_name),
 		value(_value),
 		attributes(),
-		children(node_ptr_compare)
+		children(),
+		sortedChildren(node_ptr_compare)
 	{ }
 
 	Node::Node(const std::string& _name, const std::string& _value) :
 		name(_name),
 		value(_value),
 		attributes(),
-		children(node_ptr_compare)
+		children(),
+		sortedChildren(node_ptr_compare)
 	{ }
 
-	// Copy Constructor - technically a deep copy since the "children" set is copied
-	// but note that the set is just a bunch of pointers. The actual child nodes are not copied.
-	Node::Node(const Node& rhs) :
-		name(rhs.name),
-		value(rhs.value),
-		attributes(),
-		children(node_ptr_compare)
-	{
-		for (std::set<Attribute>::const_iterator ite = rhs.attributes.begin(); ite != rhs.attributes.end(); ite++)
-		{
-			attributes.insert(*ite);
-		}
+	// // Copy Constructor - technically a deep copy since the "children" set is copied
+	// // but note that the set is just a bunch of pointers. The actual child nodes are not copied.
+	// Node::Node(const Node& rhs) :
+	// 	name(rhs.name),
+	// 	value(rhs.value),
+	// 	attributes(),
+	// 	children(),
+	// 	sortedChildren(node_ptr_compare)
+	// {
+	// 	for (std::set<Attribute>::const_iterator ite = rhs.attributes.begin(); ite != rhs.attributes.end(); ite++)
+	// 	{
+	// 		attributes.insert(*ite);
+	// 	}
 
-		for (std::set<Node*>::const_iterator ite = rhs.children.begin(); ite != rhs.children.end(); ite++)
-		{
-			children.insert(*ite);
-		}
-	}
+	// 	for (std::vector<Node*>::const_iterator ite = rhs.children.begin(); ite != rhs.children.end(); ite++)
+	// 	{
+	// 		children.push_back(*ite);
+	// 	}
 
-	// Assignment - deep copy (beware, this loses all children pointers but does not free them)
-	Node& Node::operator=(const Node& rhs)
-	{
-		if (this != &rhs)
-		{
-			attributes.clear();
-			for (std::set<Attribute>::const_iterator ite = rhs.attributes.begin(); ite != rhs.attributes.end(); ite++)
-			{
-				attributes.insert(*ite);
-			}
+	// 	for (std::set<Node*>::const_iterator ite = rhs.sortedChildren.begin(); ite != rhs.sortedChildren.end(); ite++)
+	// 	{
+	// 		sortedChildren.insert(*ite);
+	// 	}
+	// }
 
-			children.clear();
-			for (std::set<Node*>::const_iterator ite = rhs.children.begin(); ite != rhs.children.end(); ite++)
-			{
-				children.insert(*ite);
-			}
+	// // Assignment - deep copy (beware, this loses all children pointers but does not free them)
+	// Node& Node::operator=(const Node& rhs)
+	// {
+	// 	if (this != &rhs)
+	// 	{
+	// 		attributes.clear();
+	// 		for (std::set<Attribute>::const_iterator ite = rhs.attributes.begin(); ite != rhs.attributes.end(); ite++)
+	// 		{
+	// 			attributes.insert(*ite);
+	// 		}
 
-			name = rhs.name;
-			value = rhs.value;
-		}
+	// 		children.clear();
+	// 		for (std::vector<Node*>::const_iterator ite = rhs.children.begin(); ite != rhs.children.end(); ite++)
+	// 		{
+	// 			children.push_back(*ite);
+	// 		}
 
-		return *this;
-	}
+	// 		sortedChildren.clear();
+	// 		for (std::set<Node*>::const_iterator ite = rhs.sortedChildren.begin(); ite != rhs.sortedChildren.end(); ite++)
+	// 		{
+	// 			sortedChildren.insert(*ite);
+	// 		}
+
+	// 		name = rhs.name;
+	// 		value = rhs.value;
+	// 	}
+
+	// 	return *this;
+	// }
 
 	std::string Node::val() const
 	{
-		return value;
+		return value.c_str();
 	}
 
 	// This function will only be called if the given type didn't match any of the template
@@ -88,7 +103,7 @@ namespace EASYXML_NAMESPACE
 	template<>
 	std::string Node::val<std::string>() const
 	{
-		return value;
+		return value.c_str();
 	}
 
 	template<>
@@ -141,9 +156,9 @@ namespace EASYXML_NAMESPACE
 		}
 
 		static std::set<Node*>::const_iterator iter;
-		iter = children.find(&query);
+		iter = sortedChildren.find(&query);
 
-		if (iter != children.end())
+		if (iter != sortedChildren.end())
 		{
 			if (restOfPath.length() == 0)
 			{

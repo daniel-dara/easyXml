@@ -9,25 +9,34 @@ class String
 {
 public:
 	String() :
-		buf_(NULL),
 		capacity_(0),
 		length_(0),
+		buf_(NULL),
 		c_str_(NULL)
 	{ }
 
 	String(const String& rhs) :
-		buf_(new char[rhs.capacity_]),
 		capacity_(rhs.capacity_),
 		length_(rhs.length_),
-		c_str_(rhs.c_str_)
+		buf_(new char[rhs.capacity_]),
+		c_str_(NULL)
 	{
 		memcpy(buf_, rhs.buf_, length_);
 	}
 
+	String(const char* rhs) :
+		capacity_(strlen(rhs)),
+		length_(capacity_),
+		buf_(new char[capacity_]),
+		c_str_(NULL)
+	{
+		memcpy(buf_, rhs, length_);
+	}
+
 	String(const std::string& rhs) :
-		buf_(new char[rhs.capacity()]),
 		capacity_(rhs.capacity()),
 		length_(rhs.length()),
+		buf_(new char[capacity_]),
 		c_str_(NULL)
 	{
 		memcpy(buf_, rhs.c_str(), length_);
@@ -54,7 +63,7 @@ public:
 		}
 	}
 
-	bool operator==(const String& rhs)
+	bool operator==(const String& rhs) const
 	{
 		if (length_ != rhs.length_)
 		{
@@ -72,7 +81,7 @@ public:
 		return true;
 	}
 
-	bool operator!=(const String& rhs)
+	bool operator!=(const String& rhs) const
 	{
 		return !(*this == rhs);
 	}
@@ -132,23 +141,51 @@ public:
 		return *this;
 	}
 
+	String& operator+=(const String& rhs)
+	{
+		append(rhs);
+		return *this;
+	}
+
+	template <class T> void swap ( T& a, T& b )
+	{
+		T c(a); a=b; b=c;
+	}
+
 	void swap(String& rhs)
 	{
-		std::swap(buf_, rhs.buf_);
-		// char* temp_buf_ = buf_;
-		uint temp_capacity_ = capacity_;
-		uint temp_length_ = length_;
-		char* temp_c_str_ = c_str_;
+		swap(buf_, rhs.buf_);
+		swap(capacity_, rhs.capacity_);
+		swap(length_, rhs.length_);
+		swap(c_str_, rhs.c_str_);
 
-		// buf_ = rhs.buf_;
-		capacity_ = rhs.capacity_;
-		length_ = rhs.length_;
-		c_str_ = rhs.c_str_;
+	}
 
-		// rhs.buf_ = temp_buf_;
-		rhs.capacity_ = temp_capacity_;
-		rhs.length_ = temp_length_;
-		rhs.c_str_ = temp_c_str_;
+	void append(const String& rhs)
+	{
+		uint len = rhs.length_;
+
+		if (length_ + len >= capacity_)
+		{
+			do
+			{
+				capacity_ = (capacity_ ? capacity_ * 2 : 1);
+			}
+			while (length_ + len >= capacity_);
+
+			char* buf = new char[capacity_];
+
+			if (buf_ != NULL)
+			{
+				memcpy(buf, buf_, length_);
+				delete[] buf_;
+			}
+
+			buf_ = buf;
+		}
+
+		memcpy(buf_ + length_, rhs.buf_, len);
+		length_ += len;	
 	}
 
 	void append(const char* c_str)
@@ -174,7 +211,7 @@ public:
 			buf_ = buf;
 		}
 
-		memcpy(buf_, c_str, len);
+		memcpy(buf_ + length_, c_str, len);
 		length_ += len;
 	}
 
@@ -260,15 +297,15 @@ public:
 	}
 
 public:
-	char* buf_;
 	uint capacity_;
 	uint length_;
+	char* buf_;
 	mutable char* c_str_;
 };
 
 inline String operator+(const char* rhs, const String& lhs)
 {
-	return lhs + rhs;
+	return String(rhs) + lhs;
 }
 
 inline std::ostream& operator<<(std::ostream& out, const String& rhs)
