@@ -1,6 +1,8 @@
 #include "functions.h"
-#include "exception.h"
+#include "Exception.h"
 #include "String.h"
+#include "Stack.h"
+#include "Set.h"
 #include <iostream>
 #include <algorithm>
 #include <fstream>
@@ -16,125 +18,6 @@ namespace EASYXML_NAMESPACE
 	const uint ELEMENT_VALUE_SIZE = 50;
 	const std::string esc_sequences[] = {"&amp;", "&lt;", "&gt;", "&apos;", "&quot;"};
 	const std::string esc_values[] = {"&", "<", ">", "'", "\""};
-
-	template <typename T>
-	class Stack2
-	{
-	public:
-		Stack2() : capacity_(1), top_(-1), array_(new T[capacity_])
-		{ }
-
-		Stack2(int capacity) : capacity_(capacity), top_(-1), array_(new T[capacity_])
-		{ }
-
-		~Stack2()
-		{
-			delete[] array_;
-		}
-
-		void push(T val)
-		{
-			if (top_ < capacity_)
-			{
-				array_[++top_] = val;
-			}
-		}
-
-		T top()
-		{
-			if (top_ == -1)
-			{
-				return NULL;
-			}
-			else
-			{
-				return array_[top_];
-			}
-		}
-
-		T pop()
-		{
-			if (top_ > -1)
-			{
-				return array_[top_--];
-			}
-			else
-			{
-				return NULL;
-			}
-		}
-
-	private:
-		int capacity_;
-		int top_;
-		T* array_;
-	};
-
-	template <typename T>
-	class Stack
-	{
-	public:
-		Stack() : size(0), top_(NULL)
-		{ }
-
-		~Stack()
-		{
-			while (top_ != NULL)
-			{
-				pop();
-			}
-		}
-
-		void push(T val)
-		{
-			if (top_ == NULL)
-			{
-				top_ = new Node_(val, NULL);
-			}
-			else
-			{
-				struct Node_* node = new Node_(val, top_);
-				top_ = node;
-			}
-		}
-
-		T top()
-		{
-			if (top_ == NULL)
-			{
-				return NULL;
-			}
-			else
-			{
-				return top_->val;
-			}
-		}
-
-		T pop()
-		{
-			T val = top_->val;
-			struct Node_* temp = top_;
-			top_ = top_->next;
-			delete temp;
-			return val;
-		}
-
-	private:
-		Stack(const Stack& rhs);
-		Stack& operator=(const Stack& rhs);
-
-		struct Node_
-		{
-			Node_(T Val, struct Node_* Next) : val(Val), next(Next)
-			{ }
-
-			T val;
-			struct Node_* next;
-		};
-
-		uint size;
-		struct Node_* top_;
-	};
 
 	Node* loadXml2(const std::string& filePath)
 	{
@@ -241,8 +124,10 @@ namespace EASYXML_NAMESPACE
 					// 	std::cout << "bad_alloc: " << e.what() << "\n";
 					// 	return NULL;
 					// }
+
 					ancestors.top()->value.swap(value);
-					// char* test = new char[92];
+
+					// char* test = new char[1];
 					// char test = 'c';
 
 					String name;
@@ -310,8 +195,12 @@ namespace EASYXML_NAMESPACE
 					}
 
 					Node* node = new Node();
-					// node->name.swap(name);
-					// name.swap(node->name);
+
+					// char* t = new char[52];
+					// char* t2 = new char(name.length());
+
+					node->name.swap(name);
+					name.swap(node->name);
 					
 					// std::cout << "start tag: " << name.cpp_str() << "\n";
 

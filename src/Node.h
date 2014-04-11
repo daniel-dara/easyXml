@@ -2,7 +2,7 @@
 #define NODE_H
 
 #include "namespace.h"
-#include "exception.h"
+#include "Exception.h"
 #include "String.h"
 #include <vector>
 #include <set>

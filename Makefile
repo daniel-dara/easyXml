@@ -1,10 +1,10 @@
-CC=g++
+CC=clang++
 CFLAGS=-Wall -Weffc++ -Wextra -pedantic -g -O3
 LDFLAGS=
 
 SRC_DIR=src
 VPATH=$(SRC_DIR)
-SOURCES=functions.cpp exception.cpp node.cpp
+SOURCES=functions.cpp Exception.cpp Node.cpp
 OBJ_DIR=obj
 OBJECTS=$(addprefix $(OBJ_DIR)/, $(SOURCES:.cpp=.o))
 HEADERS=$(SOURCES:.cpp=.h)

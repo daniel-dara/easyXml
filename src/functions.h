@@ -2,7 +2,7 @@
 #define FUNCTIONS_H
 
 #include "namespace.h"
-#include "node.h"
+#include "Node.h"
 
 namespace EASYXML_NAMESPACE
 {

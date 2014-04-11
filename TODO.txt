@@ -1,0 +1,15 @@
+Set and iterators
+- Implement Node_->next() (successor) for Set
+- Address begin() == end() issue
+- Make a list of undefined behaviors
+- Test Set and iteration
+- Add comments
+
+Other necessary classes
+- Create Vector
+- Possibly move parts of Set to binary tree and have Set inherit
+
+easyXml
+- Use new classes and try to decrease memory usage below tinyXmls
+- Add error handling
+- Test unlikely() path optimizations
