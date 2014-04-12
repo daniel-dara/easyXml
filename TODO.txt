@@ -1,13 +1,14 @@
 Set and iterators
-- Implement Node_->next() (successor) for Set
 - Address begin() == end() issue
 - Make a list of undefined behaviors
-- Test Set and iteration
+- Test List/Set and iteration
 - Add comments
 
-Other necessary classes
-- Create Vector
-- Possibly move parts of Set to binary tree and have Set inherit
+Tree
+- Need a balanced tree (AVL or Red Black)
+
+String
+- Get rid of c_str buffer and instead allocate one extra byte for null character
 
 easyXml
 - Use new classes and try to decrease memory usage below tinyXmls

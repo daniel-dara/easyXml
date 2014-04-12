@@ -246,278 +246,278 @@ namespace EASYXML_NAMESPACE
 		return root;
 	}
 
-	Node* loadXml(const std::string& filePath)
-	{
-		std::ifstream reader(filePath.c_str());
+	// Node* loadXml(const std::string& filePath)
+	// {
+	// 	std::ifstream reader(filePath.c_str());
 
-		if (reader.is_open())
-		{
-			std::stack<Node*> ancestors;
-			Node* root = NULL;
+	// 	if (reader.is_open())
+	// 	{
+	// 		std::stack<Node*> ancestors;
+	// 		Node* root = NULL;
 
-			std::string line, line2;
-			std::string value;
-			uint lineNumber = 0;
+	// 		std::string line, line2;
+	// 		std::string value;
+	// 		uint lineNumber = 0;
 
-			// read file line by line
-			while (getline(reader, line2))
-			{
-				// lineNumber++;
-				line += line2;
-			}
-				size_t index = 0;
-				lineNumber = 1;
+	// 		// read file line by line
+	// 		while (getline(reader, line2))
+	// 		{
+	// 			// lineNumber++;
+	// 			line += line2;
+	// 		}
+	// 			size_t index = 0;
+	// 			lineNumber = 1;
 
-			{
-				// mixed content should retain new lines between actual values
-				// line += '\n';
+	// 		{
+	// 			// mixed content should retain new lines between actual values
+	// 			// line += '\n';
 
-				while (index < line.length())
-				{
-					size_t openIndex = line.find('<', index);
-					size_t closeIndex = line.find("</" , index, 2);
-					const size_t notFound = std::string::npos;
+	// 			while (index < line.length())
+	// 			{
+	// 				size_t openIndex = line.find('<', index);
+	// 				size_t closeIndex = line.find("</" , index, 2);
+	// 				const size_t notFound = std::string::npos;
 
-					if (openIndex == notFound && closeIndex == notFound)
-					{ 
-						// the rest of this line is probably a value so save it
-						value += line.substr(index);
-						index = line.length();
-					}
-					// Check if this is an opening tag.
-					else if (openIndex < closeIndex || closeIndex == notFound)
-					{ 
-						std::string name = getElementName(line, openIndex + 1);
+	// 				if (openIndex == notFound && closeIndex == notFound)
+	// 				{ 
+	// 					// the rest of this line is probably a value so save it
+	// 					value += line.substr(index);
+	// 					index = line.length();
+	// 				}
+	// 				// Check if this is an opening tag.
+	// 				else if (openIndex < closeIndex || closeIndex == notFound)
+	// 				{ 
+	// 					std::string name = getElementName(line, openIndex + 1);
 
-						// Make sure the tag is not empty.
-						if (name.length() == 0)
-						{
-							throw EasyXmlException("No name in opening tag on line %d.", 9, lineNumber);
-						}
-						// Check if the tag is a comment.
-						else if (name.length() >= 3 && name.substr(0, 3) == "!--")
-						{
-							std::string comment;
+	// 					// Make sure the tag is not empty.
+	// 					if (name.length() == 0)
+	// 					{
+	// 						throw EasyXmlException("No name in opening tag on line %d.", 9, lineNumber);
+	// 					}
+	// 					// Check if the tag is a comment.
+	// 					else if (name.length() >= 3 && name.substr(0, 3) == "!--")
+	// 					{
+	// 						std::string comment;
 
-							size_t endIndex = openIndex + 4; // Index of comment close.
-							size_t startIndex = endIndex; // Index to start search (after "!--")
-							const uint origLineNumber = lineNumber; // Save the line number of the opening tag.
+	// 						size_t endIndex = openIndex + 4; // Index of comment close.
+	// 						size_t startIndex = endIndex; // Index to start search (after "!--")
+	// 						const uint origLineNumber = lineNumber; // Save the line number of the opening tag.
 
-							// If the end of the comment is not on this line, we must keep searching.
-							while ( (endIndex = line.find("-->", startIndex)) == notFound )
-							{
-								// Store comment contents, for use in future versions of easyXml.
-								comment += line.substr(startIndex) + "\n";
+	// 						// If the end of the comment is not on this line, we must keep searching.
+	// 						while ( (endIndex = line.find("-->", startIndex)) == notFound )
+	// 						{
+	// 							// Store comment contents, for use in future versions of easyXml.
+	// 							comment += line.substr(startIndex) + "\n";
 
-								// Reset startIndex to the beginning of the new line.
-								startIndex = 0; 
+	// 							// Reset startIndex to the beginning of the new line.
+	// 							startIndex = 0; 
 
-								if (!getline(reader, line))
-								{
-									throw EasyXmlException("Unclosed comment at line %d.", 8, origLineNumber);
-								}
+	// 							if (!getline(reader, line))
+	// 							{
+	// 								throw EasyXmlException("Unclosed comment at line %d.", 8, origLineNumber);
+	// 							}
 
-								lineNumber++;
-							}
+	// 							lineNumber++;
+	// 						}
 
-							comment += line.substr(startIndex, endIndex - startIndex);
+	// 						comment += line.substr(startIndex, endIndex - startIndex);
 
-							index = endIndex + 3;
+	// 						index = endIndex + 3;
 
-							// TODO: Possibly store comments in the xml tree somehow, useful for preserving
-							// them if data is to be written back to a file.
-						}
-						// Check if the tag is an xml Prolog.
-						else if (name.length() >= 4 && name.substr(0, 4) == "?xml")
-						{
-							if (lineNumber != 1)
-							{
-								throw EasyXmlException("XML Prolog must appear on the first line." \
-								                       " Prolog found on line %d.", 6, lineNumber);
-							}
+	// 						// TODO: Possibly store comments in the xml tree somehow, useful for preserving
+	// 						// them if data is to be written back to a file.
+	// 					}
+	// 					// Check if the tag is an xml Prolog.
+	// 					else if (name.length() >= 4 && name.substr(0, 4) == "?xml")
+	// 					{
+	// 						if (lineNumber != 1)
+	// 						{
+	// 							throw EasyXmlException("XML Prolog must appear on the first line." \
+	// 							                       " Prolog found on line %d.", 6, lineNumber);
+	// 						}
 
-							if (name[name.length() - 1] != '?')
-							{
-								throw EasyXmlException("Malformed XML Prolog. Must end with \"?>\" instead" \
-								                       " of \">\" at line %d.", 7, lineNumber);
-							}
+	// 						if (name[name.length() - 1] != '?')
+	// 						{
+	// 							throw EasyXmlException("Malformed XML Prolog. Must end with \"?>\" instead" \
+	// 							                       " of \">\" at line %d.", 7, lineNumber);
+	// 						}
 
-							// Use the original name since the new name may have been self-closing.
-							index = openIndex + 1 + name.length() + 1;
+	// 						// Use the original name since the new name may have been self-closing.
+	// 						index = openIndex + 1 + name.length() + 1;
 
-							// TODO: Parse xml Prolog for document information.
-						}
-						// It must be a node.
-						else
-						{
-							int tagLength = name.length();
+	// 						// TODO: Parse xml Prolog for document information.
+	// 					}
+	// 					// It must be a node.
+	// 					else
+	// 					{
+	// 						int tagLength = name.length();
 
-							bool isSelfClosing = (name[name.length() - 1] == '/');
+	// 						bool isSelfClosing = (name[name.length() - 1] == '/');
 
-							// Check for attributes
-							std::string attributes = "";
-							size_t attrIndex = name.find(" ");
+	// 						// Check for attributes
+	// 						std::string attributes = "";
+	// 						size_t attrIndex = name.find(" ");
 
-							// Fix the name if there were attributes
-							if (attrIndex != notFound)
-							{
-								attributes.swap(name); // quicker than copy
-								name = attributes.substr(0, attrIndex);
-							}
+	// 						// Fix the name if there were attributes
+	// 						if (attrIndex != notFound)
+	// 						{
+	// 							attributes.swap(name); // quicker than copy
+	// 							name = attributes.substr(0, attrIndex);
+	// 						}
 
-							Node* newNode = new Node(name);
+	// 						Node* newNode = new Node(name);
 
-							// Parse attributes
-							while (attrIndex != notFound && Trim(attributes.substr(attrIndex)) != "/")
-							{
-								size_t equalsIndex = attributes.find("=", attrIndex + 1);
+	// 						// Parse attributes
+	// 						while (attrIndex != notFound && Trim(attributes.substr(attrIndex)) != "/")
+	// 						{
+	// 							size_t equalsIndex = attributes.find("=", attrIndex + 1);
 
-								if (equalsIndex == notFound)
-								{
-									throw EasyXmlException("Equals sign not found after attribute name" \
-									                       " at line %d.", 10, lineNumber);
-								}
+	// 							if (equalsIndex == notFound)
+	// 							{
+	// 								throw EasyXmlException("Equals sign not found after attribute name" \
+	// 								                       " at line %d.", 10, lineNumber);
+	// 							}
 
-								size_t firstQuoteIndex = attributes.find("\"", equalsIndex + 1);
+	// 							size_t firstQuoteIndex = attributes.find("\"", equalsIndex + 1);
 
-								if (firstQuoteIndex == notFound)
-								{
-									throw EasyXmlException("Missing double quote after equals sign in" \
-									                     " element attribute at line %d.", 11, lineNumber);
-								}
+	// 							if (firstQuoteIndex == notFound)
+	// 							{
+	// 								throw EasyXmlException("Missing double quote after equals sign in" \
+	// 								                     " element attribute at line %d.", 11, lineNumber);
+	// 							}
 
-								size_t secondQuoteIndex = attributes.find("\"", firstQuoteIndex + 1);
+	// 							size_t secondQuoteIndex = attributes.find("\"", firstQuoteIndex + 1);
 
-								if (secondQuoteIndex == notFound)
-								{
-									throw EasyXmlException("Missing double quote after the value in" \
-									                     " element attribute at line %d.", 12, lineNumber);
-								}
+	// 							if (secondQuoteIndex == notFound)
+	// 							{
+	// 								throw EasyXmlException("Missing double quote after the value in" \
+	// 								                     " element attribute at line %d.", 12, lineNumber);
+	// 							}
 
-								int attrNameLength = equalsIndex - attrIndex;
-								int attrValLength = secondQuoteIndex - firstQuoteIndex - 1;
+	// 							int attrNameLength = equalsIndex - attrIndex;
+	// 							int attrValLength = secondQuoteIndex - firstQuoteIndex - 1;
 
-								// Parse attribute name and remove whitespace
-								std::string attrName = attributes.substr(attrIndex, attrNameLength);
-								attrName = trim(attrName);
+	// 							// Parse attribute name and remove whitespace
+	// 							std::string attrName = attributes.substr(attrIndex, attrNameLength);
+	// 							attrName = trim(attrName);
 
-								// Parse attribute value
-								std::string attrVal = attributes.substr(firstQuoteIndex + 1, attrValLength);
+	// 							// Parse attribute value
+	// 							std::string attrVal = attributes.substr(firstQuoteIndex + 1, attrValLength);
 
-								newNode->attributes.insert(Node::Attribute(attrName, attrVal));
+	// 							newNode->attributes.insert(Node::Attribute(attrName, attrVal));
 
-								attrIndex = attributes.find(" ", secondQuoteIndex + 1);
-							}
+	// 							attrIndex = attributes.find(" ", secondQuoteIndex + 1);
+	// 						}
 
-							if (isSelfClosing)
-							{
-								// Trim the '/' and any whitespace in between the name and closing bracket.
-								// We must save the original name so we know how far to advance the index
-								// pointer used for pasring.
-								std::string temp = name.substr(0, name.length() - 1);
-								newNode->name = rtrim(temp);
-							}
+	// 						if (isSelfClosing)
+	// 						{
+	// 							// Trim the '/' and any whitespace in between the name and closing bracket.
+	// 							// We must save the original name so we know how far to advance the index
+	// 							// pointer used for pasring.
+	// 							std::string temp = name.substr(0, name.length() - 1);
+	// 							newNode->name = rtrim(temp);
+	// 						}
 
-							if (!ancestors.empty())
-							{
-								// To support mixed content, store any previously found values into parent
-								// if (ancestors.top()->name == "car")
-								// 	std::cout << "val add to: " + value << std::endl;
+	// 						if (!ancestors.empty())
+	// 						{
+	// 							// To support mixed content, store any previously found values into parent
+	// 							// if (ancestors.top()->name == "car")
+	// 							// 	std::cout << "val add to: " + value << std::endl;
 
-								ancestors.top()->value += value;
+	// 							ancestors.top()->value += value;
 
-								// if (ancestors.top()->name == "car")
-								// 	std::cout << "car val after: " + root->value << std::endl;
-								value = "";
-								ancestors.top()->children.push_back(newNode);
-								ancestors.top()->sortedChildren.insert(newNode);
-							}
-							else
-							{
-								if (root != NULL)
-								{
-									// 2.1.2a
-									throw EasyXmlException("Malformed XML: Multiple root nodes found." \
-										" First root node is \"" + root->name + "\", second node is \"" + \
-										newNode->name + "\" defined at line %d.", 2, lineNumber);
-								}
+	// 							// if (ancestors.top()->name == "car")
+	// 							// 	std::cout << "car val after: " + root->value << std::endl;
+	// 							value = "";
+	// 							ancestors.top()->children.push_back(newNode);
+	// 							ancestors.top()->sortedChildren.insert(newNode);
+	// 						}
+	// 						else
+	// 						{
+	// 							if (root != NULL)
+	// 							{
+	// 								// 2.1.2a
+	// 								throw EasyXmlException("Malformed XML: Multiple root nodes found." \
+	// 									" First root node is \"" + root->name + "\", second node is \"" + \
+	// 									newNode->name + "\" defined at line %d.", 2, lineNumber);
+	// 							}
 
-								root = newNode;
-							}
+	// 							root = newNode;
+	// 						}
 
-							// If the tag is self closing, do not push it since it will have no closing tag.
-							if (!isSelfClosing)
-							{
-								ancestors.push(newNode);
-							}
+	// 						// If the tag is self closing, do not push it since it will have no closing tag.
+	// 						if (!isSelfClosing)
+	// 						{
+	// 							ancestors.push(newNode);
+	// 						}
 
-							// Use the length of the original name since the new name may be shortened.
-							index = openIndex + 1 + tagLength + 1;
-						}
-					}
-					// Closing tag.
-					else
-					{
-						std::string elementName = getElementName(line, closeIndex + 2);
+	// 						// Use the length of the original name since the new name may be shortened.
+	// 						index = openIndex + 1 + tagLength + 1;
+	// 					}
+	// 				}
+	// 				// Closing tag.
+	// 				else
+	// 				{
+	// 					std::string elementName = getElementName(line, closeIndex + 2);
 
-						if (ancestors.top() == root && root->name != elementName)
-						{
-							// 2.1.2d
-							throw EasyXmlException("Malformed XML: No opening tag for \"" + 
-								elementName + "\", closing tag found at line %d.", 3, lineNumber);
-						}
+	// 					if (ancestors.top() == root && root->name != elementName)
+	// 					{
+	// 						// 2.1.2d
+	// 						throw EasyXmlException("Malformed XML: No opening tag for \"" + 
+	// 							elementName + "\", closing tag found at line %d.", 3, lineNumber);
+	// 					}
 
-						if (ancestors.top()->name != elementName)
-						{
-							// 2.1.2b
-							throw EasyXmlException("Malformed XML: Mismatched closing tag at line %d." \
-								" Expected \"" + ancestors.top()->name + "\" found \"" + elementName + "\"." \
-								, 5, lineNumber);
-						}
+	// 					if (ancestors.top()->name != elementName)
+	// 					{
+	// 						// 2.1.2b
+	// 						throw EasyXmlException("Malformed XML: Mismatched closing tag at line %d." \
+	// 							" Expected \"" + ancestors.top()->name + "\" found \"" + elementName + "\"." \
+	// 							, 5, lineNumber);
+	// 					}
 
 
-						value += line.substr(index, openIndex - index);
+	// 					value += line.substr(index, openIndex - index);
 
-						std::string temp = value;
+	// 					std::string temp = value;
 
-						// Replace XML escape sequences. Ampersands must be replaced last or else they may
-						// cause other escape sequences to be replaced that were not in the original string.
-						for (int i = 4; i >= 0; i--)
-						{
-							replaceAll(temp, esc_sequences[i], esc_values[i]);
-						}
+	// 					// Replace XML escape sequences. Ampersands must be replaced last or else they may
+	// 					// cause other escape sequences to be replaced that were not in the original string.
+	// 					for (int i = 4; i >= 0; i--)
+	// 					{
+	// 						replaceAll(temp, esc_sequences[i], esc_values[i]);
+	// 					}
 
-						ancestors.top()->value += temp;
-						value = "";
+	// 					ancestors.top()->value += temp;
+	// 					value = "";
 
-						index = closeIndex + 2 + ancestors.top()->name.length() + 1;
-						ancestors.pop();
-					}
-				}
-			}
+	// 					index = closeIndex + 2 + ancestors.top()->name.length() + 1;
+	// 					ancestors.pop();
+	// 				}
+	// 			}
+	// 		}
 
-			if (root == NULL)
-			{
-				// 2.1 Rule 1
-				throw EasyXmlException("No XML elements found in file \"" + filePath + "\".", 1);
-			}
+	// 		if (root == NULL)
+	// 		{
+	// 			// 2.1 Rule 1
+	// 			throw EasyXmlException("No XML elements found in file \"" + filePath + "\".", 1);
+	// 		}
 
-			if (!ancestors.empty())
-			{
-				// 2.1 Rule 2
-				throw EasyXmlException("Unclosed XML element \"" + ancestors.top()->name + "\".", 4);
-			}
+	// 		if (!ancestors.empty())
+	// 		{
+	// 			// 2.1 Rule 2
+	// 			throw EasyXmlException("Unclosed XML element \"" + ancestors.top()->name + "\".", 4);
+	// 		}
 
-			reader.close();
+	// 		reader.close();
 
-			return root;
-		}
-		else
-		{
-			throw EasyXmlException("Unable to open file \"" + filePath + "\".", 101);
-			return NULL;
-		}
-	}
+	// 		return root;
+	// 	}
+	// 	else
+	// 	{
+	// 		throw EasyXmlException("Unable to open file \"" + filePath + "\".", 101);
+	// 		return NULL;
+	// 	}
+	// }
 
 	void saveXml(const Node* node, const std::string& filePath)
 	{
