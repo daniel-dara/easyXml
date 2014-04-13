@@ -4,6 +4,7 @@
 #include "namespace.h"
 #include "Exception.h"
 #include "String.h"
+#include "List.h"
 #include <vector>
 #include <set>
 #include <string>
@@ -46,9 +47,9 @@ namespace EASYXML_NAMESPACE
 			std::string value;
 		};
 
-		std::set<Attribute> attributes;
-		std::vector<Node*> children;
-		std::set<Node*, bool (*)(const Node*, const Node*)> sortedChildren;
+		// std::set<Attribute> attributes;
+		List<Node*> children;
+		// std::set<Node*, bool (*)(const Node*, const Node*)> sortedChildren;
 
 	private:
 		// Comparator function used to sort the "children" set.

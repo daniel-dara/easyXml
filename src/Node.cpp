@@ -9,26 +9,26 @@ namespace EASYXML_NAMESPACE
 	Node::Node() :
 		name(),
 		value(),
-		attributes(),
-		children(),
-		sortedChildren(node_ptr_compare)
+		// attributes(),
+		children()
+		// sortedChildren(node_ptr_compare)
 	{ }
 
 	// Conversion Constructors
 	Node::Node(const char* _name, const char* _value) :
 		name(_name),
 		value(_value),
-		attributes(),
-		children(),
-		sortedChildren(node_ptr_compare)
+		// attributes(),
+		children()
+		// sortedChildren(node_ptr_compare)
 	{ }
 
 	Node::Node(const std::string& _name, const std::string& _value) :
 		name(_name),
 		value(_value),
-		attributes(),
-		children(),
-		sortedChildren(node_ptr_compare)
+		// attributes(),
+		children()
+		// sortedChildren(node_ptr_compare)
 	{ }
 
 	// // Copy Constructor - technically a deep copy since the "children" set is copied
@@ -139,44 +139,46 @@ namespace EASYXML_NAMESPACE
 
 	Node* Node::findNode(const std::string path, bool returnNull) const
 	{
-		// Save the cost of instantiation since findNode is recursive and its name is always overwritten.
-		static Node query;
+		return NULL;
+		
+		// // Save the cost of instantiation since findNode is recursive and its name is always overwritten.
+		// static Node query;
 
-		std::string restOfPath;
-		size_t slashIndex = path.find('/');
+		// std::string restOfPath;
+		// size_t slashIndex = path.find('/');
 
-		if (slashIndex == std::string::npos)
-		{
-			query.name = path;
-		}
-		else
-		{
-			query.name = path.substr(0, slashIndex);
-			restOfPath = path.substr(slashIndex + 1);
-		}
+		// if (slashIndex == std::string::npos)
+		// {
+		// 	query.name = path;
+		// }
+		// else
+		// {
+		// 	query.name = path.substr(0, slashIndex);
+		// 	restOfPath = path.substr(slashIndex + 1);
+		// }
 
-		static std::set<Node*>::const_iterator iter;
-		iter = sortedChildren.find(&query);
+		// static std::set<Node*>::const_iterator iter;
+		// iter = sortedChildren.find(&query);
 
-		if (iter != sortedChildren.end())
-		{
-			if (restOfPath.length() == 0)
-			{
-				return (*iter);
-			}
-			else
-			{
-				return (*iter)->findNode(restOfPath);
-			}
-		}
+		// if (iter != sortedChildren.end())
+		// {
+		// 	if (restOfPath.length() == 0)
+		// 	{
+		// 		return (*iter);
+		// 	}
+		// 	else
+		// 	{
+		// 		return (*iter)->findNode(restOfPath);
+		// 	}
+		// }
 
-		if (returnNull)
-		{
-			return NULL;
-		}
-		else
-		{
-			throw EasyXmlException("Child element \"" + path + "\" not found.", 103);
-		}
+		// if (returnNull)
+		// {
+		// 	return NULL;
+		// }
+		// else
+		// {
+		// 	throw EasyXmlException("Child element \"" + path + "\" not found.", 103);
+		// }
 	}
 }

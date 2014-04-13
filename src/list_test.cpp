@@ -22,6 +22,7 @@ int main()
 	List<int>::iterator ite;
 	Set<int>::iterator ite2;
 	// ite2 = numbers.end();
+	std::cout << "check: " << (numbers.begin() == numbers.end()) << "\n";
 	for (ite = numbers.begin(); ite != numbers.end(); ite++)
 	{
 		std::cout << *ite << "\n";

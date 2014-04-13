@@ -33,6 +33,15 @@ public:
 		memcpy(buf_, rhs, length_);
 	}
 
+	String(const char* rhs, uint length) :
+		capacity_(length + 1),
+		length_(length),
+		buf_(new char[capacity_]),
+		c_str_(NULL)
+	{
+		memcpy(buf_, rhs, length_);
+	}
+
 	String(const std::string& rhs) :
 		capacity_(rhs.capacity()),
 		length_(rhs.length()),
@@ -104,7 +113,7 @@ public:
 	String operator+(const String& rhs) const
 	{
 		String str(*this);
-		str += rhs.c_str();
+		str.append(rhs);
 		return str;
 	}
 
@@ -147,9 +156,12 @@ public:
 		return *this;
 	}
 
-	template <class T> void swap ( T& a, T& b )
+	template <class T>
+	void swap (T& a, T& b)
 	{
-		T c(a); a=b; b=c;
+		T c(a);
+		a = b;
+		b = c;
 	}
 
 	void swap(String& rhs)
@@ -158,7 +170,6 @@ public:
 		swap(capacity_, rhs.capacity_);
 		swap(length_, rhs.length_);
 		swap(c_str_, rhs.c_str_);
-
 	}
 
 	void append(const String& rhs)
@@ -263,6 +274,17 @@ public:
 			delete[] temp;
 			// printf("freeing: %x\n", temp);
 		}
+	}
+
+	void resize(int length)
+	{
+		String temp(buf_, length);
+		swap(temp);
+	}
+
+	void minimize()
+	{
+		resize(length_);
 	}
 
 	// Note: c_str() can be modified by further calls to String

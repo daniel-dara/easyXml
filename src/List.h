@@ -38,6 +38,19 @@ public:
 	List() : head_(NULL), tail_(NULL), size_(0)
 	{ }
 
+	~List()
+	{
+		Node_* cur = head_;
+		Node_* next;
+
+		while (cur != NULL)
+		{
+			next = cur->right;
+			delete cur;
+			cur = next;
+		}
+	}
+
 	class iterator : public Iterable<T>::iterator
 	{
 	public:

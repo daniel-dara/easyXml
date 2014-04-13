@@ -61,7 +61,8 @@ public:
 		/// Returns true if the iterators point to the same node address, have the same status, and are not INVALID.
 		bool operator==(const iterator& rhs) const
 		{
-			return (iterNode_ == iterNode_) && (status_ == rhs.status_) && (status_ != INVALID);
+			return ((iterNode_ == rhs.iterNode_) && (status_ == rhs.status_) && (status_ != INVALID)) ||
+			       ((iterNode_ == NULL) && (rhs.iterNode_ == NULL) && (status_ != INVALID) && (rhs.status_ != INVALID));
 		}
 
 		/// Returns the logical not of operator==
@@ -158,7 +159,7 @@ public:
 		/*
 		 * Undefined behavior if the iterator points to end() of some iterable class.
 		 */
-		iterator operator++(int postfix)
+		iterator operator++(int)
 		{
 			iterator temp(*this);
 
@@ -171,7 +172,7 @@ public:
 		/*
 		 * Undefined behavior if the iterator points to begin() of some iterable class.
 		 */
-		iterator operator--(int postfix) const
+		iterator operator--(int) const
 		{
 			iterator temp(*this);
 

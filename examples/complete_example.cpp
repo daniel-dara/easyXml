@@ -6,6 +6,19 @@
 // In your code you would use the following include (uncommented of course).
 // #include <easyXml.h>
 
+unsigned int count = 0;
+
+void explore(xml::Node* parent)
+{
+	count++;
+	List<xml::Node*>::iterator ite = parent->children.begin();
+	while (ite != parent->children.end())
+	{
+		explore(*ite);
+		ite++;
+	}
+}
+
 int main()
 {
 	/*** LOADING FILES  *************************************************************************************/
@@ -16,7 +29,7 @@ int main()
 	try
 	{
 		// Loading an XML file is easy, and it returns a pointer to the root node.
-		root = xml::loadXml2("../../../Downloads/bigdaddy.xml");
+		root = xml::loadXml2("../../../Downloads/nasa.xml");
 
 		if (root != NULL)
 		{
@@ -46,6 +59,10 @@ int main()
 			//           << std::endl;
 
 			//xml::saveXml(root, "example_output.xml");
+
+			explore(root);
+
+			std::cout << "total nodes: " << count << "\n";
 
 			/*** CLEANUP ****************************************************************************************/
 			          

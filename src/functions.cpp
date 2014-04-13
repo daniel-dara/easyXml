@@ -2,7 +2,7 @@
 #include "Exception.h"
 #include "String.h"
 #include "Stack.h"
-#include "Set.h"
+#include "List.h"
 #include <iostream>
 #include <algorithm>
 #include <fstream>
@@ -83,10 +83,13 @@ namespace EASYXML_NAMESPACE
 		// The file contents are now in memory and the file stream can be closed.
 		fclose(fp);
 
+		printf("pointer size: %d\n", sizeof(void*));
+		printf("uint size: %d\n", sizeof(uint));
 		printf("Node size: %d\n", sizeof(Node));
 		printf("String size: %d\n", sizeof(String));
 		printf("std::string size: %d\n", sizeof(std::string));
 		printf("set: %d\n", sizeof(std::set<Node*, bool (*)(const Node*, const Node*)>));
+		printf("my List: %d\n", sizeof(List<Node*>));
 
 		Node* root = NULL;
 
@@ -125,6 +128,7 @@ namespace EASYXML_NAMESPACE
 					// 	return NULL;
 					// }
 
+					value.minimize();
 					ancestors.top()->value.swap(value);
 
 					// char* test = new char[1];
@@ -199,7 +203,8 @@ namespace EASYXML_NAMESPACE
 					// char* t = new char[52];
 					// char* t2 = new char(name.length());
 
-					node->name.swap(name);
+					// node->name.swap(name);
+					name.minimize();
 					name.swap(node->name);
 					
 					// std::cout << "start tag: " << name.cpp_str() << "\n";
@@ -207,12 +212,12 @@ namespace EASYXML_NAMESPACE
 					if (root == NULL)
 					{
 						// std::cout << "\troot\n";
-						// root = node;
+						root = node;
 					}
 					else
 					{
 						ancestors.top()->children.push_back(node);
-						ancestors.top()->sortedChildren.insert(node);
+						// ancestors.top()->sortedChildren.insert(node);
 					}
 
 					if (file[index - 1] == '/')
@@ -535,7 +540,7 @@ namespace EASYXML_NAMESPACE
 		{
 			out << ">\n";
 
-			for (std::vector<Node*>::const_iterator it = node->children.begin(); \
+			for (List<Node*>::iterator it = node->children.begin(); \
 			     it != node->children.end(); ++it)
 			{
 				saveXml(*it, out, indentation + "\t");
@@ -570,23 +575,23 @@ namespace EASYXML_NAMESPACE
 	{
 		std::cout << indentation << node->name << ": " << node->value << std::endl;
 
-		if (node->attributes.size() != 0)
-		{
-			std::cout << "\t" + indentation + "attributes:";
+		// if (node->attributes.size() != 0)
+		// {
+		// 	std::cout << "\t" + indentation + "attributes:";
 
-			std::set<Node::Attribute>::const_iterator it;
-			for (it = node->attributes.begin(); it != node->attributes.end(); ++it)
-			{
-				std::cout << " " << (*it).name << "=\"" << (*it).value << "\"";
-			}
+		// 	std::set<Node::Attribute>::const_iterator it;
+		// 	for (it = node->attributes.begin(); it != node->attributes.end(); ++it)
+		// 	{
+		// 		std::cout << " " << (*it).name << "=\"" << (*it).value << "\"";
+		// 	}
 
-			std::cout << std::endl;
-		}
+		// 	std::cout << std::endl;
+		// }
 
 		// increase the indentation for the next level
 		indentation += "\t";
 
-		std::vector<Node*>::const_iterator it;
+		List<Node*>::iterator it;
 		for (it = node->children.begin(); it != node->children.end(); ++it)
 		{
 			printTree((*it), indentation);
@@ -601,10 +606,12 @@ namespace EASYXML_NAMESPACE
 		}
 		else
 		{
-			std::vector<Node*>::iterator it;
-			for (it = node->children.begin(); it != node->children.end(); ++it)
+			List<Node*>::iterator it = node->children.begin();
+
+			while (it != node->children.end())
 			{
 				deleteTree(*it);
+				it++;
 			}
 
 			delete node;
