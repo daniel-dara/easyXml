@@ -8,107 +8,164 @@
 class String
 {
 public:
+	static const uint npos = -1;
+
+	void debug() const
+	{
+		std::cout << "buf: " << buf_ << "\n";
+		std::cout << "capacity: " << capacity_ << "\n";
+		std::cout << "length: " << length_ << "\n\n";
+	}
+
 	String() :
-		capacity_(0),
+		capacity_(1),
 		length_(0),
-		buf_(NULL),
-		c_str_(NULL)
-	{ }
+		buf_(new char[2])
+	{
+		buf_[0] = '\0';
+	}
 
 	String(const String& rhs) :
 		capacity_(rhs.capacity_),
 		length_(rhs.length_),
-		buf_(new char[rhs.capacity_]),
-		c_str_(NULL)
+		buf_(new char[rhs.capacity_ + 1])
 	{
 		memcpy(buf_, rhs.buf_, length_);
 	}
 
-	String(const char* rhs) :
-		capacity_(strlen(rhs)),
+	String(const char* rhs, uint pos = 0, uint length = npos) :
+		capacity_(length == npos ? strlen(rhs) : length),
 		length_(capacity_),
-		buf_(new char[capacity_]),
-		c_str_(NULL)
+		buf_(new char[capacity_ + 1])
 	{
-		memcpy(buf_, rhs, length_);
-	}
-
-	String(const char* rhs, uint length) :
-		capacity_(length + 1),
-		length_(length),
-		buf_(new char[capacity_]),
-		c_str_(NULL)
-	{
-		memcpy(buf_, rhs, length_);
+		memcpy(buf_, rhs + pos, length_);
 	}
 
 	String(const std::string& rhs) :
 		capacity_(rhs.capacity()),
 		length_(rhs.length()),
-		buf_(new char[capacity_]),
-		c_str_(NULL)
+		buf_(new char[capacity_ + 1])
 	{
 		memcpy(buf_, rhs.c_str(), length_);
 	}
 
 	~String()
 	{
-		free();
+		delete[] buf_;
 	}
 
-	void free()
+	int compare(const String& rhs) const
 	{
-		// printf("freeing: %x\n", str_);
-		if (buf_ != NULL)
+		return compare(0, length_, rhs.buf_, 0, rhs.length_);
+	}
+
+	int compare(const char* rhs) const
+	{
+		return compare(0, length_, rhs, 0, strlen(rhs));
+	}
+
+	int compare(uint pos, uint len, const String& rhs, uint subpos = 0, uint sublen = npos) const
+	{
+		return compare(pos, len, rhs.buf_, subpos, (sublen == npos ? rhs.length_ : sublen));
+	}
+
+	int compare(uint pos, uint len, const char* rhs, uint subpos = 0, uint sublen = npos) const
+	{
+		if (sublen == npos)
 		{
-			delete[] buf_;
-			buf_ = NULL;
+			sublen = strlen(rhs + subpos);
 		}
 
-		if (c_str_ != NULL)
+		if (len != sublen)
 		{
-			delete[] c_str_;
-			c_str_ = NULL;
+			// Returns -1 if "this" string is shorter and 1 if it is longer.
+			// Boolean arithmetic avoids a costly branch.
+			return (len > sublen) - (len < sublen);
 		}
+
+		const char* buf_char = buf_ + pos;
+		const char* rhs_char = rhs + subpos;
+		uint i = 0;
+
+		// while (buf_char - buf_ < len) could also be used but I'm not sure if the arithmetic would be
+		// properly optimized out. The only variable changing in that equation is buf_char so its more
+		// efficient to just use a counter.
+		while (i < len)
+		{
+			if (*buf_char != *rhs_char)
+			{
+				return (*buf_char > *rhs_char) - (*buf_char < *rhs_char);
+			}
+			i++;
+		}
+
+		return 0;
 	}
 
 	bool operator==(const String& rhs) const
 	{
-		if (length_ != rhs.length_)
-		{
-			return false;
-		}
+		return compare(rhs) == 0;
+	}
 
-		for (uint i = 0; i < length_; i++)
-		{
-			if (buf_[i] != rhs.buf_[i])
-			{
-				return false;
-			}	
-		}
+	bool operator==(const char* rhs) const
+	{
+		return compare(rhs) == 0;
+	}
 
-		return true;
+	bool operator==(char rhs) const
+	{
+		return length_ == 1 && buf_[0] == rhs;
 	}
 
 	bool operator!=(const String& rhs) const
 	{
-		return !(*this == rhs);
+		return !operator==(rhs);
 	}
 
-	String& operator=(const String& rhs)
+	bool operator!=(const char* rhs) const
 	{
-		if (this != &rhs)
+		return !operator==(rhs);
+	}
+
+	bool operator!=(char rhs) const
+	{
+		return !operator==(rhs);
+	}
+
+	String& assign(const String& rhs, uint subpos = 0, uint sublen = npos)
+	{
+		return assign(rhs.buf_, subpos, sublen == npos ? rhs.length_ : sublen);
+	}
+
+	String& assign(const char* rhs, uint subpos = 0, uint sublen = npos)
+	{
+		if (buf_ != rhs)
 		{
-			free();
-			capacity_ = rhs.capacity_;
-			length_ = rhs.length_;
-			buf_ = new char[capacity_];
-			c_str_ = rhs.c_str_;
-			memcpy(buf_, rhs.buf_, length_);
+			String temp(rhs, subpos, sublen);
+			swap(temp);
 		}
 
 		return *this;
 	}
+
+	String& operator=(const String& rhs)
+	{
+		return assign(rhs);
+	}
+
+	String& operator=(const char* rhs)
+	{
+		return assign(rhs);
+	}
+
+	String& operator=(char rhs)
+	{
+		char temp[] = {rhs, '\0'};
+		return assign(temp);
+	}
+
+// PICK UP HERE
+
 
 	String operator+(const String& rhs) const
 	{
@@ -303,7 +360,7 @@ public:
 
 	void clear()
 	{
-		free();
+		// free(); // TODO: Fix this function
 		length_ = 0;
 		capacity_ = 0;
 	}

@@ -1,42 +1,69 @@
 #include <iostream>
+#include <string>
 #include "String.h"
 
-void test_minimize(String& str)
+void assert(bool condition)
 {
-	String temp(str);
-	temp += "!";
-	str.swap(temp);
+	if (condition == true)
+	{
+		std::cout << "   PASS\n";
+	}
+	else
+	{
+		std::cout << "   FAIL***\n";
+	}
 }
 
 int main()
 {
-	String str;
+	String s1;
+	String s2(String("string2"));
+	String s3("string3");
+	String s4("string4asdf");
+	String s4b("string4asdf", 7, 3);
+	String s5(std::string("string5"));
 
-	std::cout << str << "\n";
-	std::cout << str.length() << "\n";
-	std::cout << str.capacity() << "\n";
+	s1.debug();
+	s2.debug();
+	s3.debug();
+	s4.debug();
+	s4b.debug();
+	s5.debug();
 
-	str.append("testasd");
+	int result;
 
-	std::cout << str << "\n";
-	std::cout << str.length() << "\n";
-	std::cout << str.capacity() << "\n";
+	result = s2.compare(String("String2"));
+	std::cout << "s2.compare(\"String2\") -> " << result;
+	assert(result == 1);
 
-	str.append("asdf");
+	result = (s2 == String("String2"));
+	std::cout << "s2 == String(\"String2\"): " << result;
+	assert(result == 0);
 
-	std::cout << str << "\n";
-	std::cout << str.length() << "\n";
-	std::cout << str.capacity() << "\n";
+	result = (s2 == String("string2"));
+	std::cout << "s2 == String(\"string2\"): " << result;
+	assert(result == 1);
 
-	test_minimize(str);
-	str.minimize();
+	result = (s4 == "string4asdf");
+	std::cout << "s4 == \"string4asdf\": " << result;
+	assert(result == 1);
 
-	std::cout << str << "\n";
+	result = s4.compare(7, 4, "test4asdf", 5, 4);
+	std::cout << "s4.compare(7, 4, \"test4asdf\", 5, 4): " << result;
+	assert(result == 0);
 
-	// String* test_str = new String("swap test");
-	// str.swap(*test_str);
-	// delete test_str;
-	// std::cout << str << "\n";
+	result = String("a") == 'a';
+	std::cout << "String(\"a\") == 'a': " << result;
+	assert(result == 1);
+
+	result = s5 != "string";
+	std::cout << "s5 != \"string\": " << result;
+	assert(result == 1);
+
+	String temp("assign_test");
+	temp = "arf!";
+	std::cout << "temp = \"arf!\": " << result;
+	assert(temp == "arf!");
 
 	return 0;	
 }
