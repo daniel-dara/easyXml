@@ -13,9 +13,11 @@ public:
 
 	void debug() const
 	{
+		std::cout << "\n";
 		std::cout << "buf: " << buf_ << "\n";
 		std::cout << "capacity: " << capacity_ << "\n";
-		std::cout << "length: " << length_ << "\n\n";
+		std::cout << "length: " << length_ << "\n";
+		std::cout << "\n";
 	}
 
 	String() :
@@ -50,6 +52,14 @@ public:
 		buf_(new char[capacity_ + 1])
 	{
 		memcpy(buf_, rhs.c_str(), length_);
+		nullCap();
+	}
+
+	String(uint capacity) :
+		capacity_(capacity),
+		length_(0),
+		buf_(new char[capacity_ + 1])
+	{
 		nullCap();
 	}
 
@@ -180,7 +190,9 @@ public:
 		}
 
 		_reserve(length_ + sublen);
+
 		memcpy(buf_ + length_, str + subpos, sublen);
+		length_ += sublen;
 		nullCap();
 
 		return *this;		
@@ -219,6 +231,16 @@ public:
 		return append(rhs);
 	}
 
+	char& operator[](uint index)
+	{
+		return buf_[index];
+	}
+
+	const char& operator[](uint index) const
+	{
+		return buf_[index];
+	}
+
 	void swap(String& rhs)
 	{
 		swap(buf_, rhs.buf_);
@@ -230,7 +252,7 @@ public:
 	{
 		if (capacity > max_size())
 		{
-			throw std::string("String Error: Can not reserve greater than max_size.");
+			throw std::string("String Error: Cannot reserve greater than max_size.");
 		}
 		else if (capacity > capacity_)
 		{

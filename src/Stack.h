@@ -107,7 +107,7 @@ public:
 		return val;
 	}
 
-	uint getSize() const
+	uint size() const
 	{
 		return size_;
 	}

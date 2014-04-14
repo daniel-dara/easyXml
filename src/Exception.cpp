@@ -12,6 +12,11 @@ namespace EASYXML_NAMESPACE
 		errorCode_(errorCode),
 		lineNumber_(lineNumber)
 	{
+		if (errorCode > 100)
+		{
+			message_ += "Malformed XML: ";
+		}
+
 		message_ += message + '\n';
 
 		if (lineNumber > 0)

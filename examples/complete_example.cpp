@@ -29,7 +29,8 @@ int main()
 	try
 	{
 		// Loading an XML file is easy, and it returns a pointer to the root node.
-		root = xml::loadXml2("../../../Downloads/nasa.xml");
+		root = xml::loadXml2("../../Downloads/nasa.xml");
+		// root = xml::loadXml2("example.xml");
 
 		if (root != NULL)
 		{
@@ -74,6 +75,7 @@ int main()
 	catch (const xml::EasyXmlException& e)
 	{
 		// Print out the error message.
+		std::cout << "error code: " << e.getErrorCode() << "\n";
 		std::cout << e.what();
 	}
 
