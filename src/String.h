@@ -160,8 +160,7 @@ public:
 
 	String& operator=(char rhs)
 	{
-		char temp[] = {rhs, '\0'};
-		return assign(temp);
+		return assign(&rhs, 0, 1);
 	}
 
 // PICK UP HERE

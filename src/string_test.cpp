@@ -62,8 +62,12 @@ int main()
 
 	String temp("assign_test");
 	temp = "arf!";
-	std::cout << "temp = \"arf!\": " << result;
+	std::cout << "temp = \"arf!\": " << "";
 	assert(temp == "arf!");
+
+	temp = 'c';
+	std::cout << "temp = 'c': " << "";
+	assert(temp == "c");
 
 	return 0;	
 }
