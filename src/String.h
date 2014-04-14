@@ -1,9 +1,10 @@
 #ifndef STRING_H
 #define STRING_H
 
-#include "namespace.h"
 #include <iostream>
 #include <cstring>
+
+typedef unsigned int uint;
 
 class String
 {
@@ -22,7 +23,7 @@ public:
 		length_(0),
 		buf_(new char[2])
 	{
-		buf_[0] = '\0';
+		nullCap();
 	}
 
 	String(const String& rhs) :
@@ -31,6 +32,7 @@ public:
 		buf_(new char[rhs.capacity_ + 1])
 	{
 		memcpy(buf_, rhs.buf_, length_);
+		nullCap();
 	}
 
 	String(const char* rhs, uint pos = 0, uint length = npos) :
@@ -39,6 +41,7 @@ public:
 		buf_(new char[capacity_ + 1])
 	{
 		memcpy(buf_, rhs + pos, length_);
+		nullCap();
 	}
 
 	String(const std::string& rhs) :
@@ -47,6 +50,7 @@ public:
 		buf_(new char[capacity_ + 1])
 	{
 		memcpy(buf_, rhs.c_str(), length_);
+		nullCap();
 	}
 
 	~String()
@@ -163,61 +167,56 @@ public:
 		return assign(&rhs, 0, 1);
 	}
 
-// PICK UP HERE
-
-
-	String operator+(const String& rhs) const
+	String& append(const String& str, uint subpos = 0, uint sublen = npos)
 	{
-		String str(*this);
-		str.append(rhs);
-		return str;
+		return append(str.buf_, subpos, sublen == npos ? str.length_ : sublen);
 	}
 
-	String operator+(const std::string& rhs) const
+	String& append(const char* str, uint subpos = 0, uint sublen = npos)
 	{
-		String str(*this);
-		str += rhs.c_str();
-		return str;
+		if (sublen == npos)
+		{
+			sublen = strlen(str);
+		}
+
+		_reserve(length_ + sublen);
+		memcpy(buf_ + length_, str + subpos, sublen);
+		nullCap();
+
+		return *this;		
 	}
 
-	String operator+(const char* rhs) const
+	String& append(char c, uint copies = 1)
 	{
-		String str(*this);
-		str += rhs;
-		return str;
-	}
+		_reserve(length_ + copies);
 
-	String operator+(char rhs) const
-	{
-		String str(*this);
-		str += rhs;
-		return str;
-	}
+		while (copies--)
+		{
+			buf_[length_++] = c;
+		}
 
-	String& operator+=(const char* rhs)
-	{
-		append(rhs);
+		nullCap();
 		return *this;
 	}
 
-	String& operator+=(char rhs)
+	uint max_size()
 	{
-		append(rhs);
-		return *this;
+		return npos - 1;
 	}
 
 	String& operator+=(const String& rhs)
 	{
-		append(rhs);
-		return *this;
+		return append(rhs);
 	}
 
-	template <class T>
-	void swap (T& a, T& b)
+	String& operator+=(const char* rhs)
 	{
-		T c(a);
-		a = b;
-		b = c;
+		return append(rhs);
+	}
+
+	String& operator+=(char rhs)
+	{
+		return append(rhs);
 	}
 
 	void swap(String& rhs)
@@ -225,143 +224,63 @@ public:
 		swap(buf_, rhs.buf_);
 		swap(capacity_, rhs.capacity_);
 		swap(length_, rhs.length_);
-		swap(c_str_, rhs.c_str_);
-	}
-
-	void append(const String& rhs)
-	{
-		uint len = rhs.length_;
-
-		if (length_ + len >= capacity_)
-		{
-			do
-			{
-				capacity_ = (capacity_ ? capacity_ * 2 : 1);
-			}
-			while (length_ + len >= capacity_);
-
-			char* buf = new char[capacity_];
-
-			if (buf_ != NULL)
-			{
-				memcpy(buf, buf_, length_);
-				delete[] buf_;
-			}
-
-			buf_ = buf;
-		}
-
-		memcpy(buf_ + length_, rhs.buf_, len);
-		length_ += len;	
-	}
-
-	void append(const char* c_str)
-	{
-		uint len = strlen(c_str);
-
-		if (length_ + len >= capacity_)
-		{
-			do
-			{
-				capacity_ = (capacity_ ? capacity_ * 2 : 1);
-			}
-			while (length_ + len >= capacity_);
-
-			char* buf = new char[capacity_];
-
-			if (buf_ != NULL)
-			{
-				memcpy(buf, buf_, length_);
-				delete[] buf_;
-			}
-
-			buf_ = buf;
-		}
-
-		memcpy(buf_ + length_, c_str, len);
-		length_ += len;
-	}
-
-	void append(char Char)
-	{
-		if (length_ >= capacity_)
-		{
-			do
-			{
-				capacity_ = (capacity_ ? capacity_ * 2 : 1);
-			}
-			while (length_ >= capacity_);
-
-			char* buf = new char[capacity_];
-
-			if (buf_ != NULL)
-			{
-				// std::cout << "problem?\n";
-				memcpy(buf, buf_, length_);
-				// std::cout << "no problem yet " << str_[0] << "\n";
-				// printf("freeing: %x\n", str_);
-				delete[] buf_;
-				// std::cout << "no problem\n";
-			}
-
-			buf_ = buf;
-			// printf("allocated: %x\n", str_);
-		}
-
-		buf_[length_++] = Char;
 	}
 
 	void reserve(uint capacity)
 	{
-		if (capacity <= capacity_)
+		if (capacity > max_size())
 		{
-			throw std::string("String Error: Can not reserve less than string's current capacity.");
-			return;
+			throw std::string("String Error: Can not reserve greater than max_size.");
 		}
-
-		capacity_ = capacity;
-		char* temp = buf_;
-		buf_ = new char[capacity_];
-		// printf("allocated: %x\n", buf_);
-		
-		if (temp != NULL)
+		else if (capacity > capacity_)
 		{
-			memcpy(buf_, temp, length_);
+			// Create bigger buffer
+			char* temp = new char[capacity + 1];
+
+			// Copy old buf
+			memcpy(temp, buf_, length_ + 1);
+
+			swap(buf_, temp);
 			delete[] temp;
-			// printf("freeing: %x\n", temp);
+
+			capacity_ = capacity;
 		}
 	}
 
-	void resize(int length)
+	/// Resize string and fill empty space with "fill"
+	void resize(uint length, char fill = '\0')
 	{
-		String temp(buf_, length);
-		swap(temp);
+		if (length > length_)
+		{
+			reserve(length);
+			memset(buf_ + length, fill, length - length_);
+		}
+		
+		length_ = length;
+		nullCap();
 	}
 
-	void minimize()
+	void shrink_to_fit()
 	{
-		resize(length_);
+		String temp(buf_, 0, length_);
+		swap(temp);
 	}
 
 	// Note: c_str() can be modified by further calls to String
 	const char* c_str() const
 	{
-		if (c_str_ != NULL)
-		{
-			delete[] c_str_;
-		}
-
-		c_str_ = new char[length_ + 1];
-		memcpy(c_str_, buf_, length_);
-		c_str_[length_] = '\0';
-		return c_str_;
+		return buf_;
 	}
 
 	void clear()
 	{
-		// free(); // TODO: Fix this function
 		length_ = 0;
-		capacity_ = 0;
+		nullCap();
+	}
+
+	uint size() const
+	{
+		return length_;
 	}
 
 	uint length() const
@@ -374,16 +293,69 @@ public:
 		return capacity_;
 	}
 
-public:
+private:
 	uint capacity_;
 	uint length_;
 	char* buf_;
-	mutable char* c_str_;
+
+	template <class T>
+	void swap (T& a, T& b)
+	{
+		T c(a);
+		a = b;
+		b = c;
+	}
+
+	void nullCap()
+	{
+		buf_[length_] = '\0';
+	}
+
+	void _reserve(uint capacity)
+	{
+		uint newCapacity = capacity_;
+		while (capacity > newCapacity)
+		{
+			newCapacity *= 2;
+		}
+
+		reserve(newCapacity);
+	}
 };
 
-inline String operator+(const char* rhs, const String& lhs)
+inline String operator+(const String& lhs, const String& rhs)
 {
-	return String(rhs) + lhs;
+	String temp(lhs);
+	temp.append(rhs);
+	return temp;
+}
+
+inline String operator+(const char* lhs, const String& rhs)
+{
+	String temp(lhs);
+	temp.append(rhs);
+	return temp;
+}
+
+inline String operator+(const String& lhs, const char* rhs)
+{
+	String temp(lhs);
+	temp.append(rhs);
+	return temp;
+}
+
+inline String operator+(char lhs, const String& rhs)
+{
+	String temp(&lhs, 0, 1);
+	temp.append(rhs);
+	return temp;
+}
+
+inline String operator+(const String& lhs, char rhs)
+{
+	String temp(lhs);
+	temp.append(rhs);
+	return temp;
 }
 
 inline std::ostream& operator<<(std::ostream& out, const String& rhs)
