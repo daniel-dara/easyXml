@@ -267,4 +267,33 @@ namespace EASYXML_NAMESPACE
 			lastChild_ = child;
 		}
 	}
+
+	unsigned int Node::countChildren() const
+	{
+		unsigned int count = 0;
+
+		for (const Node* child = getFirstChild(); child != NULL; child = child->getNextSibling())
+		{
+			count++;
+		}
+
+		return count;
+	}
+
+	unsigned int Node::countOffspring() const
+	{
+		return countOffspring(this);
+	}
+
+	unsigned int Node::countOffspring(const Node* node) const
+	{
+		unsigned int count = 0;
+
+		for (const xml::Node* child = node->getFirstChild(); child != NULL; child = child->getNextSibling())
+		{
+			count += countOffspring(child);
+		}	
+
+		return count + 1;
+	}
 }

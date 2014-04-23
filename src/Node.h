@@ -62,12 +62,17 @@ namespace EASYXML_NAMESPACE
 		void addChildBefore(Node* child, Node* before);
 		void addChild(Node* child);
 
+		unsigned int countChildren() const;
+		unsigned int countOffspring() const;
+
 	private:
 		Node* parent_;
 		Node* firstChild_;
 		Node* lastChild_;
 		Node* nextSibling_;
 		Node* prevSibling_;
+
+		unsigned int countOffspring(const Node* node) const;
 
 		// Comparator function used to sort the "children" set.
 		static bool node_ptr_compare(const Node* lhs, const Node* rhs)

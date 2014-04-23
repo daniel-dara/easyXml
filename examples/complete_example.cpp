@@ -71,7 +71,7 @@ int main()
 
 			//xml::saveXml(root, "example_output.xml");
 
-			explore2(root);
+			count = root->countOffspring();
 
 			std::cout << "total nodes: " << count << "\n";
 
