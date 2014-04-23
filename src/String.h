@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <cstring>
+#include <cstdlib>
 
 typedef unsigned int uint;
 
@@ -23,7 +24,7 @@ public:
 	String() :
 		capacity_(1),
 		length_(0),
-		buf_(new char[2])
+		buf_(static_cast<char*>(malloc(2)))
 	{
 		nullCap();
 	}
@@ -31,7 +32,7 @@ public:
 	String(const String& rhs) :
 		capacity_(rhs.capacity_),
 		length_(rhs.length_),
-		buf_(new char[rhs.capacity_ + 1])
+		buf_(static_cast<char*>(malloc(rhs.capacity_ + 1)))
 	{
 		memcpy(buf_, rhs.buf_, length_);
 		nullCap();
@@ -40,7 +41,7 @@ public:
 	String(const char* rhs, uint pos = 0, uint length = npos) :
 		capacity_(length == npos ? strlen(rhs) : length),
 		length_(capacity_),
-		buf_(new char[capacity_ + 1])
+		buf_(static_cast<char*>(malloc(capacity_ + 1)))
 	{
 		memcpy(buf_, rhs + pos, length_);
 		nullCap();
@@ -49,7 +50,7 @@ public:
 	String(const std::string& rhs) :
 		capacity_(rhs.capacity()),
 		length_(rhs.length()),
-		buf_(new char[capacity_ + 1])
+		buf_(static_cast<char*>(malloc(capacity_ + 1)))
 	{
 		memcpy(buf_, rhs.c_str(), length_);
 		nullCap();
@@ -58,14 +59,14 @@ public:
 	String(uint capacity) :
 		capacity_(capacity),
 		length_(0),
-		buf_(new char[capacity_ + 1])
+		buf_(static_cast<char*>(malloc(capacity_ + 1)))
 	{
 		nullCap();
 	}
 
 	~String()
 	{
-		delete[] buf_;
+		free(buf_);
 	}
 
 	inline int compare(const String& rhs) const
@@ -198,7 +199,15 @@ public:
 		return *this;		
 	}
 
-	inline String& append(char c, uint copies = 1)
+	inline String& append(char c)
+	{
+		_reserve(length_ + 1);
+		buf_[length_++] = c;
+		nullCap();
+		return *this;
+	}
+
+	inline String& append(char c, uint copies)
 	{
 		_reserve(length_ + copies);
 
@@ -250,20 +259,21 @@ public:
 
 	inline void reserve(uint capacity)
 	{
-		if (capacity > max_size())
+		if (capacity > capacity_)
 		{
-			throw std::string("String Error: Cannot reserve greater than max_size.");
-		}
-		else if (capacity > capacity_)
-		{
+			if (capacity > max_size())
+			{
+				throw std::string("String Error: Cannot reserve greater than max_size.");
+			}
+
 			// Create bigger buffer
-			char* temp = new char[capacity + 1];
+			char* temp = static_cast<char*>(realloc(buf_, capacity + 1));
 
 			// Copy old buf
 			memcpy(temp, buf_, length_ + 1);
 
 			swap(buf_, temp);
-			delete[] temp;
+			// delete[] temp;
 
 			capacity_ = capacity;
 		}
@@ -335,13 +345,18 @@ private:
 
 	inline void _reserve(uint capacity)
 	{
-		uint newCapacity = capacity_;
-		while (capacity > newCapacity)
+		if (capacity > capacity_)
 		{
-			newCapacity *= 2;
-		}
+			uint newCapacity = capacity_;
 
-		reserve(newCapacity);
+			do
+			{
+				newCapacity *= 2;
+			}
+			while (capacity > newCapacity);
+
+			reserve(newCapacity);	
+		}
 	}
 };
 
