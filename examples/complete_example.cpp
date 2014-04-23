@@ -29,7 +29,7 @@ int main()
 	try
 	{
 		// Loading an XML file is easy, and it returns a pointer to the root node.
-		root = xml::loadXml2("../../Downloads/nasa.xml");
+		root = xml::loadXml2("../../Downloads/bigdaddy.xml");
 		// root = xml::loadXml2("example.xml");
 
 		if (root != NULL)

@@ -16,7 +16,7 @@ namespace EASYXML_NAMESPACE
 	const std::string esc_sequences[] = {"&amp;", "&lt;", "&gt;", "&apos;", "&quot;"};
 	const std::string esc_values[] = {"&", "<", ">", "'", "\""};
 
-	static int inline strcmp2(const char* rhs, const char* lhs, uint len = -1)
+	static inline int strcmp2(const char* rhs, const char* lhs, uint len = -1)
 	{
 		uint i = 0;
 
@@ -133,8 +133,8 @@ namespace EASYXML_NAMESPACE
 		// Character index into "file".
 		long int index = 0;
 
-		// Instantiate value one time.
-		String value;
+		// Instantiate Strings one time.
+		String name, value, attrName, attrValue;
 		value.reserve(ELEMENT_VALUE_SIZE);
 
 		// Parse the file.
@@ -154,7 +154,8 @@ namespace EASYXML_NAMESPACE
 					value.shrink_to_fit();
 					ancestors.top()->value.swap(value);
 
-					String name;
+					// String name;
+					name.clear();
 					name.reserve(ELEMENT_NAME_SIZE);
 
 					// Parse the element's name.
@@ -215,7 +216,8 @@ namespace EASYXML_NAMESPACE
 					value.clear();
 					value.reserve(ELEMENT_VALUE_SIZE);
 
-					String name;
+					// String name;
+					name.clear();
 					name.reserve(ELEMENT_NAME_SIZE);
 
 					bool foundWhitespace = false;
@@ -231,7 +233,8 @@ namespace EASYXML_NAMESPACE
 						// Otherwise it is an attribute.
 						else
 						{
-							String attrName;
+							// String attrName;
+							attrName.clear();
 							attrName.reserve(50);
 
 							// Parse attribute name.
@@ -246,7 +249,8 @@ namespace EASYXML_NAMESPACE
 
 							// Attributes can start with either a single or double quote
 							char startQuote = file[index++];
-							String attrValue;
+							// String attrValue;
+							attrValue.clear();
 							attrValue.reserve(50);
 
 							// Parse attribute value
@@ -292,7 +296,7 @@ namespace EASYXML_NAMESPACE
 					// Otherwise, add the node to his parent's child list.
 					else
 					{
-						ancestors.top()->children.push_back(node);
+						// ancestors.top()->children.push_back(node);
 						// ancestors.top()->sortedChildren.insert(node);
 					}
 

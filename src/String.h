@@ -68,22 +68,22 @@ public:
 		delete[] buf_;
 	}
 
-	int compare(const String& rhs) const
+	inline int compare(const String& rhs) const
 	{
 		return compare(0, length_, rhs.buf_, 0, rhs.length_);
 	}
 
-	int compare(const char* rhs) const
+	inline int compare(const char* rhs) const
 	{
 		return compare(0, length_, rhs, 0, strlen(rhs));
 	}
 
-	int compare(uint pos, uint len, const String& rhs, uint subpos = 0, uint sublen = npos) const
+	inline int compare(uint pos, uint len, const String& rhs, uint subpos = 0, uint sublen = npos) const
 	{
 		return compare(pos, len, rhs.buf_, subpos, (sublen == npos ? rhs.length_ : sublen));
 	}
 
-	int compare(uint pos, uint len, const char* rhs, uint subpos = 0, uint sublen = npos) const
+	inline int compare(uint pos, uint len, const char* rhs, uint subpos = 0, uint sublen = npos) const
 	{
 		if (sublen == npos)
 		{
@@ -116,42 +116,42 @@ public:
 		return 0;
 	}
 
-	bool operator==(const String& rhs) const
+	inline bool operator==(const String& rhs) const
 	{
 		return compare(rhs) == 0;
 	}
 
-	bool operator==(const char* rhs) const
+	inline bool operator==(const char* rhs) const
 	{
 		return compare(rhs) == 0;
 	}
 
-	bool operator==(char rhs) const
+	inline bool operator==(char rhs) const
 	{
 		return length_ == 1 && buf_[0] == rhs;
 	}
 
-	bool operator!=(const String& rhs) const
+	inline bool operator!=(const String& rhs) const
 	{
 		return !operator==(rhs);
 	}
 
-	bool operator!=(const char* rhs) const
+	inline bool operator!=(const char* rhs) const
 	{
 		return !operator==(rhs);
 	}
 
-	bool operator!=(char rhs) const
+	inline bool operator!=(char rhs) const
 	{
 		return !operator==(rhs);
 	}
 
-	String& assign(const String& rhs, uint subpos = 0, uint sublen = npos)
+	inline String& assign(const String& rhs, uint subpos = 0, uint sublen = npos)
 	{
 		return assign(rhs.buf_, subpos, sublen == npos ? rhs.length_ : sublen);
 	}
 
-	String& assign(const char* rhs, uint subpos = 0, uint sublen = npos)
+	inline String& assign(const char* rhs, uint subpos = 0, uint sublen = npos)
 	{
 		if (buf_ != rhs)
 		{
@@ -162,27 +162,27 @@ public:
 		return *this;
 	}
 
-	String& operator=(const String& rhs)
+	inline String& operator=(const String& rhs)
 	{
 		return assign(rhs);
 	}
 
-	String& operator=(const char* rhs)
+	inline String& operator=(const char* rhs)
 	{
 		return assign(rhs);
 	}
 
-	String& operator=(char rhs)
+	inline String& operator=(char rhs)
 	{
 		return assign(&rhs, 0, 1);
 	}
 
-	String& append(const String& str, uint subpos = 0, uint sublen = npos)
+	inline String& append(const String& str, uint subpos = 0, uint sublen = npos)
 	{
 		return append(str.buf_, subpos, sublen == npos ? str.length_ : sublen);
 	}
 
-	String& append(const char* str, uint subpos = 0, uint sublen = npos)
+	inline String& append(const char* str, uint subpos = 0, uint sublen = npos)
 	{
 		if (sublen == npos)
 		{
@@ -198,7 +198,7 @@ public:
 		return *this;		
 	}
 
-	String& append(char c, uint copies = 1)
+	inline String& append(char c, uint copies = 1)
 	{
 		_reserve(length_ + copies);
 
@@ -211,44 +211,44 @@ public:
 		return *this;
 	}
 
-	uint max_size()
+	inline uint max_size()
 	{
 		return npos - 1;
 	}
 
-	String& operator+=(const String& rhs)
+	inline String& operator+=(const String& rhs)
 	{
 		return append(rhs);
 	}
 
-	String& operator+=(const char* rhs)
+	inline String& operator+=(const char* rhs)
 	{
 		return append(rhs);
 	}
 
-	String& operator+=(char rhs)
+	inline String& operator+=(char rhs)
 	{
 		return append(rhs);
 	}
 
-	char& operator[](uint index)
+	inline char& operator[](uint index)
 	{
 		return buf_[index];
 	}
 
-	const char& operator[](uint index) const
+	inline const char& operator[](uint index) const
 	{
 		return buf_[index];
 	}
 
-	void swap(String& rhs)
+	inline void swap(String& rhs)
 	{
 		swap(buf_, rhs.buf_);
 		swap(capacity_, rhs.capacity_);
 		swap(length_, rhs.length_);
 	}
 
-	void reserve(uint capacity)
+	inline void reserve(uint capacity)
 	{
 		if (capacity > max_size())
 		{
@@ -270,7 +270,7 @@ public:
 	}
 
 	/// Resize string and fill empty space with "fill"
-	void resize(uint length, char fill = '\0')
+	inline void resize(uint length, char fill = '\0')
 	{
 		if (length > length_)
 		{
@@ -282,35 +282,35 @@ public:
 		nullCap();
 	}
 
-	void shrink_to_fit()
+	inline void shrink_to_fit()
 	{
 		String temp(buf_, 0, length_);
 		swap(temp);
 	}
 
 	// Note: c_str() can be modified by further calls to String
-	const char* c_str() const
+	inline const char* c_str() const
 	{
 		return buf_;
 	}
 
-	void clear()
+	inline void clear()
 	{
 		length_ = 0;
 		nullCap();
 	}
 
-	uint size() const
+	inline uint size() const
 	{
 		return length_;
 	}
 
-	uint length() const
+	inline uint length() const
 	{
 		return length_;
 	}
 
-	uint capacity() const
+	inline uint capacity() const
 	{
 		return capacity_;
 	}
@@ -321,19 +321,19 @@ private:
 	char* buf_;
 
 	template <class T>
-	void swap (T& a, T& b)
+	inline void swap (T& a, T& b)
 	{
 		T c(a);
 		a = b;
 		b = c;
 	}
 
-	void nullCap()
+	inline void nullCap()
 	{
 		buf_[length_] = '\0';
 	}
 
-	void _reserve(uint capacity)
+	inline void _reserve(uint capacity)
 	{
 		uint newCapacity = capacity_;
 		while (capacity > newCapacity)

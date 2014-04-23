@@ -20,6 +20,8 @@ protected:
 	class IterableNode_;
 
 public:
+	virtual ~Iterable() {}
+
 	class iterator;
 
 	/*
@@ -57,6 +59,8 @@ public:
 			status_(INVALID),
 			iterNode_(NULL)
 		{ }
+
+		virtual ~iterator() {}
 
 		/// Returns true if the iterators point to the same node address, have the same status, and are not INVALID.
 		bool operator==(const iterator& rhs) const
