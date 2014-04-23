@@ -1,7 +1,7 @@
-#include "Node.h"
 #include <iostream>
 #include <typeinfo>
 #include <cstdlib>
+#include "Node.h"
 
 namespace EASYXML_NAMESPACE
 {
@@ -9,8 +9,13 @@ namespace EASYXML_NAMESPACE
 	Node::Node() :
 		name(),
 		value(),
+		parent_(NULL),
+		firstChild_(NULL),
+		lastChild_(NULL),
+		nextSibling_(NULL),
+		prevSibling_(NULL)
 		// attributes(),
-		children()
+		// children()
 		// sortedChildren(node_ptr_compare)
 	{ }
 
@@ -18,16 +23,26 @@ namespace EASYXML_NAMESPACE
 	Node::Node(const char* _name, const char* _value) :
 		name(_name),
 		value(_value),
+		parent_(NULL),
+		firstChild_(NULL),
+		lastChild_(NULL),
+		nextSibling_(NULL),
+		prevSibling_(NULL)
 		// attributes(),
-		children()
+		// children()
 		// sortedChildren(node_ptr_compare)
 	{ }
 
 	Node::Node(const std::string& _name, const std::string& _value) :
 		name(_name),
 		value(_value),
+		parent_(NULL),
+		firstChild_(NULL),
+		lastChild_(NULL),
+		nextSibling_(NULL),
+		prevSibling_(NULL)
 		// attributes(),
-		children()
+		// children()
 		// sortedChildren(node_ptr_compare)
 	{ }
 
@@ -180,5 +195,76 @@ namespace EASYXML_NAMESPACE
 		// {
 		// 	throw EasyXmlException("Child element \"" + path + "\" not found.", 103);
 		// }
+	}
+
+	const Node* Node::getParent() const
+	{
+		return parent_;
+	}
+
+	const Node* Node::getFirstChild() const
+	{
+		return firstChild_;
+	}
+
+	const Node* Node::getLastChild() const
+	{
+		return lastChild_;
+	}
+
+	const Node* Node::getNextSibling() const
+	{
+		return nextSibling_;
+	}
+
+	const Node* Node::getPrevSibling() const
+	{
+		return prevSibling_;
+	}
+
+	void Node::addChildAfter(Node* child, Node* after)
+	{
+		child->parent_ = this;
+
+		child->nextSibling_ = after->nextSibling_;
+
+		if (child->nextSibling_ != NULL)
+		{
+			child->nextSibling_->prevSibling_ = child;
+		}
+
+		child->prevSibling_ = after;
+		after->nextSibling_ = child;
+	}
+
+	void Node::addChildBefore(Node* child, Node* before)
+	{
+		child->parent_ = this;
+
+		child->prevSibling_ = before->prevSibling_;
+
+		if (child->prevSibling_ != NULL)
+		{
+			child->prevSibling_->nextSibling_ = child;
+		}
+
+		child->nextSibling_ = before;
+		before->prevSibling_ = child;
+	}
+
+	void Node::addChild(Node* child)
+	{
+		child->parent_ = this;
+
+		if (firstChild_ == NULL)
+		{
+			lastChild_ = firstChild_ = child;
+		}
+		else
+		{
+			lastChild_->nextSibling_ = child;
+			child->prevSibling_ = lastChild_;
+			lastChild_ = child;
+		}
 	}
 }

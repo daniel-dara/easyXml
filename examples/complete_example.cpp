@@ -8,14 +8,24 @@
 
 unsigned int count = 0;
 
-void explore(xml::Node* parent)
+// void explore(xml::Node* parent)
+// {
+// 	count++;
+// 	List<xml::Node*>::iterator ite = parent->children.begin();
+// 	while (ite != parent->children.end())
+// 	{
+// 		explore(*ite);
+// 		ite++;
+// 	}
+// }
+
+void explore2(const xml::Node* parent)
 {
 	count++;
-	List<xml::Node*>::iterator ite = parent->children.begin();
-	while (ite != parent->children.end())
+
+	for (const xml::Node* child = parent->getFirstChild(); child != NULL; child = child->getNextSibling())
 	{
-		explore(*ite);
-		ite++;
+		explore2(child);
 	}
 }
 
@@ -61,7 +71,7 @@ int main()
 
 			//xml::saveXml(root, "example_output.xml");
 
-			explore(root);
+			explore2(root);
 
 			std::cout << "total nodes: " << count << "\n";
 

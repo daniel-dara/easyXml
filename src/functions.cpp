@@ -297,6 +297,7 @@ namespace EASYXML_NAMESPACE
 					else
 					{
 						// ancestors.top()->children.push_back(node);
+						ancestors.top()->addChild(node);
 						// ancestors.top()->sortedChildren.insert(node);
 					}
 
@@ -331,41 +332,41 @@ namespace EASYXML_NAMESPACE
 
 	void saveXml(const Node* node, std::ostream& out, std::string indentation)
 	{
-		out << indentation << "<" << node->name;
+	// 	out << indentation << "<" << node->name;
 
-		if (node->children.size() > 0)
-		{
-			out << ">\n";
+	// 	if (node->children.size() > 0)
+	// 	{
+	// 		out << ">\n";
 
-			for (List<Node*>::iterator it = node->children.begin(); \
-			     it != node->children.end(); ++it)
-			{
-				saveXml(*it, out, indentation + "\t");
-			}
+	// 		for (List<Node*>::iterator it = node->children.begin(); \
+	// 		     it != node->children.end(); ++it)
+	// 		{
+	// 			saveXml(*it, out, indentation + "\t");
+	// 		}
 
-			out << indentation << "</" << node->name << ">";
-		}
-		else if (node->value == "")
-		{
-			out << " />";
-		}
-		else
-		{
-			String value(node->value);
+	// 		out << indentation << "</" << node->name << ">";
+	// 	}
+	// 	else if (node->value == "")
+	// 	{
+	// 		out << " />";
+	// 	}
+	// 	else
+	// 	{
+	// 		String value(node->value);
 
-			// Replace bad chars with XML escape sequences. Ampersands must be escaped first otherwise
-			// ampersands from other escape sequences will be double encoded.
-			for (int i = 0; i < 5; i++)
-			{
-				// TODO: write replacement function for class String
-				// replaceAll(value, esc_values[i], esc_sequences[i]);
-			}
+	// 		// Replace bad chars with XML escape sequences. Ampersands must be escaped first otherwise
+	// 		// ampersands from other escape sequences will be double encoded.
+	// 		for (int i = 0; i < 5; i++)
+	// 		{
+	// 			// TODO: write replacement function for class String
+	// 			// replaceAll(value, esc_values[i], esc_sequences[i]);
+	// 		}
 
-			out << ">" << value;
-			out << "</" << node->name << ">";
-		}
+	// 		out << ">" << value;
+	// 		out << "</" << node->name << ">";
+	// 	}
 
-		out << "\n";
+	// 	out << "\n";
 	}
 
 	void printTree(const Node* node, std::string indentation)
@@ -386,33 +387,33 @@ namespace EASYXML_NAMESPACE
 		// }
 
 		// increase the indentation for the next level
-		indentation += "\t";
+		// indentation += "\t";
 
-		List<Node*>::iterator it;
-		for (it = node->children.begin(); it != node->children.end(); ++it)
-		{
-			printTree((*it), indentation);
-		}
+		// List<Node*>::iterator it;
+		// for (it = node->children.begin(); it != node->children.end(); ++it)
+		// {
+		// 	printTree((*it), indentation);
+		// }
 	}
 
 	void deleteTree(Node* node)
 	{
-		if (node == NULL)
-		{
-			throw EasyXmlException("deleteTree was called on a NULL pointer.", 102);
-		}
-		else
-		{
-			List<Node*>::iterator it = node->children.begin();
+		// if (node == NULL)
+		// {
+		// 	throw EasyXmlException("deleteTree was called on a NULL pointer.", 102);
+		// }
+		// else
+		// {
+		// 	List<Node*>::iterator it = node->children.begin();
 
-			while (it != node->children.end())
-			{
-				deleteTree(*it);
-				it++;
-			}
+		// 	while (it != node->children.end())
+		// 	{
+		// 		deleteTree(*it);
+		// 		it++;
+		// 	}
 
-			delete node;
-		}
+		// 	delete node;
+		// }
 	}
 
 	// The following 3 functions are public domain: http://stackoverflow.com/a/217605

@@ -1,13 +1,14 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include <string>
+#include <vector>
+#include <set>
 #include "namespace.h"
 #include "Exception.h"
 #include "String.h"
 #include "List.h"
-#include <vector>
-#include <set>
-#include <string>
+
 
 namespace EASYXML_NAMESPACE
 {
@@ -48,10 +49,26 @@ namespace EASYXML_NAMESPACE
 		};
 
 		// std::set<Attribute> attributes;
-		List<Node*> children;
+		// List<Node*> children;
 		// std::set<Node*, bool (*)(const Node*, const Node*)> sortedChildren;
+		
+		const Node* getParent() const;
+		const Node* getFirstChild() const;
+		const Node* getLastChild() const;
+		const Node* getNextSibling() const;
+		const Node* getPrevSibling() const;
+
+		void addChildAfter(Node* child, Node* after);
+		void addChildBefore(Node* child, Node* before);
+		void addChild(Node* child);
 
 	private:
+		Node* parent_;
+		Node* firstChild_;
+		Node* lastChild_;
+		Node* nextSibling_;
+		Node* prevSibling_;
+
 		// Comparator function used to sort the "children" set.
 		static bool node_ptr_compare(const Node* lhs, const Node* rhs)
 		{
