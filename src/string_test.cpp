@@ -73,5 +73,33 @@ int main()
 	std::cout << "temp += \"HAR\": " << temp;
 	assert(temp == "cHAR");
 
+	temp = "i like tests";
+	temp = temp + " very much";
+	std::cout << "\"i like tests\" + \" very much\": " << temp;
+	assert(temp == "i like tests very much");
+
+	temp = "i like tests";
+	String temp2(" very much");
+	temp = temp + temp2;
+	std::cout << "operator+(const String& lhs, const String& rhs): ";
+	assert(temp == "i like tests very much");
+
+	temp = "i like tests";
+	temp2 = "";
+	temp = temp + temp2;
+	std::cout << "operator+(const String& lhs, const String& rhs): ";
+	assert(temp == "i like tests");
+
+	temp = "";
+	temp.append("test");
+	std::cout << "append(const char* str): ";
+	assert(temp == "test");
+	
+	temp = "";
+	temp2 = " very much";//String(" very much");
+	temp = temp + temp2;
+	std::cout << "operator+(const String& lhs, const String& rhs): ";
+	assert(temp == " very much");
+
 	return 0;	
 }

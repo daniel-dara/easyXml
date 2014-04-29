@@ -347,7 +347,7 @@ private:
 	{
 		if (capacity > capacity_)
 		{
-			uint newCapacity = capacity_;
+			uint newCapacity = capacity_ ? capacity_ : 1;
 
 			do
 			{
@@ -362,37 +362,27 @@ private:
 
 inline String operator+(const String& lhs, const String& rhs)
 {
-	String temp(lhs);
-	temp.append(rhs);
-	return temp;
+	return String(lhs).append(rhs);
 }
 
 inline String operator+(const char* lhs, const String& rhs)
 {
-	String temp(lhs);
-	temp.append(rhs);
-	return temp;
+	return String(lhs).append(rhs);
 }
 
 inline String operator+(const String& lhs, const char* rhs)
 {
-	String temp(lhs);
-	temp.append(rhs);
-	return temp;
+	return String(lhs).append(rhs);
 }
 
 inline String operator+(char lhs, const String& rhs)
 {
-	String temp(&lhs, 0, 1);
-	temp.append(rhs);
-	return temp;
+	return String(&lhs, 0, 1).append(rhs);
 }
 
 inline String operator+(const String& lhs, char rhs)
 {
-	String temp(lhs);
-	temp.append(rhs);
-	return temp;
+	return String(lhs).append(rhs);
 }
 
 inline std::ostream& operator<<(std::ostream& out, const String& rhs)
