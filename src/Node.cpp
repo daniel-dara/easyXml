@@ -14,9 +14,6 @@ namespace EASYXML_NAMESPACE
 		lastChild_(NULL),
 		nextSibling_(NULL),
 		prevSibling_(NULL)
-		// attributes(),
-		// children()
-		// sortedChildren(node_ptr_compare)
 	{ }
 
 	// Conversion Constructors
@@ -28,9 +25,6 @@ namespace EASYXML_NAMESPACE
 		lastChild_(NULL),
 		nextSibling_(NULL),
 		prevSibling_(NULL)
-		// attributes(),
-		// children()
-		// sortedChildren(node_ptr_compare)
 	{ }
 
 	Node::Node(const std::string& _name, const std::string& _value) :
@@ -41,65 +35,41 @@ namespace EASYXML_NAMESPACE
 		lastChild_(NULL),
 		nextSibling_(NULL),
 		prevSibling_(NULL)
-		// attributes(),
-		// children()
-		// sortedChildren(node_ptr_compare)
 	{ }
 
-	// // Copy Constructor - technically a deep copy since the "children" set is copied
-	// // but note that the set is just a bunch of pointers. The actual child nodes are not copied.
-	// Node::Node(const Node& rhs) :
-	// 	name(rhs.name),
-	// 	value(rhs.value),
-	// 	attributes(),
-	// 	children(),
-	// 	sortedChildren(node_ptr_compare)
-	// {
-	// 	for (std::set<Attribute>::const_iterator ite = rhs.attributes.begin(); ite != rhs.attributes.end(); ite++)
-	// 	{
-	// 		attributes.insert(*ite);
-	// 	}
+	/// Copy Constructor
+	/**
+	 * Copies name and value but initializes all relatives to NULL.
+	 */
+	Node::Node(const Node& rhs) :
+		name(rhs.name),
+		value(rhs.value),
+		parent_(NULL),
+		firstChild_(NULL),
+		lastChild_(NULL),
+		nextSibling_(NULL),
+		prevSibling_(NULL)
+	{ }
 
-	// 	for (std::vector<Node*>::const_iterator ite = rhs.children.begin(); ite != rhs.children.end(); ite++)
-	// 	{
-	// 		children.push_back(*ite);
-	// 	}
+	/// Assignment
+	/**
+	 * Copies name and value but sets all relatives to NULL.
+	 */
+	Node& Node::operator=(const Node& rhs)
+	{
+		if (this != &rhs)
+		{
+			name = rhs.name;
+			value = rhs.value;
+			parent_ = NULL;
+			firstChild_ = NULL;
+			lastChild_ = NULL;
+			nextSibling_ = NULL;
+			prevSibling_ = NULL;
+		}
 
-	// 	for (std::set<Node*>::const_iterator ite = rhs.sortedChildren.begin(); ite != rhs.sortedChildren.end(); ite++)
-	// 	{
-	// 		sortedChildren.insert(*ite);
-	// 	}
-	// }
-
-	// // Assignment - deep copy (beware, this loses all children pointers but does not free them)
-	// Node& Node::operator=(const Node& rhs)
-	// {
-	// 	if (this != &rhs)
-	// 	{
-	// 		attributes.clear();
-	// 		for (std::set<Attribute>::const_iterator ite = rhs.attributes.begin(); ite != rhs.attributes.end(); ite++)
-	// 		{
-	// 			attributes.insert(*ite);
-	// 		}
-
-	// 		children.clear();
-	// 		for (std::vector<Node*>::const_iterator ite = rhs.children.begin(); ite != rhs.children.end(); ite++)
-	// 		{
-	// 			children.push_back(*ite);
-	// 		}
-
-	// 		sortedChildren.clear();
-	// 		for (std::set<Node*>::const_iterator ite = rhs.sortedChildren.begin(); ite != rhs.sortedChildren.end(); ite++)
-	// 		{
-	// 			sortedChildren.insert(*ite);
-	// 		}
-
-	// 		name = rhs.name;
-	// 		value = rhs.value;
-	// 	}
-
-	// 	return *this;
-	// }
+		return *this;
+	}
 
 	std::string Node::val() const
 	{
@@ -152,54 +122,65 @@ namespace EASYXML_NAMESPACE
 		}
 	}
 
-	Node* Node::findNode(const std::string path, bool returnNull) const
+	Node* Node::getParent()
 	{
-		return NULL;
-		
-		// // Save the cost of instantiation since findNode is recursive and its name is always overwritten.
-		// static Node query;
+		return const_cast<Node*>(static_cast<const Node*>(this)->getParent());
+	}
 
-		// std::string restOfPath;
-		// size_t slashIndex = path.find('/');
+	Node* Node::getChild(const char* name)
+	{
+		return const_cast<Node*>(static_cast<const Node*>(this)->getChild(name));
+	}
 
-		// if (slashIndex == std::string::npos)
-		// {
-		// 	query.name = path;
-		// }
-		// else
-		// {
-		// 	query.name = path.substr(0, slashIndex);
-		// 	restOfPath = path.substr(slashIndex + 1);
-		// }
+	Node* Node::getChild(const String& name)
+	{
+		return const_cast<Node*>(static_cast<const Node*>(this)->getChild(name));
+	}
 
-		// static std::set<Node*>::const_iterator iter;
-		// iter = sortedChildren.find(&query);
+	Node* Node::getFirstChild()
+	{
+		return const_cast<Node*>(static_cast<const Node*>(this)->getFirstChild());
+	}
 
-		// if (iter != sortedChildren.end())
-		// {
-		// 	if (restOfPath.length() == 0)
-		// 	{
-		// 		return (*iter);
-		// 	}
-		// 	else
-		// 	{
-		// 		return (*iter)->findNode(restOfPath);
-		// 	}
-		// }
+	Node* Node::getLastChild()
+	{
+		return const_cast<Node*>(static_cast<const Node*>(this)->getLastChild());
+	}
 
-		// if (returnNull)
-		// {
-		// 	return NULL;
-		// }
-		// else
-		// {
-		// 	throw EasyXmlException("Child element \"" + path + "\" not found.", 103);
-		// }
+	Node* Node::getNextSibling()
+	{
+		return const_cast<Node*>(static_cast<const Node*>(this)->getNextSibling());
+	}
+
+	Node* Node::getPrevSibling()
+	{
+		return const_cast<Node*>(static_cast<const Node*>(this)->getPrevSibling());
 	}
 
 	const Node* Node::getParent() const
 	{
 		return parent_;
+	}
+
+	const Node* Node::getChild(const char* name) const
+	{
+		// Loop over all children.
+		for (Node* child = firstChild_; child != lastChild_; child = child->nextSibling_)
+		{
+			// Return the child if a its name matches the argument.
+			if (child->name == name)
+			{
+				return child;
+			}
+		}
+
+		// Return null if the child was not found.
+		return NULL;
+	}
+
+	const Node* Node::getChild(const String& name) const
+	{
+		return getChild(name.c_str());
 	}
 
 	const Node* Node::getFirstChild() const
@@ -285,6 +266,26 @@ namespace EASYXML_NAMESPACE
 		return countOffspring(this);
 	}
 
+	Node* Node::find(const char* path)
+	{
+		return const_cast<Node*>(static_cast<const Node*>(this)->find(path));
+	}
+
+	Node* Node::find(const String& path)
+	{
+		return const_cast<Node*>(static_cast<const Node*>(this)->find(path));
+	}
+
+	const Node* Node::find(const char* path) const
+	{
+		return find(String(path));
+	}
+
+	const Node* Node::find(const String& path) const
+	{
+		return find(this, path);
+	}
+
 	unsigned int Node::countOffspring(const Node* node) const
 	{
 		unsigned int count = 0;
@@ -295,5 +296,26 @@ namespace EASYXML_NAMESPACE
 		}	
 
 		return count + 1;
+	}
+
+	const Node* Node::find(const Node* node, const String& path) const
+	{
+		if (node == NULL)
+		{
+			return NULL;
+		}
+
+		unsigned int index = path.find("/");
+
+		node = node->getChild(path.substr(0, index));
+
+		if (index == String::npos)
+		{
+			return node;
+		}
+		else
+		{
+			return find(node, path.substr(index + 1));
+		}
 	}
 }

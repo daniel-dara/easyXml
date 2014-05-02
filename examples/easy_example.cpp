@@ -9,13 +9,13 @@ int main()
 	// You can easily search for nodes by name and use "/" as a hierarchical delimiter.
 	// find() will return NULL if the given node was not found OR you can pass the boolean "true"
 	// as the second argument and it will throw an exception instead.
-	xml::Node* n2008 = root->findNode("history/2008");
+	xml::Node* n2008 = root->find("history/2008");
 
 	// You can access a node's name and value directly.
 	std::cout << n2008->name << "=" << n2008->value << std::endl;
 
 	// There is also a templated function called val() to parse the value for you.
-	xml::Node* year = root->findNode("year");
+	xml::Node* year = root->find("year");
 	std::cout << year->name << "=" << (year->val<int>() - 10) << std::endl;
 
 	// Saving is as easy as loading.

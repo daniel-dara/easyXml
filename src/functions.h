@@ -7,7 +7,6 @@
 namespace EASYXML_NAMESPACE
 {
 	Node* loadXml(const std::string& filePath);
-	Node* loadXml2(const std::string& filePath);
 	void saveXml(const Node* node, const std::string& filePath);
 	void saveXml(const Node* node, std::ostream& out, std::string indentation = "");
 

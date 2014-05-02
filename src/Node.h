@@ -7,8 +7,6 @@
 #include "namespace.h"
 #include "Exception.h"
 #include "String.h"
-#include "List.h"
-
 
 namespace EASYXML_NAMESPACE
 {
@@ -18,41 +16,41 @@ namespace EASYXML_NAMESPACE
 		Node();
 		Node(const char* name, const char* value = "");
 		Node(const std::string& name, const std::string& value = "");
-		// Node(const Node& rhs);
-		// Node& operator=(const Node& rhs);
+		Node(const Node& rhs);
+
+		Node& operator=(const Node& rhs);
+
+		// Nested class for representing XML Attributes
+		class Attribute
+		{
+		public:
+			Attribute(const String& name, const String& value) :
+				name(name),
+				value(value)
+			{ }
+
+			String name;
+			String value;
+		};
 
 		std::string val() const;
-		// Templated short-hand "getter" function
-		template <class T> T val() const;
-
-		Node* findNode(const std::string path, bool throwException = false) const;
+		template <class T> T val() const; // Templated short-hand "getter" function
 
 		// Members should be public so they can be readable and writable by anyone
 		String name;
 		String value;
-
-		class Attribute
-		{
-		public:
-			Attribute(const std::string& _name, const std::string& _value) :
-				name(_name),
-				value(_value)
-			{ }
-
-			bool operator<(const Attribute& rhs) const
-			{
-				return name < rhs.name;
-			}
-
-			std::string name;
-			std::string value;
-		};
-
-		// std::set<Attribute> attributes;
-		// List<Node*> children;
-		// std::set<Node*, bool (*)(const Node*, const Node*)> sortedChildren;
 		
+		Node* getParent();
+		Node* getChild(const char* name);
+		Node* getChild(const String& name);
+		Node* getFirstChild();
+		Node* getLastChild();
+		Node* getNextSibling();
+		Node* getPrevSibling();
+
 		const Node* getParent() const;
+		const Node* getChild(const char* name) const;
+		const Node* getChild(const String& name) const;
 		const Node* getFirstChild() const;
 		const Node* getLastChild() const;
 		const Node* getNextSibling() const;
@@ -65,6 +63,11 @@ namespace EASYXML_NAMESPACE
 		unsigned int countChildren() const;
 		unsigned int countOffspring() const;
 
+		Node* find(const char* path);
+		Node* find(const String& path);
+		const Node* find(const char* path) const;
+		const Node* find(const String& path) const;
+
 	private:
 		Node* parent_;
 		Node* firstChild_;
@@ -72,19 +75,11 @@ namespace EASYXML_NAMESPACE
 		Node* nextSibling_;
 		Node* prevSibling_;
 
+		void* firstAttribute_;
+		void* document_;
+
 		unsigned int countOffspring(const Node* node) const;
-
-		// Comparator function used to sort the "children" set.
-		static bool node_ptr_compare(const Node* lhs, const Node* rhs)
-		{
-			return &lhs->name < &rhs->name;
-		}
-
-		// Comparator function used to sort the "attributes" set.
-		static bool attr_ptr_compare(const Attribute* lhs, const Attribute* rhs)
-		{
-			return lhs->name < rhs->name;
-		}
+		const Node* find(const Node* node, const String& path) const;
 	};
 }
 

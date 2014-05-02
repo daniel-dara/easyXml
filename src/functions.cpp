@@ -48,7 +48,7 @@ namespace EASYXML_NAMESPACE
 		return c == ' ' || c == '\t' || c == '\n' || c == '\r';
 	}
 
-	Node* loadXml2(const std::string& filePath)
+	Node* loadXml(const std::string& filePath)
 	{
 		// Open a stream to the file.
 		FILE* fp = fopen(filePath.c_str(), "rb");
