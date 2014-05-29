@@ -92,7 +92,7 @@ public:
 	/**
 	 * Copies *str* as a new value for this string
 	 */
-	String& operator=(const String& str);
+	inline String& operator=(const String& str);
 
 	/// assign C-string
 	/**
@@ -100,14 +100,14 @@ public:
 	 * Pointer to a null-terminated sequence of characters.
 	 * The sequence is copied as the new value for the string.
 	 */
-	String& operator=(const char* s);
+	inline String& operator=(const char* s);
 
 	/// assign char
 	/**
 	 * A character. The string value is set to a single copy of this character
 	 * (the string length becomes 1).
 	 */
-	String& operator=(char c);
+	inline String& operator=(char c);
 	//@}
 
 	/* SECTION: Iterators *****************************************************/
@@ -116,24 +116,24 @@ public:
 
 	/* SECTION: Capacity ******************************************************/
 
-	uint size() const;
+	inline uint size() const;
 
-	uint length() const;
+	inline uint length() const;
 
-	uint max_size();
+	inline uint max_size();
 
 	/// Resize string and fill empty space with "fill"
-	void resize(uint length, char fill = '\0');
+	inline void resize(uint length, char fill = '\0');
 
-	uint capacity() const;
+	inline uint capacity() const;
 
-	void reserve(uint capacity);
+	inline void reserve(uint capacity);
 
-	void clear();
+	inline void clear();
 
-	bool empty();
+	inline bool empty();
 
-	void shrink_to_fit();
+	inline void shrink_to_fit();
 
 	/* SECTION: Element Access ************************************************/
 
@@ -151,19 +151,19 @@ public:
 
 	/* SECTION: Modifiers *****************************************************/
 
-	String& operator+=(const String& rhs);
+	inline String& operator+=(const String& rhs);
 
-	String& operator+=(const char* rhs);
+	inline String& operator+=(const char* rhs);
 
-	String& operator+=(char rhs);
+	inline String& operator+=(char rhs);
 
-	String& append(const String& str, uint subpos = 0, uint sublen = npos);
+	inline String& append(const String& str, uint subpos = 0, uint sublen = npos);
 
-	String& append(const char* str, uint subpos = 0, uint sublen = npos);
+	inline String& append(const char* str, uint subpos = 0, uint sublen = npos);
 
-	String& append(char c);
+	inline String& append(char c);
 
-	String& append(char c, uint copies);
+	inline String& append(char c, uint copies);
 
 	/**
 	 * @name assign()
@@ -180,7 +180,7 @@ public:
 	/**
 	 * Copies str.
 	 */
-	String& assign(const String& str);
+	inline String& assign(const String& str);
 
 	/// substring
 	/**
@@ -188,53 +188,53 @@ public:
 	 * *subpos* and spans *sublen* characters (or until the end of *str*, if
 	 * either *str* is too short or if *sublen* is string::npos).
 	 */
-	String& assign(const String& str, uint subpos, uint sublen);
+	inline String& assign(const String& str, uint subpos, uint sublen);
 
 	/// c-string
 	/**
 	 * Copies the first *n* characters from the array of characters pointed to
 	 * by *s*.
 	 */
-	String& assign(const char* s);
+	inline String& assign(const char* s);
 
 	/// buffer
 	/**
 	 * Copies the first *n* characters from the array of characters pointed to
 	 * by *s*.
 	 */
-	String& assign(const char* s, uint n);
+	inline String& assign(const char* s, uint n);
 
 	/// fill
 	/**
 	 * Replaces the current value by *n* consecutive copies of character *c*.
 	 */
-	String& assign(uint n, char c);
+	inline String& assign(uint n, char c);
 	//@}
 
-	void swap(String& rhs);
+	inline void swap(String& rhs);
 
 	/* SECTION: String operations *********************************************/
 
 	/// Note: c_str() can be modified by further calls to String
-	const char* c_str() const;
+	inline const char* c_str() const;
 
-	uint find(const String& str, uint pos = 0) const;
+	inline uint find(const String& str, uint pos = 0) const;
 
-	uint find(const char* s, uint pos = 0) const;
+	inline uint find(const char* s, uint pos = 0) const;
 
-	uint find(const char* s, uint pos, uint n) const;
+	inline uint find(const char* s, uint pos, uint n) const;
 
-	uint find(char c, uint pos = 0) const;
+	inline uint find(char c, uint pos = 0) const;
 
 	String substr(uint pos = 0, uint len = npos) const;
 
-	int compare(const String& rhs) const;
+	inline int compare(const String& rhs) const;
 
-	int compare(const char* rhs) const;
+	inline int compare(const char* rhs) const;
 
-	int compare(uint pos, uint len, const String& rhs, uint subpos = 0, uint sublen = npos) const;
+	inline int compare(uint pos, uint len, const String& rhs, uint subpos = 0, uint sublen = npos) const;
 
-	int compare(uint pos, uint len, const char* rhs, uint subpos = 0, uint sublen = npos) const;
+	inline int compare(uint pos, uint len, const char* rhs, uint subpos = 0, uint sublen = npos) const;
 
 	/* SECTION: Member constants **********************************************/
 
@@ -254,37 +254,37 @@ private:
 	char* buf_;
 
 	template <class T>
-	void swap (T& a, T& b);
+	inline void swap (T& a, T& b);
 
-	void nullCap();
+	inline void nullCap();
 
-	void _reserve(uint capacity);
+	inline void _reserve(uint capacity);
 };
 
 /* SECTION: Non-member function overloads *************************************/
 
-String operator+(const String& lhs, const String& rhs);
+inline String operator+(const String& lhs, const String& rhs);
 
-String operator+(const char* lhs, const String& rhs);
+inline String operator+(const char* lhs, const String& rhs);
 
-String operator+(const String& lhs, const char* rhs);
+inline String operator+(const String& lhs, const char* rhs);
 
-String operator+(char lhs, const String& rhs);
+inline String operator+(char lhs, const String& rhs);
 
-String operator+(const String& lhs, char rhs);
+inline String operator+(const String& lhs, char rhs);
 
-bool operator==(const String& lhs, const String& rhs);
+inline bool operator==(const String& lhs, const String& rhs);
 
-bool operator==(const String& lhs, const char* rhs);
+inline bool operator==(const String& lhs, const char* rhs);
 
-bool operator==(const char* lhs, const String& rhs);
+inline bool operator==(const char* lhs, const String& rhs);
 
-bool operator!=(const String& lhs, const String& rhs);
+inline bool operator!=(const String& lhs, const String& rhs);
 
-bool operator!=(const String& lhs, const char* rhs);
+inline bool operator!=(const String& lhs, const char* rhs);
 
-bool operator!=(const char* lhs, const String& rhs);
+inline bool operator!=(const char* lhs, const String& rhs);
 
-std::ostream& operator<<(std::ostream& out, const String& rhs);
+inline std::ostream& operator<<(std::ostream& out, const String& rhs);
 
 #endif
