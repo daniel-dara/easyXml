@@ -59,11 +59,11 @@ namespace EASYXML_NAMESPACE
 	{
 		if (this != &rhs)
 		{
-			name = rhs.name;
-			value = rhs.value;
-			parent_ = NULL;
-			firstChild_ = NULL;
-			lastChild_ = NULL;
+			name         = rhs.name;
+			value        = rhs.value;
+			parent_      = NULL;
+			firstChild_  = NULL;
+			lastChild_   = NULL;
 			nextSibling_ = NULL;
 			prevSibling_ = NULL;
 		}
@@ -229,7 +229,7 @@ namespace EASYXML_NAMESPACE
 			child->prevSibling_->nextSibling_ = child;
 		}
 
-		child->nextSibling_ = before;
+		child->nextSibling_  = before;
 		before->prevSibling_ = child;
 	}
 
@@ -244,8 +244,8 @@ namespace EASYXML_NAMESPACE
 		else
 		{
 			lastChild_->nextSibling_ = child;
-			child->prevSibling_ = lastChild_;
-			lastChild_ = child;
+			child->prevSibling_      = lastChild_;
+			lastChild_               = child;
 		}
 	}
 
