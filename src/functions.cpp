@@ -48,70 +48,86 @@ namespace EASYXML_NAMESPACE
 		return c == ' ' || c == '\t' || c == '\n' || c == '\r';
 	}
 
-	Node* loadXml(const std::string& filePath)
+	// Read the entire contents of a file and store the text as a char array in 'file_contents' and store
+	// the length of the file (in characters) in 'file_length' (both arguments are by reference).
+	static inline void readFile(const std::string& file_path, char*& file_contents, long int& file_length)
 	{
-		// Open a stream to the file.
-		FILE* fp = fopen(filePath.c_str(), "rb");
+		// Create an open pointer to the file.
+		FILE* fp = fopen(file_path.c_str(), "rb");
 
+		// Verify the file was opened successfully.
 		if (fp == NULL)
 		{
-			throw EasyXmlException("fopen() - Error opening file \"" + filePath + "\": " + strerror(errno),
+			throw EasyXmlException("fopen() - Error opening file \"" + file_path + "\": " + strerror(errno),
 			                       FOPEN_FAILED);
 		}
 
 		// Move the stream position indicator to the end of the file.
 		if (fseek(fp, 0, SEEK_END))
 		{
-			throw EasyXmlException("fseek() - Error reading file \"" + filePath + "\": " + strerror(errno),
+			throw EasyXmlException("fseek() - Error reading file \"" + file_path + "\": " + strerror(errno),
 			                       FSEEK_END_FAILED);
 		}
 
 		// Get the stream position indicator's length. This is the length of the file (in bytes).
-		long int fileLength = ftell(fp);
+		file_length = ftell(fp);
 
-		if (fileLength == -1L)
+		// Verify the file_length was successfully read.
+		if (file_length == -1L)
 		{
-			throw EasyXmlException("ftell() - Error reading file \"" + filePath + "\": " + strerror(errno),
+			throw EasyXmlException("ftell() - Error reading file \"" + file_path + "\": " + strerror(errno),
 			                       FTELL_FAILED);
 		}
 
 		// Move the stream position indicator to the beginning of the file.
 		if (fseek(fp, 0, SEEK_SET))
 		{
-			throw EasyXmlException("fseek() - Error reading file \"" + filePath + "\": " + strerror(errno),
+			throw EasyXmlException("fseek() - Error reading file \"" + file_path + "\": " + strerror(errno),
 			                       FSEEK_SET_FAILED);
 		}
 
-		// "file" hold the entire contents of the input file.
-		char* file = NULL;
-
 		try
 		{
-			// Allocate memory for file.
-			file = new char[fileLength];
+			// Attempt to allocate space for the file in memory.
+			file_contents = new char[file_length];
 		}
 		catch (const std::bad_alloc& e)
 		{
-			throw EasyXmlException("Error allocating memory for file \"" + filePath + "\": " + e.what());
+			throw EasyXmlException("Error allocating memory for file \"" + file_path + "\": " + e.what());
 		}
 
-		// Read the entire file into memory.
-		if (fileLength != static_cast<long int>(fread(file, sizeof(char), fileLength, fp)))
+		// Read the file into memory and verify the entire contents were read.
+		if (file_length != static_cast<long int>(fread(file_contents, sizeof(char), file_length, fp)))
 		{
 			if (ferror(fp))
 			{
-				throw EasyXmlException("fread() - Error reading file \"" + filePath + "\": " +
+				throw EasyXmlException("fread() - Error reading file \"" + file_path + "\": " +
 				                       strerror(errno), FREAD_FAILED);
 			}
 			else if (feof(fp))
 			{
-				throw EasyXmlException("fread() - Reached early EOF in file \"" + filePath + "\": " +
+				throw EasyXmlException("fread() - Reached early EOF in file \"" + file_path + "\": " +
 				                       strerror(errno), FREAD_EOF);
 			}
 		}
 
-		// The file contents are now in memory (variable "file") and the file stream can be closed.
-		fclose(fp);
+		// Close the file pointer.
+		if (fclose(fp) == EOF)
+		{
+			std::cerr << "EasyXML: [WARNING] Unable to close the input file.\n";
+		}
+	}
+
+	Node* loadXml(const std::string& file_path)
+	{
+		char*    file_contents = NULL;
+		long int file_length   = 0;
+
+		// Read the input file into memory.
+		// Note: file_contents and file_length are passed by reference and are initialized in readFile().
+		readFile(file_path, file_contents, file_length);
+
+		const char* input = file_contents;
 
 		// DEBUG
 		// printf("\n");
@@ -124,7 +140,7 @@ namespace EASYXML_NAMESPACE
 		// printf("my List: %d\n", sizeof(List<Node*>));
 		// printf("\n");
 
-		// The first and top-level XML node.
+		// The first, top-level XML node.
 		Node* root = NULL;
 
 		// A stack of open nodes for keeping track of children and value assignment.
@@ -133,20 +149,20 @@ namespace EASYXML_NAMESPACE
 		// Character index into "file".
 		long int index = 0;
 
-		// Instantiate Strings one time.
-		String name, value, attrName, attrValue;
+		// Instantiate temporary String containers.
+		String name, value, attr_name, attr_value;
 		value.reserve(ELEMENT_VALUE_SIZE);
 
 		// Parse the file.
-		while (index < fileLength)
+		while (index < file_length)
 		{
 			// Check for an XML tag.
-			if (file[index] == '<')
+			if (input[index] == '<')
 			{
 				index++; // Skip over the character '<'.
 
 				// Check if closing tag.
-				if (file[index] == '/')
+				if (input[index] == '/')
 				{
 					index++; // Skip the '/'
 
@@ -159,9 +175,9 @@ namespace EASYXML_NAMESPACE
 					name.reserve(ELEMENT_NAME_SIZE);
 
 					// Parse the element's name.
-					while (file[index] != '>' && !isWhitespace(file[index]))
+					while (input[index] != '>' && !isWhitespace(input[index]))
 					{
-						name += file[index];
+						name += input[index];
 						index++;
 					}
 
@@ -174,7 +190,7 @@ namespace EASYXML_NAMESPACE
 					}
 
 					// Skip optional whitespace at the end of the element name.
-					while (isWhitespace(file[index]))
+					while (isWhitespace(input[index]))
 					{
 						index++;
 					}
@@ -183,10 +199,10 @@ namespace EASYXML_NAMESPACE
 					ancestors.pop();
 				}
 				// Check if comment
-				else if (strcmp2(&file[index], "!--", 3) == 0)
+				else if (strcmp2(&input[index], "!--", 3) == 0)
 				{
 					// Ignore comments
-					while (!(file[index] == '-' && file[index + 1] == '-' && file[index + 2] == '>'))
+					while (!(input[index] == '-' && input[index + 1] == '-' && input[index + 2] == '>'))
 					{
 						index++;
 					}
@@ -194,19 +210,19 @@ namespace EASYXML_NAMESPACE
 					index += 2; // Skip the "--" at the end of the comment.
 				}
 				// Check if prolog
-				else if (file[index] == '?')
+				else if (input[index] == '?')
 				{
 					// Ignore prologs
-					while (file[++index] != '?')
+					while (input[++index] != '?')
 						;
 
 					index++; // Skip the '?' at the end of the prolog.
 				}
 				// Check if DOCTYPE
-				else if (strcmp2(&file[index], "!DOCTYPE", 8) == 0)
+				else if (strcmp2(&input[index], "!DOCTYPE", 8) == 0)
 				{
 					// Ignore DOCTYPES
-					while (file[++index] != '>')
+					while (input[++index] != '>')
 						;
 				}
 				// It must be an opening tag.
@@ -220,64 +236,64 @@ namespace EASYXML_NAMESPACE
 					name.clear();
 					name.reserve(ELEMENT_NAME_SIZE);
 
-					bool foundWhitespace = false;
+					bool found_whitespace = false;
 
 					// Parse the start tag contents for the element name and any attributes.
-					while (file[index] != '>' && file[index] != '/')
+					while (input[index] != '>' && input[index] != '/')
 					{
 						// If no whitespace has been found yet, the character is part of the element's name
-						if (!foundWhitespace)
+						if (!found_whitespace)
 						{
-							name += file[index++];
+							name += input[index++];
 						}
 						// Otherwise it is an attribute.
 						else
 						{
-							// String attrName;
-							attrName.clear();
-							attrName.reserve(50);
+							// String attr_name;
+							attr_name.clear();
+							attr_name.reserve(50);
 
 							// Parse attribute name.
-							while (file[index] != '=')
+							while (input[index] != '=')
 							{
-								attrName += file[index++];
+								attr_name += input[index++];
 							}
 
-							// printf("parsed attrName: %s\n", attrName.c_str());
+							// printf("parsed attr_name: %s\n", attr_name.c_str());
 
 							index++; // Skip the equals sign.
 
 							// Attributes can start with either a single or double quote
-							char startQuote = file[index++];
-							// String attrValue;
-							attrValue.clear();
-							attrValue.reserve(50);
+							char start_quote = input[index++];
+							// String attr_value;
+							attr_value.clear();
+							attr_value.reserve(50);
 
 							// Parse attribute value
-							while (file[index] != startQuote)
+							while (input[index] != start_quote)
 							{
-								attrValue += file[index++];
+								attr_value += input[index++];
 							}
 
-							// printf("parsed attrName: %s\n", attrValue.c_str());
+							// printf("parsed attr_name: %s\n", attr_value.c_str());
 
 							index++; // Skip the last quote.
 						}
 
 						// Skip whitespace
-						while (isWhitespace(file[index]))
+						while (isWhitespace(input[index]))
 						{
-							foundWhitespace = true;
+							found_whitespace = true;
 							index++;
 						}
 					}
 
-					bool isSelfClosing = false;
+					bool is_self_closing = false;
 
 					// Skip the slash in a self-closing tag.
-					if (file[index] == '/')
+					if (input[index] == '/')
 					{
-						isSelfClosing = true;
+						is_self_closing = true;
 						index++;
 					}
 
@@ -287,7 +303,7 @@ namespace EASYXML_NAMESPACE
 					Node* node = new Node();
 					name.shrink_to_fit();
 					name.swap(node->name);
-					
+
 					// Set the root node if it hasn't been found yet.
 					if (root == NULL)
 					{
@@ -296,13 +312,11 @@ namespace EASYXML_NAMESPACE
 					// Otherwise, add the node to his parent's child list.
 					else
 					{
-						// ancestors.top()->children.push_back(node);
 						ancestors.top()->addChild(node);
-						// ancestors.top()->sortedChildren.insert(node);
 					}
 
 					// Self-closing tags cannot have children and should not be put on the ancestor's stack.
-					if (!isSelfClosing)
+					if (!is_self_closing)
 					{
 						ancestors.push(node);
 					}
@@ -311,34 +325,36 @@ namespace EASYXML_NAMESPACE
 			else
 			{
 				// Accumulate the value for this element.
-				value += file[index];
+				value += input[index];
 			}
 
 			index++; // Increment to next character.
 		}
 
-		delete[] file;
+		delete[] file_contents;
 
 		return root;
 	}
 
-	void saveXml(const Node* node, const std::string& filePath)
+	void saveXml(const Node* node, const std::string& file_path)
 	{
 		std::ofstream file;
-		file.open(filePath.c_str());
+		file.open(file_path.c_str());
 		saveXml(node, file);
 		file.close();
 	}
 
 	void saveXml(const Node* node, std::ostream& out, std::string indentation)
 	{
+		// silence warnings.
+		out << indentation << node->name << "\n";
 	// 	out << indentation << "<" << node->name;
 
 	// 	if (node->children.size() > 0)
 	// 	{
 	// 		out << ">\n";
 
-	// 		for (List<Node*>::iterator it = node->children.begin(); \
+	// 		for (List<Node*>::iterator it = node->children.begin();
 	// 		     it != node->children.end(); ++it)
 	// 		{
 	// 			saveXml(*it, out, indentation + "\t");
@@ -396,24 +412,26 @@ namespace EASYXML_NAMESPACE
 		// }
 	}
 
+	// Recursively deletes the given node and all of its offspring.
 	void deleteTree(Node* node)
 	{
-		// if (node == NULL)
-		// {
-		// 	throw EasyXmlException("deleteTree was called on a NULL pointer.", 102);
-		// }
-		// else
-		// {
-		// 	List<Node*>::iterator it = node->children.begin();
+		if (node == NULL)
+		{
+			throw EasyXmlException("deleteTree() was called on a NULL pointer.", 102);
+		}
+		else
+		{
+			Node* child = node->getFirstChild();
 
-		// 	while (it != node->children.end())
-		// 	{
-		// 		deleteTree(*it);
-		// 		it++;
-		// 	}
+			while (child != NULL)
+			{
+				Node* next_child = child->getNextSibling();
+				deleteTree(child);
+				child = next_child;
+			}
 
-		// 	delete node;
-		// }
+			delete node;
+		}
 	}
 
 	// The following 3 functions are public domain: http://stackoverflow.com/a/217605
@@ -422,16 +440,16 @@ namespace EASYXML_NAMESPACE
 	// trim from start
 	std::string& ltrim(std::string& s)
 	{
-		s.erase(s.begin(), std::find_if(s.begin(), s.end(), \
-			std::not1(std::ptr_fun<int, int>(std::isspace))));
+		s.erase(s.begin(), std::find_if(s.begin(), s.end(),
+		        std::not1(std::ptr_fun<int, int>(std::isspace))));
 		return s;
 	}
 
 	// trim from end
 	std::string& rtrim(std::string& s)
 	{
-		s.erase(std::find_if(s.rbegin(), s.rend(), \
-			std::not1(std::ptr_fun<int, int>(std::isspace))).base() ,s.end());
+		s.erase(std::find_if(s.rbegin(), s.rend(),
+		        std::not1(std::ptr_fun<int, int>(std::isspace))).base() ,s.end());
 		return s;
 	}
 
