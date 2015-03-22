@@ -151,7 +151,7 @@ void String::reserve(uint capacity)
 		char* temp = static_cast<char*>(realloc(buf_, capacity + 1));
 
 		// Copy old buf
-		memcpy(temp, buf_, length_ + 1);
+		// memcpy(temp, buf_, length_ + 1);
 
 		swap(buf_, temp);
 		// delete[] temp;
