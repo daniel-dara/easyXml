@@ -254,7 +254,7 @@ private:
 	char* buf_;
 
 	template <class T>
-	void swap (T& a, T& b);
+	void swap(T& a, T& b);
 
 	void nullCap();
 
