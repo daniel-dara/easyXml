@@ -39,7 +39,7 @@ int main()
 	try
 	{
 		// Loading an XML file is easy, and it returns a pointer to the root node.
-		root = xml::loadXml("../../Downloads/bigdaddy.xml");
+		root = xml::loadXml("/home/ddara/Downloads/nasa.xml");
 		// root = xml::loadXml2("example.xml");
 
 		if (root != NULL)
@@ -80,6 +80,8 @@ int main()
 			// When finished with an XML tree, don't forget to free the memory.
 			// deleteTree will recursively delete a node and its children for you.
 			xml::deleteTree(root);
+		} else {
+			std::cout << "No nodes found\n";
 		}
 	}
 	catch (const xml::EasyXmlException& e)
