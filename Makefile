@@ -4,7 +4,7 @@ LDFLAGS=
 
 SRC_DIR=src
 VPATH=$(SRC_DIR)
-SOURCES=functions.cpp Exception.cpp Node.cpp
+SOURCES=functions.cpp Exception.cpp Node.cpp String.cpp
 OBJ_DIR=obj
 OBJECTS=$(addprefix $(OBJ_DIR)/, $(SOURCES:.cpp=.o))
 HEADERS=$(SOURCES:.cpp=.h)
