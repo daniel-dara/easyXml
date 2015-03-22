@@ -6,14 +6,14 @@
 
 namespace EASYXML_NAMESPACE
 {
-	Node* loadXml(const std::string& filePath);
-	void saveXml(const Node* node, const std::string& filePath);
-	void saveXml(const Node* node, std::ostream& out, std::string indentation = "");
+	Node* loadXml(const std::string& file_path);
+	void  saveXml(const Node* node, const std::string& file_path);
+	void  saveXml(const Node* node, std::ostream& out, std::string indentation = "");
 
 	void printTree(const Node* node, std::string indentation = "");
 	void deleteTree(Node* node);
 
-	std::string getElementName(const std::string& data, size_t startIndex);
+	std::string getElementName(const std::string& data, size_t start_index);
 
 	// The following 3 trim functions are public domain: http://stackoverflow.com/a/217605
 	// trim from start (in place)
