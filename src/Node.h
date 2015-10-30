@@ -75,8 +75,8 @@ namespace EASYXML_NAMESPACE
 		Node* nextSibling_;
 		Node* prevSibling_;
 
-		void* firstAttribute_;
-		void* document_;
+		// void* firstAttribute_;
+		// void* document_;
 
 		unsigned int countOffspring(const Node* node) const;
 		const Node* find(const Node* node, const String& path) const;
