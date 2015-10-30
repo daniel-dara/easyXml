@@ -11,33 +11,19 @@
 
 namespace EASYXML_NAMESPACE
 {
-	const uint ELEMENT_NAME_SIZE = 50;
-	const uint ELEMENT_VALUE_SIZE = 50;
+	const uint ELEMENT_NAME_SIZE      = 50;
+	const uint ELEMENT_VALUE_SIZE     = 50;
 	const std::string esc_sequences[] = {"&amp;", "&lt;", "&gt;", "&apos;", "&quot;"};
-	const std::string esc_values[] = {"&", "<", ">", "'", "\""};
+	const std::string esc_values[]    = {"&", "<", ">", "'", "\""};
 
-	static inline int strcmp2(const char* rhs, const char* lhs, uint len = -1)
+	static inline int strcmp2(const char* lhs, const char* rhs, uint len)
 	{
-		uint i = 0;
-
-		// while (buf_char - buf_ < len) could also be used but I'm not sure if the arithmetic would be
-		// properly optimized out. The only variable changing in that equation is buf_char so its more
-		// efficient to just use a counter.
-		while (i < len)
+		for (uint i = 0; i < len; i++)
 		{
-			if (rhs[i] != lhs[i])
+			if (lhs[i] != rhs[i])
 			{
-				return (rhs[i] > lhs[i]) - (rhs[i] < lhs[i]);
+				return (lhs[i] > rhs[i]) - (lhs[i] < rhs[i]);
 			}
-			else if (rhs[i] == '\0')
-			{
-				return -1;
-			}
-			else if (lhs[i] == '\0')
-			{
-				return 1;
-			}
-			i++;
 		}
 
 		return 0;
@@ -48,11 +34,11 @@ namespace EASYXML_NAMESPACE
 		return c == ' ' || c == '\t' || c == '\n' || c == '\r';
 	}
 
-	// Read the entire contents of a file and store the text as a char array in 'file_contents' and store
-	// the length of the file (in characters) in 'file_length' (both arguments are by reference).
+	// Read the entire contents of a file and store the text as a char array in 'file_contents'. Also stores
+	// the length of the file (in characters) in 'file_length'.
 	static inline void readFile(const std::string& file_path, char*& file_contents, long int& file_length)
 	{
-		// Create an open pointer to the file.
+		// Get a pointer to the file.
 		FILE* fp = fopen(file_path.c_str(), "rb");
 
 		// Verify the file was opened successfully.
