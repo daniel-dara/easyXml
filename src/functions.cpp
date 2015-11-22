@@ -11,11 +11,18 @@
 
 namespace EASYXML_NAMESPACE
 {
+	// Initial string capicites.
 	const uint ELEMENT_NAME_SIZE      = 50;
 	const uint ELEMENT_VALUE_SIZE     = 50;
+
 	const std::string esc_sequences[] = {"&amp;", "&lt;", "&gt;", "&apos;", "&quot;"};
 	const std::string esc_values[]    = {"&", "<", ">", "'", "\""};
 
+	// This function requires that each string be at least (len - 1) characters.
+	// Compare the first 'len' characters between two strings returning:
+	// -1 if lhs < rhs
+	// 0  if lhs = rhs
+	// 1  if lhs > rhs
 	static inline int strcmp2(const char* lhs, const char* rhs, uint len)
 	{
 		for (uint i = 0; i < len; i++)
@@ -110,37 +117,44 @@ namespace EASYXML_NAMESPACE
 		long int file_length   = 0;
 
 		// Read the input file into memory.
-		// Note: file_contents and file_length are passed by reference and are initialized in readFile().
+		// 'file_contents' and 'file_length' are passed by reference and set in readFile().
 		readFile(file_path, file_contents, file_length);
 
-		const char* input = file_contents;
+		return parseXml(file_contents, file_length);
 
-		// DEBUG
-		// printf("\n");
-		// printf("pointer size: %d\n", sizeof(void*));
-		// printf("uint size: %d\n", sizeof(uint));
-		// printf("Node size: %d\n", sizeof(Node));
-		// printf("String size: %d\n", sizeof(String));
-		// printf("std::string size: %d\n", sizeof(std::string));
-		// printf("set: %d\n", sizeof(std::set<Node*, bool (*)(const Node*, const Node*)>));
-		// printf("my List: %d\n", sizeof(List<Node*>));
-		// printf("\n");
+		delete[] file_contents;
+	}
 
-		// The first, top-level XML node.
+	Node* parseXml(const char* input, const long int input_length) {
+		#if DEBUG
+			printf("\n");
+			printf("pointer size: %d\n", sizeof(void*));
+			printf("uint size: %d\n", sizeof(uint));
+			printf("Node size: %d\n", sizeof(Node));
+			printf("String size: %d\n", sizeof(String));
+			printf("std::string size: %d\n", sizeof(std::string));
+			printf("set: %d\n", sizeof(std::set<Node*, bool (*)(const Node*, const Node*)>));
+			printf("my List: %d\n", sizeof(List<Node*>));
+			printf("\n");
+		#endif
+
+		// The top-level XML node.
 		Node* root = NULL;
 
-		// A stack of open nodes for keeping track of children and value assignment.
+		// A stack of the currently open nodes. Used for assigning values and parents.
 		Stack<Node*> ancestors;
 
-		// Character index into "file".
+		// Character index for 'input'.
 		long int index = 0;
 
 		// Instantiate temporary String containers.
 		String name, value, attr_name, attr_value;
+
+		// Increase initial String capacity to reduce number of memory reallocations.
 		value.reserve(ELEMENT_VALUE_SIZE);
 
-		// Parse the file.
-		while (index < file_length)
+		// Parse the input.
+		while (index < input_length)
 		{
 			// Check for an XML tag.
 			if (input[index] == '<')
@@ -316,8 +330,6 @@ namespace EASYXML_NAMESPACE
 
 			index++; // Increment to next character.
 		}
-
-		delete[] file_contents;
 
 		return root;
 	}
