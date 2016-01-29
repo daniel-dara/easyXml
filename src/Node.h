@@ -13,6 +13,13 @@ namespace EASYXML_NAMESPACE
 	class Node
 	{
 	public:
+		class Input;
+		class Attribute;
+		bool Input::consumeStartTag(String& name, Attribute* first_attr, bool &is_self_closing);
+		Node* parseXml(Input input);
+
+		friend Node* parseXml(Input input);
+
 		Node();
 		Node(const char* name, const char* value = "");
 		Node(const std::string& name, const std::string& value = "");
@@ -24,6 +31,8 @@ namespace EASYXML_NAMESPACE
 		class Attribute
 		{
 		public:
+			friend bool Input::consumeStartTag(String& name, Node::Attribute* first_attr, bool &is_self_closing);
+
 			Attribute(const String& name, const String& value) :
 				name(name),
 				value(value)
@@ -31,6 +40,13 @@ namespace EASYXML_NAMESPACE
 
 			String name;
 			String value;
+
+			Attribute* getNextSibling() {
+				return next_sibling_;
+			}
+
+		private:
+			Attribute* next_sibling_;
 		};
 
 		std::string val() const;
@@ -39,7 +55,7 @@ namespace EASYXML_NAMESPACE
 		// Members should be public so they can be readable and writable by anyone
 		String name;
 		String value;
-		
+
 		Node* getParent();
 		Node* getChild(const char* name);
 		Node* getChild(const String& name);
@@ -75,7 +91,7 @@ namespace EASYXML_NAMESPACE
 		Node* nextSibling_;
 		Node* prevSibling_;
 
-		// void* firstAttribute_;
+		Attribute* firstAttribute_;
 		// void* document_;
 
 		unsigned int countOffspring(const Node* node) const;

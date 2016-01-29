@@ -111,6 +111,205 @@ namespace EASYXML_NAMESPACE
 		}
 	}
 
+	class Input
+	{
+		public:
+			Input(const char* input_string, long int input_length) :
+				input_(input_string),
+				input_length_(input_length)
+			{ }
+
+			bool end()
+			{
+				return index_ >= input_length_;
+			}
+
+			bool consumeChar()
+			{
+				// TODO: ADD EOF VALIDATION
+				index_++;
+				return true;
+			}
+
+			bool consumeChar(char& c)
+			{
+				// TODO: ADD EOF VALIDATION
+				c = input_[index_++];
+				return true;
+			}
+
+			bool consume(char c)
+			{
+				if (input_[index_] == c)
+				{
+					consumeChar();
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+
+			bool consume(const char* s, uint length)
+			{
+				// TODO: EOF VALIDATION in strcmp2
+				if (strcmp2(&input_[index_], s, length) == 0)
+				{
+					index_ += length;
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+
+			bool consumeComment()
+			{
+				bool foundComment = false;
+
+				if (consume("<!--", 4))
+				{
+					foundComment = true;
+
+					while (!consume("-->", 3))
+					{
+						consumeChar();
+					}
+				}
+
+				return foundComment;
+			}
+
+			bool consumeNodeName(String& name)
+			{
+				bool foundName = false;
+
+				while (input_[index_] != '>' && !isWhitespace(input_[index_]))
+				{
+					foundName = true;
+					name += input_[index_];
+					consumeChar();
+				}
+
+				return foundName = true;
+			}
+
+			bool consumeEndTag(String& name)
+			{
+				// TODO: XML VALIDATION
+				return consume("</", 2) && consumeNodeName(name) && consume('>');
+			}
+
+			bool consumeStartTag(String& name, Node::Attribute* first_attr, bool &is_self_closing)
+			{
+				first_attr = NULL;
+
+				// TODO: XML VALIDATION
+				if (index_ < input_length_ + 1 &&
+					input_[index_]     == '<' &&
+				    input_[index_ + 1] != '/' &&
+				    input_[index_ + 1] != '?' &&
+				    input_[index_ + 1] != '!')
+				{
+					consumeNodeName(name);
+					consumeWhitespace();
+
+					Node::Attribute* last_attr = NULL;
+
+					while (!consume('>') && !(is_self_closing = consume("/>", 2)))
+					{
+						String attribute_name;
+						String attribute_value;
+
+						consumeNodeName(attribute_name);
+
+						consumeWhitespace();
+						consume('=');
+						consumeWhitespace();
+
+						consume('"');
+
+						char c;
+						while (consumeChar(c) && c != '"')
+						{
+							attribute_value += c;
+						}
+
+						Node::Attribute* attr = new Node::Attribute(attribute_name, attribute_value);
+
+						if (first_attr == NULL)
+						{
+							last_attr = first_attr = attr;
+						}
+						else
+						{
+							last_attr->next_sibling_ = attr;
+							last_attr = attr;
+						}
+
+						consumeWhitespace();
+					}
+
+					return true;
+				}
+
+				return false;
+			}
+
+			bool consumeWhitespace()
+			{
+				int original_index = index_;
+
+				while (index_ < input_length_ && isWhitespace(input_[index_]))
+				{
+					index_++;
+				}
+
+				return original_index != index_;
+			}
+
+			bool consumeProlog()
+			{
+				// TODO: XML VALIDATION (of prolog)
+				if (consume("<?", 2))
+				{
+					while (!consume("?>", 2))
+					{
+						consumeChar();
+					}
+
+					return true;
+				}
+
+				return false;
+			}
+
+			bool consumeDocType()
+			{
+				// TODO: XML VALIDATION - Validate (or more likely ignore) DOCTYPEs.
+				if (consume("<!DOCTYPE", 9))
+				{
+					throw EasyXmlException("DOCTYPEs are not currently supported and can't be ignored.",
+					                       UNSUPPORTED_FEATURE);
+				}
+
+				return false;
+			}
+
+			char peek()
+			{
+				// TODO: EOF VALIDATION
+				return input_[index_];
+			}
+
+		private:
+			const String input_;
+			const long int input_length_;
+			long int index_;
+	};
+
 	Node* loadXml(const std::string& file_path)
 	{
 		char*    file_contents = NULL;
@@ -120,12 +319,16 @@ namespace EASYXML_NAMESPACE
 		// 'file_contents' and 'file_length' are passed by reference and set in readFile().
 		readFile(file_path, file_contents, file_length);
 
-		return parseXml(file_contents, file_length);
+		Input input(file_contents, file_length);
+
+		Node* root = parseXml(input);
 
 		delete[] file_contents;
+
+		return root;
 	}
 
-	Node* parseXml(const char* input, const long int input_length) {
+	Node* parseXml(Input input) {
 		#if DEBUG
 			printf("\n");
 			printf("pointer size: %d\n", sizeof(void*));
@@ -144,9 +347,6 @@ namespace EASYXML_NAMESPACE
 		// A stack of the currently open nodes. Used for assigning values and parents.
 		Stack<Node*> ancestors;
 
-		// Character index for 'input'.
-		long int index = 0;
-
 		// Instantiate temporary String containers.
 		String name, value, attr_name, attr_value;
 
@@ -154,34 +354,17 @@ namespace EASYXML_NAMESPACE
 		value.reserve(ELEMENT_VALUE_SIZE);
 
 		// Parse the input.
-		while (index < input_length)
+		while (!input.end())
 		{
 			// Check for an XML tag.
-			if (input[index] == '<')
+			if (input.peek() == '<')
 			{
-				index++; // Skip over the character '<'.
+				input.consumeComment();
+				input.consumeProlog();
+				input.consumeDocType();
 
-				// Check if closing tag.
-				if (input[index] == '/')
-				{
-					index++; // Skip the '/'
-
-					// Assign the accumulated value to the currently open node.
-					value.shrink_to_fit();
-					ancestors.top()->value.swap(value);
-
-					// String name;
-					name.clear();
-					name.reserve(ELEMENT_NAME_SIZE);
-
-					// Parse the element's name.
-					while (input[index] != '>' && !isWhitespace(input[index]))
-					{
-						name += input[index];
-						index++;
-					}
-
-					// Check that the tag is in order
+				if (input.consumeEndTag(name)) {
+					// Validate that the name matches the name of the currently open node.
 					if (name != ancestors.top()->name)
 					{
 						throw EasyXmlException("Mismatched closing tag \"" + name + "\". " \
@@ -189,120 +372,33 @@ namespace EASYXML_NAMESPACE
 						                       XML_MALFORMED_MISTMATCHED_CLOSING_TAG);
 					}
 
-					// Skip optional whitespace at the end of the element name.
-					while (isWhitespace(input[index]))
-					{
-						index++;
-					}
+					// Assign the accumulated value to the currently open node.
+					value.shrink_to_fit();
+					ancestors.top()->value.swap(value);
+
+					name.clear();
+					name.reserve(ELEMENT_NAME_SIZE);
 
 					// Since the element is now closed, it will not have any more children.
 					ancestors.pop();
 				}
-				// Check if comment
-				else if (strcmp2(&input[index], "!--", 3) == 0)
-				{
-					// Ignore comments
-					while (!(input[index] == '-' && input[index + 1] == '-' && input[index + 2] == '>'))
-					{
-						index++;
-					}
 
-					index += 2; // Skip the "--" at the end of the comment.
-				}
-				// Check if prolog
-				else if (input[index] == '?')
-				{
-					// Ignore prologs
-					while (input[++index] != '?')
-						;
-
-					index++; // Skip the '?' at the end of the prolog.
-				}
-				// Check if DOCTYPE
-				else if (strcmp2(&input[index], "!DOCTYPE", 8) == 0)
-				{
-					// Ignore DOCTYPES
-					while (input[++index] != '>')
-						;
-				}
-				// It must be an opening tag.
-				else
-				{
-					// Reset value (should only contain the whitespace between this tag and the previous one).
+				Node::Attribute* first_attr;
+				bool is_self_closing;
+				if (input.consumeStartTag(name, first_attr, is_self_closing)) {
+					// Reset value (it should only contain the whitespace between this tag and the previous one).
 					value.clear();
 					value.reserve(ELEMENT_VALUE_SIZE);
 
-					// String name;
-					name.clear();
-					name.reserve(ELEMENT_NAME_SIZE);
-
-					bool found_whitespace = false;
-
-					// Parse the start tag contents for the element name and any attributes.
-					while (input[index] != '>' && input[index] != '/')
-					{
-						// If no whitespace has been found yet, the character is part of the element's name
-						if (!found_whitespace)
-						{
-							name += input[index++];
-						}
-						// Otherwise it is an attribute.
-						else
-						{
-							// String attr_name;
-							attr_name.clear();
-							attr_name.reserve(50);
-
-							// Parse attribute name.
-							while (input[index] != '=')
-							{
-								attr_name += input[index++];
-							}
-
-							// printf("parsed attr_name: %s\n", attr_name.c_str());
-
-							index++; // Skip the equals sign.
-
-							// Attributes can start with either a single or double quote
-							char start_quote = input[index++];
-							// String attr_value;
-							attr_value.clear();
-							attr_value.reserve(50);
-
-							// Parse attribute value
-							while (input[index] != start_quote)
-							{
-								attr_value += input[index++];
-							}
-
-							// printf("parsed attr_name: %s\n", attr_value.c_str());
-
-							index++; // Skip the last quote.
-						}
-
-						// Skip whitespace
-						while (isWhitespace(input[index]))
-						{
-							found_whitespace = true;
-							index++;
-						}
-					}
-
-					bool is_self_closing = false;
-
-					// Skip the slash in a self-closing tag.
-					if (input[index] == '/')
-					{
-						is_self_closing = true;
-						index++;
-					}
-
-					// std::cout << "parsed tag name: " << name << "\n";
-
 					// Create a node for this element.
 					Node* node = new Node();
+
+					// Assign the name.
 					name.shrink_to_fit();
 					name.swap(node->name);
+
+					// Assign the attribute.
+					node->firstAttribute_ = first_attr;
 
 					// Set the root node if it hasn't been found yet.
 					if (root == NULL)
@@ -325,10 +421,10 @@ namespace EASYXML_NAMESPACE
 			else
 			{
 				// Accumulate the value for this element.
-				value += input[index];
+				char c;
+				input.consumeChar(c);
+				value += c;
 			}
-
-			index++; // Increment to next character.
 		}
 
 		return root;

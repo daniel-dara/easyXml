@@ -13,7 +13,8 @@ namespace EASYXML_NAMESPACE
 		firstChild_(NULL),
 		lastChild_(NULL),
 		nextSibling_(NULL),
-		prevSibling_(NULL)
+		prevSibling_(NULL),
+		firstAttr_(NULL)
 	{ }
 
 	// Conversion Constructors
@@ -24,7 +25,8 @@ namespace EASYXML_NAMESPACE
 		firstChild_(NULL),
 		lastChild_(NULL),
 		nextSibling_(NULL),
-		prevSibling_(NULL)
+		prevSibling_(NULL),
+		firstAttr_(NULL)
 	{ }
 
 	Node::Node(const std::string& _name, const std::string& _value) :
@@ -34,7 +36,8 @@ namespace EASYXML_NAMESPACE
 		firstChild_(NULL),
 		lastChild_(NULL),
 		nextSibling_(NULL),
-		prevSibling_(NULL)
+		prevSibling_(NULL),
+		firstAttr_(NULL)
 	{ }
 
 	/// Copy Constructor
@@ -48,7 +51,8 @@ namespace EASYXML_NAMESPACE
 		firstChild_(NULL),
 		lastChild_(NULL),
 		nextSibling_(NULL),
-		prevSibling_(NULL)
+		prevSibling_(NULL),
+		firstAttr_(NULL)
 	{ }
 
 	/// Assignment
@@ -293,7 +297,7 @@ namespace EASYXML_NAMESPACE
 		for (const xml::Node* child = node->getFirstChild(); child != NULL; child = child->getNextSibling())
 		{
 			count += countOffspring(child);
-		}	
+		}
 
 		return count + 1;
 	}
