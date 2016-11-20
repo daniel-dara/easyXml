@@ -14,7 +14,7 @@ namespace EASYXML_NAMESPACE
 		lastChild_(NULL),
 		nextSibling_(NULL),
 		prevSibling_(NULL),
-		firstAttr_(NULL)
+		firstAttribute_(NULL)
 	{ }
 
 	// Conversion Constructors
@@ -26,7 +26,7 @@ namespace EASYXML_NAMESPACE
 		lastChild_(NULL),
 		nextSibling_(NULL),
 		prevSibling_(NULL),
-		firstAttr_(NULL)
+		firstAttribute_(NULL)
 	{ }
 
 	Node::Node(const std::string& _name, const std::string& _value) :
@@ -37,7 +37,7 @@ namespace EASYXML_NAMESPACE
 		lastChild_(NULL),
 		nextSibling_(NULL),
 		prevSibling_(NULL),
-		firstAttr_(NULL)
+		firstAttribute_(NULL)
 	{ }
 
 	/// Copy Constructor
@@ -52,7 +52,7 @@ namespace EASYXML_NAMESPACE
 		lastChild_(NULL),
 		nextSibling_(NULL),
 		prevSibling_(NULL),
-		firstAttr_(NULL)
+		firstAttribute_(NULL)
 	{ }
 
 	/// Assignment
@@ -161,6 +161,11 @@ namespace EASYXML_NAMESPACE
 		return const_cast<Node*>(static_cast<const Node*>(this)->getPrevSibling());
 	}
 
+	Attribute* Node::getFirstAttribute()
+	{
+		return const_cast<Attribute*>(static_cast<const Node*>(this)->getFirstAttribute());
+	}
+
 	const Node* Node::getParent() const
 	{
 		return parent_;
@@ -206,6 +211,12 @@ namespace EASYXML_NAMESPACE
 	{
 		return prevSibling_;
 	}
+
+	const Attribute* Node::getFirstAttribute() const
+	{
+		return firstAttribute_;
+	}
+
 
 	void Node::addChildAfter(Node* child, Node* after)
 	{

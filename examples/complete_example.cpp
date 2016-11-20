@@ -40,7 +40,8 @@ int main()
 	{
 		// Loading an XML file is easy, and it returns a pointer to the root node.
 		root = xml::loadXml("/home/ddara/Downloads/dblp.xml");
-		// root = xml::loadXml2("example.xml");
+		// root = xml::loadXml("example.xml");
+		// root = xml::loadXml("test1.xml");
 
 		if (root != NULL)
 		{
@@ -66,7 +67,7 @@ int main()
 
 			// There is also a templated "getter" method for value that allows you to choose between std::string, int,
 			// float, or double as the return type.
-			// std::cout << "The integer value of \"" + year->name + "\" + 1 is " << year->val<int>() + 1 
+			// std::cout << "The integer value of \"" + year->name + "\" + 1 is " << year->val<int>() + 1
 			//           << std::endl;
 
 			//xml::saveXml(root, "example_output.xml");
@@ -76,7 +77,7 @@ int main()
 			std::cout << "total nodes: " << count << "\n";
 
 			/*** CLEANUP ****************************************************************************************/
-			          
+
 			// When finished with an XML tree, don't forget to free the memory.
 			// deleteTree will recursively delete a node and its children for you.
 			xml::deleteTree(root);

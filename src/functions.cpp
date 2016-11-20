@@ -18,29 +18,6 @@ namespace EASYXML_NAMESPACE
 	const std::string esc_sequences[] = {"&amp;", "&lt;", "&gt;", "&apos;", "&quot;"};
 	const std::string esc_values[]    = {"&", "<", ">", "'", "\""};
 
-	// This function requires that each string be at least (len - 1) characters.
-	// Compare the first 'len' characters between two strings returning:
-	// -1 if lhs < rhs
-	// 0  if lhs = rhs
-	// 1  if lhs > rhs
-	static inline int strcmp2(const char* lhs, const char* rhs, uint len)
-	{
-		for (uint i = 0; i < len; i++)
-		{
-			if (lhs[i] != rhs[i])
-			{
-				return (lhs[i] > rhs[i]) - (lhs[i] < rhs[i]);
-			}
-		}
-
-		return 0;
-	}
-
-	static inline bool isWhitespace(char c)
-	{
-		return c == ' ' || c == '\t' || c == '\n' || c == '\r';
-	}
-
 	// Read the entire contents of a file and store the text as a char array in 'file_contents'. Also stores
 	// the length of the file (in characters) in 'file_length'.
 	static inline void readFile(const std::string& file_path, char*& file_contents, long int& file_length)
@@ -111,205 +88,6 @@ namespace EASYXML_NAMESPACE
 		}
 	}
 
-	class Input
-	{
-		public:
-			Input(const char* input_string, long int input_length) :
-				input_(input_string),
-				input_length_(input_length)
-			{ }
-
-			bool end()
-			{
-				return index_ >= input_length_;
-			}
-
-			bool consumeChar()
-			{
-				// TODO: ADD EOF VALIDATION
-				index_++;
-				return true;
-			}
-
-			bool consumeChar(char& c)
-			{
-				// TODO: ADD EOF VALIDATION
-				c = input_[index_++];
-				return true;
-			}
-
-			bool consume(char c)
-			{
-				if (input_[index_] == c)
-				{
-					consumeChar();
-					return true;
-				}
-				else
-				{
-					return false;
-				}
-			}
-
-			bool consume(const char* s, uint length)
-			{
-				// TODO: EOF VALIDATION in strcmp2
-				if (strcmp2(&input_[index_], s, length) == 0)
-				{
-					index_ += length;
-					return true;
-				}
-				else
-				{
-					return false;
-				}
-			}
-
-			bool consumeComment()
-			{
-				bool foundComment = false;
-
-				if (consume("<!--", 4))
-				{
-					foundComment = true;
-
-					while (!consume("-->", 3))
-					{
-						consumeChar();
-					}
-				}
-
-				return foundComment;
-			}
-
-			bool consumeNodeName(String& name)
-			{
-				bool foundName = false;
-
-				while (input_[index_] != '>' && !isWhitespace(input_[index_]))
-				{
-					foundName = true;
-					name += input_[index_];
-					consumeChar();
-				}
-
-				return foundName = true;
-			}
-
-			bool consumeEndTag(String& name)
-			{
-				// TODO: XML VALIDATION
-				return consume("</", 2) && consumeNodeName(name) && consume('>');
-			}
-
-			bool consumeStartTag(String& name, Node::Attribute* first_attr, bool &is_self_closing)
-			{
-				first_attr = NULL;
-
-				// TODO: XML VALIDATION
-				if (index_ < input_length_ + 1 &&
-					input_[index_]     == '<' &&
-				    input_[index_ + 1] != '/' &&
-				    input_[index_ + 1] != '?' &&
-				    input_[index_ + 1] != '!')
-				{
-					consumeNodeName(name);
-					consumeWhitespace();
-
-					Node::Attribute* last_attr = NULL;
-
-					while (!consume('>') && !(is_self_closing = consume("/>", 2)))
-					{
-						String attribute_name;
-						String attribute_value;
-
-						consumeNodeName(attribute_name);
-
-						consumeWhitespace();
-						consume('=');
-						consumeWhitespace();
-
-						consume('"');
-
-						char c;
-						while (consumeChar(c) && c != '"')
-						{
-							attribute_value += c;
-						}
-
-						Node::Attribute* attr = new Node::Attribute(attribute_name, attribute_value);
-
-						if (first_attr == NULL)
-						{
-							last_attr = first_attr = attr;
-						}
-						else
-						{
-							last_attr->next_sibling_ = attr;
-							last_attr = attr;
-						}
-
-						consumeWhitespace();
-					}
-
-					return true;
-				}
-
-				return false;
-			}
-
-			bool consumeWhitespace()
-			{
-				int original_index = index_;
-
-				while (index_ < input_length_ && isWhitespace(input_[index_]))
-				{
-					index_++;
-				}
-
-				return original_index != index_;
-			}
-
-			bool consumeProlog()
-			{
-				// TODO: XML VALIDATION (of prolog)
-				if (consume("<?", 2))
-				{
-					while (!consume("?>", 2))
-					{
-						consumeChar();
-					}
-
-					return true;
-				}
-
-				return false;
-			}
-
-			bool consumeDocType()
-			{
-				// TODO: XML VALIDATION - Validate (or more likely ignore) DOCTYPEs.
-				if (consume("<!DOCTYPE", 9))
-				{
-					throw EasyXmlException("DOCTYPEs are not currently supported and can't be ignored.",
-					                       UNSUPPORTED_FEATURE);
-				}
-
-				return false;
-			}
-
-			char peek()
-			{
-				// TODO: EOF VALIDATION
-				return input_[index_];
-			}
-
-		private:
-			const String input_;
-			const long int input_length_;
-			long int index_;
-	};
-
 	Node* loadXml(const std::string& file_path)
 	{
 		char*    file_contents = NULL;
@@ -328,7 +106,7 @@ namespace EASYXML_NAMESPACE
 		return root;
 	}
 
-	Node* parseXml(Input input) {
+	Node* parseXml(Input& input) {
 		#if DEBUG
 			printf("\n");
 			printf("pointer size: %d\n", sizeof(void*));
@@ -367,6 +145,10 @@ namespace EASYXML_NAMESPACE
 					// Validate that the name matches the name of the currently open node.
 					if (name != ancestors.top()->name)
 					{
+						std::cout << "ancestor val: " << ancestors.top()->getFirstAttribute() << "\n";
+						std::cout << "ancestor name: " << ancestors.top()->name << "\n";
+						std::cout << "ancestor parent name: " << ancestors.top()->getParent()->name << "\n";
+						std::cout << "ancestor parent name: " << ancestors.top()->getParent()->getFirstAttribute() << "\n";
 						throw EasyXmlException("Mismatched closing tag \"" + name + "\". " \
 						                       "Expected \"" + ancestors.top()->name + "\".",
 						                       XML_MALFORMED_MISTMATCHED_CLOSING_TAG);
@@ -383,8 +165,9 @@ namespace EASYXML_NAMESPACE
 					ancestors.pop();
 				}
 
-				Node::Attribute* first_attr;
+				Attribute* first_attr = NULL;
 				bool is_self_closing;
+
 				if (input.consumeStartTag(name, first_attr, is_self_closing)) {
 					// Reset value (it should only contain the whitespace between this tag and the previous one).
 					value.clear();

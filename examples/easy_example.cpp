@@ -6,6 +6,11 @@ int main()
 	// Loading an XML file is one function call. loadXml returns a pointer to the root node.
 	xml::Node* root = xml::loadXml("example.xml");
 
+	if (root == NULL) {
+		std::cout << "root node is NULL, error parsing xml.";
+		return 1;
+	}
+
 	// You can easily search for nodes by name and use "/" as a hierarchical delimiter.
 	// find() will return NULL if the given node was not found OR you can pass the boolean "true"
 	// as the second argument and it will throw an exception instead.

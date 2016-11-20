@@ -1,10 +1,10 @@
 CC=g++
-CFLAGS=-Wall -Wextra -pedantic -g -O3
+CFLAGS=-Wall -Wextra -pedantic -g
 LDFLAGS=
 
 SRC_DIR=src
 VPATH=$(SRC_DIR)
-SOURCES=functions.cpp Exception.cpp Node.cpp String.cpp
+SOURCES=functions.cpp Exception.cpp Node.cpp String.cpp Input.cpp Attribute.cpp
 OBJ_DIR=obj
 OBJECTS=$(addprefix $(OBJ_DIR)/, $(SOURCES:.cpp=.o))
 HEADERS=$(SOURCES:.cpp=.h)
@@ -33,7 +33,7 @@ all: ex1
 .PHONY: ex1
 ex1: $(EX_OUT)
 
-$(EX_OUT): $(LIB_DIR)/$(LIB).a $(EX_SOURCE) 
+$(EX_OUT): $(LIB_DIR)/$(LIB).a $(EX_SOURCE)
 	$(CC) $(CFLAGS) $(EX_SOURCE) -o $@ -L$(LIB_DIR) -l$(LIB:lib%=%)
 
 .PHONY: run r

@@ -7,18 +7,17 @@
 #include "namespace.h"
 #include "Exception.h"
 #include "String.h"
+#include "Input.h"
+#include "Attribute.h"
 
 namespace EASYXML_NAMESPACE
 {
 	class Node
 	{
 	public:
-		class Input;
-		class Attribute;
-		bool Input::consumeStartTag(String& name, Attribute* first_attr, bool &is_self_closing);
-		Node* parseXml(Input input);
+		Node* parseXml(Input& input);
 
-		friend Node* parseXml(Input input);
+		friend Node* parseXml(Input& input);
 
 		Node();
 		Node(const char* name, const char* value = "");
@@ -26,28 +25,6 @@ namespace EASYXML_NAMESPACE
 		Node(const Node& rhs);
 
 		Node& operator=(const Node& rhs);
-
-		// Nested class for representing XML Attributes
-		class Attribute
-		{
-		public:
-			friend bool Input::consumeStartTag(String& name, Node::Attribute* first_attr, bool &is_self_closing);
-
-			Attribute(const String& name, const String& value) :
-				name(name),
-				value(value)
-			{ }
-
-			String name;
-			String value;
-
-			Attribute* getNextSibling() {
-				return next_sibling_;
-			}
-
-		private:
-			Attribute* next_sibling_;
-		};
 
 		std::string val() const;
 		template <class T> T val() const; // Templated short-hand "getter" function
@@ -63,6 +40,7 @@ namespace EASYXML_NAMESPACE
 		Node* getLastChild();
 		Node* getNextSibling();
 		Node* getPrevSibling();
+		Attribute* getFirstAttribute();
 
 		const Node* getParent() const;
 		const Node* getChild(const char* name) const;
@@ -71,6 +49,7 @@ namespace EASYXML_NAMESPACE
 		const Node* getLastChild() const;
 		const Node* getNextSibling() const;
 		const Node* getPrevSibling() const;
+		const Attribute* getFirstAttribute() const;
 
 		void addChildAfter(Node* child, Node* after);
 		void addChildBefore(Node* child, Node* before);
