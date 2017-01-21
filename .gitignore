@@ -22,4 +22,6 @@
 *.out
 *.app
 
+# Other
 *.sublime*
+*.dSYM
