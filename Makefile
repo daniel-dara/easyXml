@@ -28,11 +28,16 @@ EX_OUT=$(EX_SOURCE:.cpp=.out)
 
 EASY_EX=easy_example
 
-TEST_DIR=tests
+TEST_DIR=tests/exceptions
 TEST_SOURCE=unit_test.cpp
 TEST_OUT_DIR=$(TEST_DIR)
 TEST_OUT=$(TEST_SOURCE:.cpp=.out)
 TEST_CASES=test_cases.txt
+
+FTEST_SOURCE=tests/functional/test.cpp
+FTEST_OUT=$(FTEST_SOURCE:.cpp=.out)
+
+OUTS=$(EX_OUT) $(FTEST_OUT)
 
 .PHONY: all
 all: ex1
@@ -40,7 +45,11 @@ all: ex1
 .PHONY: ex1
 ex1: $(EX_OUT)
 
-$(EX_OUT): $(LIB_DIR)/$(LIB).a $(EX_SOURCE)
+.PHONY: ftest
+ftest: $(FTEST_OUT)
+	./$(FTEST_OUT)
+
+$(OUTS): $(LIB_DIR)/$(LIB).a $(EX_SOURCE)
 	$(CC) $(CFLAGS) $(EX_SOURCE) -o $@ -L$(LIB_DIR) -l$(LIB:lib%=%)
 
 .PHONY: run r
