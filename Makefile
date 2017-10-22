@@ -1,5 +1,12 @@
-CC=g++
-CFLAGS=-Wall -Wextra -pedantic -g
+UNAME := $(shell uname)
+
+ifeq ($(UNAME), Linux)
+	CC=g++
+else ifeq ($(UNAME), Darwin)
+	CC=clang++
+endif
+
+CFLAGS=-Wall -Weffc++ -Wextra -pedantic -O3 -g
 LDFLAGS=
 
 SRC_DIR=src
