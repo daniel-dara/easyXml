@@ -23,7 +23,7 @@ namespace EASYXML_NAMESPACE
 		{
 			std::ostringstream ss;
 			ss << lineNumber_;
-			message_ += "At line " + ss.str() + "\n.";
+			message_ += "At line " + ss.str() + ".";
 		}
 	}
 				                       
@@ -38,7 +38,7 @@ namespace EASYXML_NAMESPACE
 		{
 			std::ostringstream ss;
 			ss << lineNumber_;
-			message_ += "At line " + ss.str() + "\n.";
+			message_ += "At line " + ss.str() + ".";
 		}
 	}
 
