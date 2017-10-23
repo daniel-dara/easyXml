@@ -34,10 +34,9 @@ TEST_OUT_DIR=$(TEST_DIR)
 TEST_OUT=$(TEST_SOURCE:.cpp=.out)
 TEST_CASES=test_cases.txt
 
-FTEST_SOURCE=tests/functional/test.cpp
-FTEST_OUT=$(FTEST_SOURCE:.cpp=.out)
+FTEST_OUT=tests/functional/test.out
 
-OUTS=$(EX_OUT) $(FTEST_OUT)
+EXECUTABLE=$(FTEST_OUT) $(EX_OUT)
 
 .PHONY: all
 all: ex1
@@ -49,8 +48,8 @@ ex1: $(EX_OUT)
 ftest: $(FTEST_OUT)
 	./$(FTEST_OUT)
 
-$(OUTS): $(LIB_DIR)/$(LIB).a $(EX_SOURCE)
-	$(CC) $(CFLAGS) $(EX_SOURCE) -o $@ -L$(LIB_DIR) -l$(LIB:lib%=%)
+$(EXECUTABLE): %.out: %.cpp $(LIB_DIR)/$(LIB).a
+	$(CC) $(CFLAGS) $*.cpp -o $@ -L$(LIB_DIR) -l$(LIB:lib%=%)
 
 .PHONY: run r
 run r:
@@ -109,7 +108,7 @@ uninstall:
 clean: clean-all
 
 .PHONY: clean-all
-clean-all: clean-lib clean-ex
+clean-all: clean-lib clean-ex clean-ftest
 
 .PHONY: clean-lib
 clean-lib:
@@ -118,3 +117,7 @@ clean-lib:
 .PHONY: clean-ex
 clean-ex:
 	rm -f $(EX_OUT)
+
+.PHONY: clean-ftest
+clean-ftest:
+	rm -f $(FTEST_OUT)
