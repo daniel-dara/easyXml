@@ -20,6 +20,10 @@ namespace EASYXML_NAMESPACE
 
 	private:
 		Attribute* next_sibling_;
+
+		// Block access until implemented.
+		Attribute(const Attribute&);
+		Attribute operator=(const Attribute&);
 	};
 }
 
