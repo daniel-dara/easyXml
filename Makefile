@@ -1,10 +1,10 @@
 UNAME := $(shell uname)
 
-ifeq ($(UNAME), Linux)
-	CC=g++
-else ifeq ($(UNAME), Darwin)
+# ifeq ($(UNAME), Linux)
+	# CC=g++
+# else ifeq ($(UNAME), Darwin)
 	CC=clang++
-endif
+# endif
 
 CFLAGS=-Wall -Weffc++ -Wextra -pedantic -g
 LDFLAGS=
