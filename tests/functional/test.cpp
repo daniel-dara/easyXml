@@ -110,4 +110,3 @@ int main()
 
 	std::cout << "Done!\n"; // TODO: Add test summary to TestRunner and most likely use instance instead of static methods.
 }
-
