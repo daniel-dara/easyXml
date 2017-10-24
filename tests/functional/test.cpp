@@ -8,10 +8,23 @@
 class AssertionException : public std::exception
 {
 public:
+	AssertionException(const String& message) : message_(generateFullMessage(message))
+	{ }
+
+	String generateFullMessage(const String& message)
+	{
+		return "AssertionException: " + message;
+	}
+
+	~AssertionException() throw () {}
+
 	virtual const char* what() const throw()
 	{
-		return "AssertionException";
+		return message_.c_str();
 	}
+
+private:
+	String message_;
 };
 
 class FunctionalTest
@@ -22,6 +35,7 @@ public:
 	virtual ~FunctionalTest() {}
 
 	virtual void run() = 0;
+	virtual String getName() = 0;
 
 	virtual ERROR_CODE getExpectedErrorCode() {
 		return expectedErrorCode;
@@ -33,9 +47,9 @@ public:
 
 protected:
 	// TODO: Consider moving to an Assertion class for SoC.
-	void fail()
+	void fail(const String& message)
 	{
-		throw AssertionException(); // TODO: Add support for assertion types.
+		throw AssertionException(message); // TODO: Add support for assertion types.
 	}
 
 private:
@@ -52,7 +66,12 @@ public:
 	void run()
 	{
 		xml::loadXml("/home/ddara/Downloads/dblp.xml");
-		fail(); // TODO: Add support for messages.
+		fail("This is a test message."); // TODO: Add support for messages.
+	}
+
+	String getName()
+	{
+		return "MissingFileTest";
 	}
 };
 
@@ -97,7 +116,7 @@ public:
 			message << exception.what();
 		}
 
-		std::cout << "[" << (didTestPass ? "PASS" : "FAIL") << "] " << typeid(*test).name() << ": " << message.rdbuf() << "\n";
+		std::cout << "[" << (didTestPass ? "PASS" : "FAIL") << "] [" << test->getName() << "] " << message.rdbuf() << "\n";
 
 		delete test;
 	}
