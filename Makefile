@@ -10,10 +10,11 @@ CFLAGS=-Wall -Weffc++ -Wextra -pedantic -g
 LDFLAGS=
 
 SRC_DIR=src
-VPATH=$(SRC_DIR)
-SOURCES=functions.cpp Exception.cpp Node.cpp String.cpp Input.cpp Attribute.cpp
+# VPATH=$(SRC_DIR)
+RAW_SOURCES=functions.cpp Exception.cpp Node.cpp String.cpp Input.cpp Attribute.cpp
+SOURCES=$(addprefix $(SRC_DIR)/, $(RAW_SOURCES))
 OBJ_DIR=obj
-OBJECTS=$(addprefix $(OBJ_DIR)/, $(SOURCES:.cpp=.o))
+OBJECTS=$(addprefix $(OBJ_DIR)/, $(RAW_SOURCES:.cpp=.o))
 HEADERS=$(SOURCES:.cpp=.h)
 DEPENDS=$(addprefix $(OBJ_DIR)/, $(HEADERS:.h=.d))
 
@@ -41,7 +42,7 @@ FTEST_OBJS=$(FTEST_SRC:.cpp=.o)
 FTEST_HEADERS=$(wildcard $(FTEST_DIR)/*.h)
 FTEST_DEPENDS=$(FTEST_HEADERS:.h=.d)
 
-EXECUTABLE=$(FTEST_OUT) $(EX_OUT)
+COMPILE_OBJECT_FILES=$(CC) -c $(CFLAGS) -MMD $< -o $@
 
 .PHONY: all
 all: ex1
@@ -49,23 +50,21 @@ all: ex1
 .PHONY: ex1
 ex1: $(EX_OUT)
 
+$(EX_OUT): %.out: %.cpp $(LIB_DIR)/$(LIB).a
+	$(CC) $(CFLAGS) $*.cpp -o $@ -L$(LIB_DIR) -l$(LIB:lib%=%)
+
 .PHONY: ftest
 ftest: $(FTEST_OUT)
 	./$(FTEST_OUT)
 
 $(FTEST_OUT): %.out: $(LIB_DIR)/$(LIB).a $(FTEST_OBJS)
-	@echo 'building .out: $(FTEST_OBJS)';
 	$(CC) $(CFLAGS) -MMD $(filter-out *.a,$^) -o $@ -L$(LIB_DIR) -l$(LIB:lib%=%)
 
 $(FTEST_DIR)/%.o: $(FTEST_DIR)/%.cpp
-	@echo 'building .o: $@';
-	$(CC) -c $(CFLAGS) -MMD $< -o $@
+	$(COMPILE_OBJECT_FILES)
 
 # recompile lib if header files change
 -include $(FTEST_DEPENDS)
-
-$(EX_OUT): %.out: %.cpp $(LIB_DIR)/$(LIB).a
-	$(CC) $(CFLAGS) $*.cpp -o $@ -L$(LIB_DIR) -l$(LIB:lib%=%)
 
 .PHONY: run r
 run r:
@@ -87,8 +86,8 @@ $(LIB_DIR)/$(LIB).a: $(SOURCES) $(OBJECTS)
 # recompile lib if header files change
 -include $(DEPENDS)
 
-$(OBJ_DIR)/%.o: %.cpp | $(OBJ_DIR)
-	$(CC) -c $(CFLAGS) -MMD $< -o $@
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
+	$(COMPILE_OBJECT_FILES)
 
 $(OBJ_DIR):
 	mkdir $(OBJ_DIR)
