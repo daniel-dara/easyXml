@@ -34,7 +34,12 @@ TEST_OUT_DIR=$(TEST_DIR)
 TEST_OUT=$(TEST_SOURCE:.cpp=.out)
 TEST_CASES=test_cases.txt
 
-FTEST_OUT=tests/functional/test.out
+FTEST_DIR=tests/functional
+FTEST_OUT=$(FTEST_DIR)/test.out
+FTEST_SRC=$(wildcard $(FTEST_DIR)/*.cpp)
+FTEST_OBJS=$(FTEST_SRC:.cpp=.o)
+FTEST_HEADERS=$(wildcard $(FTEST_DIR)/*.h)
+FTEST_DEPENDS=$(FTEST_HEADERS:.h=.d)
 
 EXECUTABLE=$(FTEST_OUT) $(EX_OUT)
 
@@ -48,7 +53,18 @@ ex1: $(EX_OUT)
 ftest: $(FTEST_OUT)
 	./$(FTEST_OUT)
 
-$(EXECUTABLE): %.out: %.cpp $(LIB_DIR)/$(LIB).a
+$(FTEST_OUT): %.out: $(LIB_DIR)/$(LIB).a $(FTEST_OBJS)
+	@echo 'building .out: $(FTEST_OBJS)';
+	$(CC) $(CFLAGS) -MMD $(filter-out *.a,$^) -o $@ -L$(LIB_DIR) -l$(LIB:lib%=%)
+
+$(FTEST_DIR)/%.o: $(FTEST_DIR)/%.cpp
+	@echo 'building .o: $@';
+	$(CC) -c $(CFLAGS) -MMD $< -o $@
+
+# recompile lib if header files change
+-include $(FTEST_DEPENDS)
+
+$(EX_OUT): %.out: %.cpp $(LIB_DIR)/$(LIB).a
 	$(CC) $(CFLAGS) $*.cpp -o $@ -L$(LIB_DIR) -l$(LIB:lib%=%)
 
 .PHONY: run r
@@ -120,4 +136,4 @@ clean-ex:
 
 .PHONY: clean-ftest
 clean-ftest:
-	rm -f $(FTEST_OUT)
+	rm -f $(FTEST_DIR)/*.o $(FTEST_DIR)/*.d $(FTEST_DIR)/*.out

@@ -3,29 +3,7 @@
 #include <typeinfo>
 
 #include "../../src/dev-easyXml.h"
-
-// TODO: Break out into separate files.
-class AssertionException : public std::exception
-{
-public:
-	AssertionException(const String& message) : message_(generateFullMessage(message))
-	{ }
-
-	String generateFullMessage(const String& message)
-	{
-		return "AssertionException: " + message;
-	}
-
-	~AssertionException() throw () {}
-
-	virtual const char* what() const throw()
-	{
-		return message_.c_str();
-	}
-
-private:
-	String message_;
-};
+#include "AssertionException.h"
 
 class FunctionalTest
 {
