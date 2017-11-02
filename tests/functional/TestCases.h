@@ -1,5 +1,5 @@
-#ifndef MISSING_FILE_TEST_H
-#define MISSING_FILE_TEST_H
+#ifndef TEST_CASES_H
+#define TEST_CASES_H
 
 #include "FunctionalTest.h"
 
