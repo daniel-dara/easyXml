@@ -5,6 +5,7 @@
 #include "AssertionException.h"
 #include "FunctionalTest.h"
 #include "TestCases.h"
+#include "TestRunner.h"
 
 int main()
 {
