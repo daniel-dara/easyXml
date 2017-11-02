@@ -4,36 +4,7 @@
 
 #include "../../src/dev-easyXml.h"
 #include "AssertionException.h"
-
-class FunctionalTest
-{
-public:
-	FunctionalTest() : expectedErrorCode(NO_ERROR) {}
-	FunctionalTest(ERROR_CODE errorCode) : expectedErrorCode(errorCode) {}
-	virtual ~FunctionalTest() {}
-
-	virtual void run() = 0;
-	virtual String getName() = 0;
-
-	virtual ERROR_CODE getExpectedErrorCode() {
-		return expectedErrorCode;
-	}
-
-	bool errorIsExpected() {
-		return expectedErrorCode != NO_ERROR;
-	}
-
-protected:
-	// TODO: Consider moving to an Assertion class for SoC.
-	void fail(const String& message)
-	{
-		throw AssertionException(message); // TODO: Add support for assertion types.
-	}
-
-private:
-	const ERROR_CODE expectedErrorCode;
-};
-
+#include "FunctionalTest.h"
 
 class MissingFileTest : public FunctionalTest
 {

@@ -71,6 +71,7 @@ run r:
 	@cd examples; \
 	./$(EX_NAME).out
 
+.PHONY: simple
 simple:
 	cd examples; \
 	g++ easy_example.cpp -lEasyXml; \
