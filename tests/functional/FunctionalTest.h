@@ -1,3 +1,6 @@
+#ifndef FUNCTIONAL_TEST_H
+#define FUNCTIONAL_TEST_H
+
 #include "../../src/dev-easyXml.h"
 
 class FunctionalTest
@@ -21,3 +24,5 @@ protected:
 private:
 	const ERROR_CODE expectedErrorCode;
 };
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef ASSERTION_EXCEPTION_H
+#define ASSERTION_EXCEPTION_H
+
 #include "../../src/dev-easyXml.h"
 
 class AssertionException : public std::exception
@@ -14,3 +17,5 @@ public:
 private:
 	String message_;
 };
+
+#endif
