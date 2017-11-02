@@ -5,24 +5,7 @@
 #include "../../src/dev-easyXml.h"
 #include "AssertionException.h"
 #include "FunctionalTest.h"
-
-class MissingFileTest : public FunctionalTest
-{
-public:
-	MissingFileTest() : FunctionalTest(FOPEN_FAILED)
-	{ }
-
-	void run()
-	{
-		xml::loadXml("/home/ddara/Downloads/dblp.xml");
-		fail("This is a test message."); // TODO: Add support for messages.
-	}
-
-	String getName()
-	{
-		return "MissingFileTest";
-	}
-};
+#include "TestCases.h"
 
 class TestRunner
 {
