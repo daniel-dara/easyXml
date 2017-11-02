@@ -36,13 +36,19 @@ TEST_OUT=$(TEST_SOURCE:.cpp=.out)
 TEST_CASES=test_cases.txt
 
 FTEST_DIR=tests/functional
+FTEST_OBJ_DIR=$(FTEST_DIR)/obj
+
 FTEST_OUT=$(FTEST_DIR)/test.out
-FTEST_SRC=$(wildcard $(FTEST_DIR)/*.cpp)
-FTEST_OBJS=$(FTEST_SRC:.cpp=.o)
+FTEST_SRCS=$(wildcard $(FTEST_DIR)/*.cpp)
+FTEST_OBJS=$(addprefix $(FTEST_OBJ_DIR)/, $(notdir $(FTEST_SRCS:.cpp=.o)))
 FTEST_HEADERS=$(wildcard $(FTEST_DIR)/*.h)
 FTEST_DEPENDS=$(FTEST_HEADERS:.h=.d)
 
 COMPILE_OBJECT_FILES=$(CC) -c $(CFLAGS) -MMD $< -o $@
+
+.PHONY: info
+info:
+	@echo $(FTEST_OBJ_DIR)
 
 .PHONY: all
 all: ex1
@@ -60,8 +66,11 @@ ftest: $(FTEST_OUT)
 $(FTEST_OUT): %.out: $(LIB_DIR)/$(LIB).a $(FTEST_OBJS)
 	$(CC) $(CFLAGS) -MMD $(filter-out *.a,$^) -o $@ -L$(LIB_DIR) -l$(LIB:lib%=%)
 
-$(FTEST_DIR)/%.o: $(FTEST_DIR)/%.cpp
+$(FTEST_OBJ_DIR)/%.o: $(FTEST_DIR)/%.cpp | $(FTEST_OBJ_DIR)
 	$(COMPILE_OBJECT_FILES)
+
+$(FTEST_OBJ_DIR):
+	mkdir $(FTEST_OBJ_DIR)
 
 # recompile lib if header files change
 -include $(FTEST_DEPENDS)
@@ -137,3 +146,4 @@ clean-ex:
 .PHONY: clean-ftest
 clean-ftest:
 	rm -f $(FTEST_DIR)/*.o $(FTEST_DIR)/*.d $(FTEST_DIR)/*.out
+	rm -rf $(FTEST_OBJ_DIR)
